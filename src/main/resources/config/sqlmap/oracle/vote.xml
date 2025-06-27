@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.hotdeal.vote.dao.VoteDAO">
+
+    <!-- 회원별 추천/비추천 중복 체크 -->
+    <select id="countVote" resultType="int">
+        SELECT COUNT(*) FROM HOTDEAL_VOTE
+        WHERE HOTDEAL_ID = #{hotdealId}
+          AND USERNAME = #{username}
+          AND VOTE_TYPE = #{voteType}
+    </select>
+
+    <!-- 추천/비추천 투표 기록 -->
+<insert id="insertVote">
+    INSERT INTO HOTDEAL_VOTE (VOTE_ID, HOTDEAL_ID, USERNAME, VOTE_TYPE)
+    VALUES (HOTDEAL_VOTE_SEQ.NEXTVAL, #{hotdealId}, #{username}, #{voteType})
+</insert>
+
+    <!-- 테스트 데이터 정리용 -->
+    <delete id="deleteVoteForTest">
+        DELETE FROM HOTDEAL_VOTE
+        WHERE HOTDEAL_ID = #{hotdealId}
+          AND USERNAME = #{username}
+          AND VOTE_TYPE = #{voteType}
+    </delete>
+
+    <!-- 추천수 증가 -->
+    <update id="increaseLikes" parameterType="int">
+        UPDATE HOTDEAL SET LIKES = LIKES + 1 WHERE ID = #{id}
+    </update>
+
+    <!-- 비추천수 증가 -->
+    <update id="increaseDislikes" parameterType="int">
+        UPDATE HOTDEAL SET DISLIKES = DISLIKES + 1 WHERE ID = #{id}
+    </update>
+    
+    <delete id="deleteVote">
+      DELETE FROM HOTDEAL_VOTE
+    	WHERE HOTDEAL_ID = #{hotdealId}
+      AND USERNAME = #{username}
+      AND VOTE_TYPE = #{voteType}
+	</delete>
+    
+    <delete id="deleteAllVotes">
+    DELETE FROM HOTDEAL_VOTE
+</delete>
+</mapper>
