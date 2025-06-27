@@ -50,9 +50,4 @@ public class VoteDAOImpl implements VoteDAO {
         param.put("voteType", voteType);
         sqlSessionTemplate.delete(NAMESPACE + "deleteVote", param);
     }
-    
-    @Override
-    public void deleteAllVotes() {
-        sqlSessionTemplate.delete(NAMESPACE + "deleteAllVotes");
-    }
 }

@@ -39,8 +39,8 @@ public class MemberController {
 
     // 로그인 처리
     @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
+    public String login(@RequestParam("username") String username,
+            @RequestParam("password") String password,
                         HttpSession session,
                         Model model) {
         MemberVO member = memberService.login(username, password);

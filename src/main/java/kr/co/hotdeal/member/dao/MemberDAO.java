@@ -9,6 +9,4 @@ public interface MemberDAO {
     MemberVO login(String username, String password);
     
     void deleteMemberByUsername(String username);
-    
-    void deleteAllMembers(); // 전체 회원 삭제
 }

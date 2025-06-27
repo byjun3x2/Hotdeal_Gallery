@@ -43,9 +43,4 @@ public class MemberDAOImpl implements MemberDAO {
     public void deleteMemberByUsername(String username) {
         sqlSessionTemplate.delete(NAMESPACE + "deleteMemberByUsername", username);
     }
-    
-    @Override
-    public void deleteAllMembers() {
-        sqlSessionTemplate.delete(NAMESPACE + "deleteAllMembers");
-    }
 }
