@@ -47,7 +47,7 @@
         <input type="text" name="product.productName" id="productName" maxlength="200" required>
 
         <label for="price">가격</label>
-        <input type="number" name="product.price" id="price" min="0" step="1" maxlength="20" required>
+        <input type="number" name="product.price" id="price" min="0" step="1" maxlength="20" placeholder="숫자만 입력 (예: 3000)" required>
 
         <label for="deliveryFee">배송비</label>
         <input type="text" name="product.deliveryFee" id="deliveryFee" maxlength="20" required>

@@ -1,5 +1,6 @@
  package kr.co.hotdeal.board.vo;
 
+import kr.co.hotdeal.product.vo.ProductVO;
 import lombok.Data;
 
 @Data
@@ -15,6 +16,4 @@ public class HotdealVO {
     private String content;
     private String category; 
     private String productId; // 상품 참조용 FK
- // [ADD] 댓글 수를 담기 위한 필드 추가
-    private int commentCount;
 }

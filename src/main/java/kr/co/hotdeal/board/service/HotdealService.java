@@ -47,7 +47,7 @@ public class HotdealService {
     
     public List<HotdealVO> getHotdealList(int page, String keyword) {
         // 페이징 계산 (예시)
-        int perPageNum = 10;
+        int perPageNum = 11;
         int pageStart = (page - 1) * perPageNum + 1;
         int pageEnd = page * perPageNum;
 

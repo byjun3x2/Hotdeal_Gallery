@@ -1,10 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>핫딜 게시판</title>
 <style>
 html, body {
@@ -21,24 +23,48 @@ html, body {
 
 main {
 	flex: 1;
-	min-height: 480px;
-	display: flex;
-	flex-direction: column;
 }
 
-/* [수정] 게시판과 베스트글의 위치 기준이 될 래퍼 */
+/* [REVISED] 반응형 레이아웃의 핵심 */
 .content-wrapper {
-	position: relative; /* 자식 요소의 absolute 위치 기준점 */
-	width: 900px; /* 게시판과 동일한 너비 */
-	margin: 40px auto 0 auto; /* 이 래퍼를 중앙 정렬 (결과적으로 게시판이 중앙에 위치) */
+	display: flex;
+	flex-wrap: wrap; /* 화면이 좁아지면 자식 요소가 아래로 내려가도록 설정 */
+	gap: 24px; /* 컨텐츠와 사이드바 사이 간격 */
+	width: 95%; /* 전체 너비를 화면의 95%로 설정 */
+	max-width: 1200px; /* 최대 너비는 1200px로 제한 */
+	margin: 40px auto;
 }
 
-/* [수정] 너비와 마진은 부모(content-wrapper)가 담당하므로 삭제 */
 .hotdeal-board {
+	flex: 3; /* 메인 컨텐츠가 3의 비율을 차지 */
+	min-width: 600px; /* 최소 너비를 지정해 너무 찌그러지는 것 방지 */
 	display: flex;
 	flex-direction: column;
-	flex: 1 0 auto;
 }
+
+.best-posts {
+	flex: 1; /* 사이드바가 1의 비율을 차지 */
+	min-width: 220px;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	padding: 16px;
+	background-color: #fdfdfd;
+	height: fit-content; /* 내용물 높이에 맞춤 */
+}
+
+/* 화면 너비가 992px 이하일 때 적용될 스타일 */
+@media (max-width: 992px) {
+	.content-wrapper {
+		flex-direction: column; /* 세로로 쌓이도록 방향 변경 */
+		width: 90%;
+	}
+	.hotdeal-board, .best-posts {
+		min-width: 100%; /* 화면 너비에 꽉 차도록 설정 */
+		flex: none; /* 비율 무시 */
+		width: 100%;
+	}
+}
+
 
 .hotdeal-board table {
 	width: 100%;
@@ -48,7 +74,7 @@ main {
 .hotdeal-board th, .hotdeal-board td {
 	border: 1px solid #e0e0e0;
 	padding: 8px;
-	text-align: center;
+	text-align: left;
 	height: 70px;
 	vertical-align: middle;
 }
@@ -56,6 +82,7 @@ main {
 .hotdeal-board th {
 	background-color: #f8f8f8;
 	font-weight: bold;
+	text-align: center;
 }
 
 .hotdeal-board img {
@@ -77,19 +104,16 @@ main {
 }
 
 .pagination-row {
-	position: relative;
-	margin-top: auto;
-	height: 40px;
+	margin-top: 20px;
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 }
 
 .pagination-center {
 	display: flex;
 	justify-content: center;
-	align-items: center;
 	flex: 1;
-	height: 100%;
 }
 
 .pagination {
@@ -114,7 +138,6 @@ main {
 }
 
 .write-btn {
-	margin-left: 18px;
 	padding: 8px 18px;
 	background: #007bff;
 	color: #fff;
@@ -122,9 +145,6 @@ main {
 	text-decoration: none;
 	font-weight: bold;
 	font-size: 15px;
-	height: 36px;
-	line-height: 20px;
-	display: inline-block;
 }
 
 .write-btn:hover {
@@ -143,19 +163,6 @@ main {
 
 .search-box button {
 	padding: 5px 10px;
-}
-
-/* [수정] position: absolute로 변경하여 위치 지정 */
-.best-posts {
-	position: absolute; /* content-wrapper를 기준으로 위치 지정 */
-	top: 0;
-	left: 100%; /* content-wrapper의 바로 오른쪽 */
-	margin-left: 24px; /* 게시판과의 간격 */
-	width: 220px;
-	border: 1px solid #e0e0e0;
-	border-radius: 4px;
-	padding: 16px;
-	background-color: #fdfdfd;
 }
 
 .best-posts h3 {
@@ -188,6 +195,32 @@ main {
 .best-posts a:hover {
 	text-decoration: underline;
 }
+
+.deal-title-cell {
+    text-align: left; 
+    padding-left: 15px !important;
+}
+.deal-title-link {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+    text-decoration: none;
+}
+.deal-title-link:hover {
+    text-decoration: underline;
+}
+.deal-title-link .category {
+    color: #0056b3; 
+}
+.deal-meta-info {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 6px;
+}
+.deal-meta-info .price {
+    font-weight: bold;
+    color: #d9534f; 
+}
 </style>
 </head>
 <body>
@@ -195,7 +228,6 @@ main {
 		<%@ include file="topMenu.jsp"%>
 		<main>
 			<div class="content-wrapper">
-
 				<div class="hotdeal-board">
 					<form method="get" action="list" class="search-box">
 						<input type="text" name="keyword" value="${keyword}"
@@ -206,14 +238,14 @@ main {
 					<table>
 						<thead>
 							<tr>
-								<th>번호</th>
-								<th>이미지</th>
+								<th style="width: 8%;">번호</th>
+								<th style="width: 10%;">이미지</th>
 								<th>제목</th>
-								<th>작성자</th>
-								<th>등록일</th>
-								<th>조회</th>
-								<th>추천</th>
-								<th>비추천</th>
+								<th style="width: 12%;">작성자</th>
+								<th style="width: 12%;">등록일</th>
+								<th style="width: 8%;">조회</th>
+								<th style="width: 8%;">추천</th>
+								<th style="width: 8%;">비추천</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -221,22 +253,35 @@ main {
 								<c:when test="${not empty hotdealList}">
 									<c:forEach var="deal" items="${hotdealList}">
 										<tr>
-											<td>${deal.id}</td>
-											<td><c:if test="${not empty deal.thumbnail}">
+											<td style="text-align: center;">${deal.id}</td>
+											<td>
+												<c:if test="${not empty deal.thumbnail}">
 													<img src="${deal.thumbnail}" alt="썸네일">
-												</c:if></td>
-											<td><a href="detail?id=${deal.id}">${deal.title}</a></td>
-											<td>${deal.author}</td>
-											<td>${deal.regDate}</td>
-											<td>${deal.views}</td>
-											<td>${deal.likes}</td>
-											<td>${deal.dislikes}</td>
+												</c:if>
+											</td>
+											<td class="deal-title-cell">
+												<div>
+													<a href="detail?id=${deal.id}" class="deal-title-link">
+														<span class="category">[${deal.product.category}]</span> ${deal.title}
+													</a>
+												</div>
+												<div class="deal-meta-info">
+													가격  <span class="price"><fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</span>
+													<span> | 배송료 ${deal.product.deliveryFee}</span>
+													<span> | ${deal.product.shopName}</span>
+												</div>
+											</td>
+											<td style="text-align: center;">${deal.author}</td>
+											<td style="text-align: center;">${fn:substring(deal.regDate, 0, 10)}</td>
+											<td style="text-align: center;">${deal.views}</td>
+											<td style="text-align: center;">${deal.likes}</td>
+											<td style="text-align: center;">${deal.dislikes}</td>
 										</tr>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
 									<tr>
-										<td colspan="8">등록된 핫딜이 없습니다.</td>
+										<td colspan="8" style="text-align: center;">등록된 핫딜이 없습니다.</td>
 									</tr>
 								</c:otherwise>
 							</c:choose>
@@ -266,9 +311,11 @@ main {
 								</c:if>
 							</div>
 						</div>
-						<c:if test="${not empty sessionScope.loginUser}">
-							<a href="write" class="write-btn">새글등록</a>
-						</c:if>
+						<div>
+							<c:if test="${not empty sessionScope.loginUser}">
+								<a href="write" class="write-btn">새글등록</a>
+							</c:if>
+						</div>
 					</div>
 				</div>
 
@@ -289,8 +336,6 @@ main {
 						</c:if>
 					</ul>
 				</aside>
-
-
 			</div>
 		</main>
 		<%@ include file="footer.jsp"%>
