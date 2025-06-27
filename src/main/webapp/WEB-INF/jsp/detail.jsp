@@ -20,7 +20,6 @@
             width: 100vw;
             min-height: 100vh;
             gap: 32px;
-            margin-top: 32px; /* 원하는 만큼 조정 */
             box-sizing: border-box;
         }
         .ad-sidebar-left {
@@ -213,10 +212,6 @@
             .main-content { min-width: 100vw; max-width: 100vw; padding: 0 4vw; }
             .detail-container, .comment-section { padding: 16px 4vw; }
         }
-        
-        #commentForm textarea {
-    		resize: none;
-		}
     </style>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
