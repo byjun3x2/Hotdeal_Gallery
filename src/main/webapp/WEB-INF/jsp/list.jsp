@@ -164,8 +164,6 @@ main {
 			<div class="layout-anchor">
 
 				<%@ include file="adCarousel.jsp" %>
-
-				<!-- 메인 게시판 영역 -->
 				<div class="hotdeal-board" id="hotdealBoard">
 					<form method="get" action="list" class="search-box">
 						<input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
@@ -357,7 +355,7 @@ main {
 
 		function setAdInitialPosition() {
 			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
-			adTop = tableTop + (tableHeight / 2) - (adHeight / 2) - anchorTop;
+			adTop = tableTop - anchorTop; // ★ 테이블 상단 경계선에 맞춤
 			const minTop = tableTop - anchorTop;
 			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
 			adTop = clamp(adTop, minTop, maxTop);
@@ -375,15 +373,63 @@ main {
 			if (!ticking) {
 				window.requestAnimationFrame(function() {
 					updateAdPositionByScroll(deltaY);
+					updateBestPositionByScroll(deltaY); // 베스트 게시글도 같이 동기화
 					ticking = false;
 				});
 				ticking = true;
 			}
 		});
-
 		window.addEventListener('resize', function() {
 			setAdInitialPosition();
+			setBestInitialPosition();
 		});
+
+		// === [베스트 게시글 사이드바 스크롤 연동] ===
+		const bestSidebar = document.querySelector('.best-posts');
+
+		function getBestTableBounds() {
+			const tableRect = table.getBoundingClientRect();
+			const anchorRect = anchor.getBoundingClientRect();
+			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+			const tableTop = tableRect.top + scrollTop;
+			const tableHeight = table.offsetHeight;
+			const bestHeight = bestSidebar.offsetHeight;
+			const anchorTop = anchorRect.top + scrollTop;
+			const anchorHeight = anchor.offsetHeight;
+			return {
+				tableTop,
+				tableHeight,
+				bestHeight,
+				anchorTop,
+				anchorHeight
+			};
+		}
+
+		let bestTop = 0;
+
+		function updateBestPositionByScroll(deltaY) {
+			if (!bestSidebar) return;
+			const { tableTop, tableHeight, bestHeight, anchorTop, anchorHeight } = getBestTableBounds();
+			const minTop = tableTop - anchorTop;
+			const maxTop = tableTop + tableHeight - bestHeight - anchorTop;
+
+			bestTop += deltaY;
+			bestTop = clamp(bestTop, minTop, maxTop);
+
+			bestSidebar.style.top = bestTop + "px";
+		}
+
+		function setBestInitialPosition() {
+			if (!bestSidebar) return;
+			const { tableTop, tableHeight, bestHeight, anchorTop, anchorHeight } = getBestTableBounds();
+			bestTop = tableTop - anchorTop; // ★ 테이블 상단 경계선에 맞춤
+			const minTop = tableTop - anchorTop;
+			const maxTop = tableTop + tableHeight - bestHeight - anchorTop;
+			bestTop = clamp(bestTop, minTop, maxTop);
+			bestSidebar.style.top = bestTop + "px";
+		}
+
+		setBestInitialPosition();
 	});
 	</script>
 </body>
