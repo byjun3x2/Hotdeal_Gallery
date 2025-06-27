@@ -8,34 +8,55 @@
     <meta charset="UTF-8">
     <title>핫딜 상세보기</title>
     <style>
-        /* [REVISED] 전체적인 레이아웃 및 디자인 개선 */
         body {
-            background-color: #f4f6f9; /* 배경색 추가 */
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
         }
-        .page-container {
+        .layout-3col {
             display: flex;
             justify-content: center;
-            gap: 24px;
-            width: 95%;
-            max-width: 1200px;
-            margin: 40px auto;
             align-items: flex-start;
+            width: 100vw;
+            min-height: 100vh;
+            gap: 32px;
+            margin-top: 32px; /* 원하는 만큼 조정 */
+            box-sizing: border-box;
+        }
+        .ad-sidebar-left {
+            width: 220px;
+            min-width: 220px;
+            max-width: 220px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fffbe8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+            height: fit-content;
+            position: sticky;
+            top: 40px;
+            z-index: 10;
+            overflow: hidden;
         }
         .main-content {
-            flex: 3;
+            flex: 0 1 800px;
             min-width: 600px;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
         }
-
-        /* 상세 내용 컨테이너 */
         .detail-container {
             background-color: #fff;
             border: 1px solid #dee2e6;
             border-radius: 8px;
             padding: 30px 40px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin: 0 auto;
         }
-
-        /* 게시글 헤더 */
         .deal-header {
             border-bottom: 2px solid #343a40;
             padding-bottom: 15px;
@@ -56,8 +77,6 @@
             content: "|";
             margin: 0 10px;
         }
-        
-        /* 상품 정보 박스 */
         .product-info-box {
             background-color: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -75,16 +94,14 @@
             margin: 8px 0;
             font-size: 1em;
         }
-        .product-info-box .product-link a {
-            font-weight: bold;
+        .product-info-box a {
             color: #007bff;
             text-decoration: none;
+            word-break: break-all;
         }
-        .product-info-box .product-link a:hover {
+        .product-info-box a:hover {
             text-decoration: underline;
         }
-
-        /* 게시글 본문 */
         .deal-content {
             min-height: 150px;
             line-height: 1.7;
@@ -92,15 +109,11 @@
             color: #343a40;
             margin-bottom: 30px;
         }
-
-        /* 투표 섹션 */
         .vote-section { text-align: center; margin: 30px 0; }
         .vote-btn { padding:8px 22px; margin:0 10px; border-radius:20px; border:1px solid #ccc; font-size:15px; cursor:pointer; background-color: #fff; transition: all 0.2s; }
         .vote-btn.like-btn:hover { background-color:#e7f3ff; border-color:#9ecbff;}
         .vote-btn.dislike-btn:hover { background-color:#ffe3e6; border-color:#ffb3ba;}
         .vote-msg { color:#d00; font-size:14px; margin-top:10px; display: block; height: 1em;}
-
-        /* 댓글 섹션 */
         .comment-section-wrapper { margin-top: 40px; }
         .comment-section {
             width: 100%;
@@ -113,28 +126,104 @@
         .comment-section h3 { margin-bottom: 18px; text-align: left; }
         #commentForm textarea { width: 100%; box-sizing:border-box; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; margin-bottom: 10px; }
         #commentForm button { float: right; }
-
         .comment-item { border-top: 1px solid #e9ecef; padding: 15px 0; text-align: left; }
         .reply-toggle-btn { font-size: 13px; padding: 2px 8px; cursor: pointer; margin-top: 5px; }
         .replyForm { display: none; margin-top: 8px; }
-
-        /* 베스트 게시글 사이드바 스타일 */
-        .best-posts { flex: 1; min-width: 220px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; background-color: #fff; height: fit-content; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .best-posts {
+            width: 220px;
+            min-width: 220px;
+            max-width: 220px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            background-color: #fff;
+            height: fit-content;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 40px;
+            flex-shrink: 0;
+        }
         .best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
         .best-posts ul { list-style: none; padding: 0; margin: 0; }
         .best-posts li { margin-bottom: 10px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .best-posts a { text-decoration: none; color: #333; }
         .best-posts a:hover { text-decoration: underline; }
-        
         .back-link { display: inline-block; margin-top: 20px; color: #007bff; text-decoration: none; }
         .back-link:hover { text-decoration: underline; }
+        /* 광고 캐러셀 스타일 */
+        .carousel-container {
+            position: relative;
+            width: 220px;
+            height: 600px;
+            overflow: hidden;
+        }
+        .carousel-slide {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            transition: opacity 0.7s;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+        .carousel-slide.active {
+            display: block;
+            opacity: 1;
+            z-index: 1;
+        }
+        .carousel-slide.inactive {
+            opacity: 0;
+            z-index: 0;
+        }
+        .carousel-btn { display: none; }
+        .carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 3;
+        }
+        .carousel-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 4px;
+            background: #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .carousel-dot.active {
+            background: #007bff;
+        }
+        @media (max-width: 1400px) {
+            .layout-3col { gap: 12px; }
+            .main-content { min-width: 400px; }
+            .ad-sidebar-left, .best-posts { display: none; }
+        }
+        @media (max-width: 900px) {
+            .main-content { min-width: 100vw; max-width: 100vw; padding: 0 4vw; }
+            .detail-container, .comment-section { padding: 16px 4vw; }
+        }
+        
+        #commentForm textarea {
+    		resize: none;
+		}
     </style>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
     <%@ include file="topMenu.jsp" %>
-    
-    <div class="page-container">
+    <div class="layout-3col">
+        <%@ include file="adCarousel.jsp" %>
         <div class="main-content">
             <div class="detail-container">
                 <div class="deal-header">
@@ -150,7 +239,6 @@
                         <span>조회: ${deal.views}</span>
                     </div>
                 </div>
-
                 <div class="product-info-box">
                     <h3>상품 정보</h3>
                     <p><strong>상품명:</strong> ${deal.product.productName}</p>
@@ -164,23 +252,26 @@
                             </c:otherwise>
                         </c:choose>
                     </p>
-                    <c:if test="${not empty deal.product.relatedUrl}">
-                        <p class="product-link">
-                            <a href="${deal.product.relatedUrl}" target="_blank">상품 페이지로 이동 &raquo;</a>
-                        </p>
-                    </c:if>
+                    <p>
+                        <strong>상품페이지 링크 :</strong>
+                        <c:choose>
+                            <c:when test="${not empty deal.product.relatedUrl}">
+                                <a href="${deal.product.relatedUrl}" target="_blank">${deal.product.relatedUrl}</a>
+                            </c:when>
+                            <c:otherwise>
+                                <span>없음</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </p>
                 </div>
-                
                 <c:if test="${not empty deal.thumbnail}">
                     <div style="text-align:center; margin-bottom: 25px;">
                         <img src="${deal.thumbnail}" alt="썸네일" style="max-width:100%; border-radius:6px;">
                     </div>
                 </c:if>
-                
                 <div class="deal-content">
                     <pre style="font-family: inherit; font-size: inherit; white-space: pre-wrap; word-wrap: break-word;">${deal.content}</pre>
                 </div>
-
                 <div class="vote-section">
                     <c:if test="${not empty sessionScope.loginUser}">
                         <button class="vote-btn like-btn" onclick="vote('LIKE')">👍 추천 <span id="likes-count">${deal.likes}</span></button>
@@ -188,10 +279,8 @@
                     </c:if>
                     <span id="vote-msg" class="vote-msg"></span>
                 </div>
-
                 <a href="list?page=1" class="back-link">← 목록으로</a>
             </div>
-
             <div class="comment-section-wrapper">
                 <div class="comment-section">
                     <h3>댓글</h3>
@@ -205,7 +294,6 @@
                     <c:if test="${empty sessionScope.loginUser}">
                         <div style="color:#888; margin-bottom:18px;">댓글을 작성하려면 로그인하세요.</div>
                     </c:if>
-                    
                     <div id="comment-list">
                         <c:if test="${empty commentList}">
                             <div style="color:#aaa;">아직 댓글이 없습니다.</div>
@@ -224,10 +312,8 @@
                 </div>
             </div>
         </div>
-
         <%@ include file="bestPosts.jsp" %>
     </div>
-
 <script>
 function vote(type) {
     $.post("vote", {id: "${deal.id}", type: type}, function(res) {
@@ -240,7 +326,6 @@ function vote(type) {
         }
     }, "json");
 }
-
 $(function() {
     $("#commentForm").submit(function(e) {
         e.preventDefault();
@@ -257,13 +342,11 @@ $(function() {
             }
         });
     });
-
     $(document).on("click", ".reply-toggle-btn", function() {
         var targetId = $(this).data("target");
         $(".replyForm").not("#" + targetId).hide();
         $("#" + targetId).toggle();
     });
-
     $(document).on("submit", ".replyForm", function(e) {
         e.preventDefault();
         var $form = $(this);
@@ -281,6 +364,40 @@ $(function() {
             }
         });
     });
+});
+/* 광고 캐러셀 */
+window.addEventListener("DOMContentLoaded", function() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    let current = 0;
+    let timer = null;
+    function showSlide(idx) {
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active', 'inactive');
+            if (i === idx) slide.classList.add('active');
+            else slide.classList.add('inactive');
+        });
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === idx);
+        });
+        current = idx;
+    }
+    function nextSlide() {
+        let next = (current + 1) % slides.length;
+        showSlide(next);
+    }
+    function startAuto() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(nextSlide, 10000);
+    }
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            showSlide(i);
+            startAuto();
+        });
+    });
+    showSlide(0);
+    startAuto();
 });
 </script>
 </body>

@@ -9,19 +9,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>핫딜 게시판</title>
 <style>
-/* CSS 스타일은 이전과 동일하게 유지됩니다. */
-html, body { height: 100%; margin: 0; padding: 0; }
-.wrapper { min-height: 100vh; display: flex; flex-direction: column; }
-main { flex: 1; }
-.content-wrapper { display: flex; flex-wrap: wrap; gap: 24px; width: 95%; max-width: 1200px; margin: 40px auto; }
-.hotdeal-board { flex: 3; min-width: 600px; display: flex; flex-direction: column; }
-.best-posts { flex: 1; min-width: 220px; border: 1px solid #e0e0e0; border-radius: 4px; padding: 16px; background-color: #fdfdfd; height: fit-content; }
-@media (max-width: 992px) {
-	.content-wrapper { flex-direction: column; width: 90%; }
-	.hotdeal-board, .best-posts { min-width: 100%; flex: none; width: 100%; }
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: #f4f6f9;
+}
+.wrapper {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+main {
+	flex: 1 0 auto;
+	padding-top: 40px;
+}
+.layout-anchor {
+	position: relative;
+	width: 1000px;
+	margin: 0 auto;
+}
+/* 광고 캐러셀 사이드바 */
+.ad-sidebar-left {
+	position: absolute;
+	left: -244px;
+	width: 220px;
+	min-height: 600px;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background-color: #fffbe8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	box-sizing: border-box;
+	z-index: 10;
+	transition: top 0.25s;
+	overflow: hidden;
+}
+.carousel-container {
+	position: relative;
+	width: 220px;
+	height: 600px;
+	overflow: hidden;
+}
+.carousel-slide {
+	display: none;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	transition: opacity 0.7s;
+}
+.carousel-slide img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 4px;
+	display: block;
+}
+.carousel-slide.active {
+	display: block;
+	opacity: 1;
+	z-index: 1;
+}
+.carousel-slide.inactive {
+	opacity: 0;
+	z-index: 0;
+}
+/* 화살표 숨김 */
+.carousel-btn {
+	display: none;
+}
+.carousel-dots {
+	position: absolute;
+	bottom: 12px;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	z-index: 3;
+}
+.carousel-dot {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	margin: 0 4px;
+	background: #ccc;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.carousel-dot.active {
+	background: #007bff;
+}
+@media (max-width: 1650px) {
+	.ad-sidebar-left { display: none; }
+}
+@media (max-width: 1350px) {
+	.best-posts { display: none; }
+	.layout-anchor { width: 90%; }
+}
+.best-posts {
+	position: absolute;
+	top: 0;
+	left: 100%;
+	margin-left: 24px;
+	width: 240px;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	padding: 16px;
+	background-color: #fdfdfd;
+	height: fit-content;
+}
+.hotdeal-board {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 }
 .hotdeal-board table { width: 100%; border-collapse: collapse; }
 .hotdeal-board th, .hotdeal-board td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; height: 70px; vertical-align: middle; }
+.hotdeal-board tbody tr:hover { background-color: #f8f9fa; cursor: pointer; }
 .hotdeal-board th { background-color: #f8f8f8; font-weight: bold; text-align: center; }
 .hotdeal-board img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; display: block; margin: 0 auto; }
 .hotdeal-board a { color: #0056b3; text-decoration: none; }
@@ -53,32 +161,35 @@ main { flex: 1; }
 	<div class="wrapper">
 		<%@ include file="topMenu.jsp"%>
 		<main>
-			<div class="content-wrapper">
-				<div class="hotdeal-board">
+			<div class="layout-anchor">
+
+				<%@ include file="adCarousel.jsp" %>
+
+				<!-- 메인 게시판 영역 -->
+				<div class="hotdeal-board" id="hotdealBoard">
 					<form method="get" action="list" class="search-box">
-						<input type="text" name="keyword" value="${keyword}"
-							placeholder="제목 검색">
+						<input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
 						<button type="submit">검색</button>
 						<input type="hidden" name="page" value="1" />
 					</form>
-					<table>
+					<table id="hotdealTable">
 						<thead>
 							<tr>
-								<th style="width: 8%;">번호</th>
-								<th style="width: 10%;">이미지</th>
+								<th style="width: 5%;">번호</th>
+								<th style="width: 8%;">이미지</th>
 								<th>제목</th>
-								<th style="width: 12%;">작성자</th>
-								<th style="width: 12%;">등록일</th>
-								<th style="width: 8%;">조회</th>
-								<th style="width: 8%;">추천</th>
-								<th style="width: 8%;">비추천</th>
+								<th style="width: 9%;">작성자</th>
+								<th style="width: 9%;">등록일</th>
+								<th style="width: 6%;">조회</th>
+								<th style="width: 6%;">추천</th>
+								<th style="width: 6%;">비추천</th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:choose>
 								<c:when test="${not empty hotdealList}">
 									<c:forEach var="deal" items="${hotdealList}">
-										<tr>
+										<tr onclick="location.href='detail?id=${deal.id}'">
 											<td style="text-align: center;">${deal.id}</td>
 											<td>
 												<c:if test="${not empty deal.thumbnail}">
@@ -113,7 +224,6 @@ main { flex: 1; }
 							</c:choose>
 						</tbody>
 					</table>
-
 					<div class="pagination-row">
 						<div class="pagination-center">
 							<div class="pagination">
@@ -145,12 +255,136 @@ main { flex: 1; }
 					</div>
 				</div>
 
-				<%-- bestPosts.jsp 파일을 여기에 포함시킵니다 --%>
-				<%@ include file="bestPosts.jsp" %>
-				
+				<!-- 오른쪽 베스트 게시글 사이드바 -->
+				<aside class="best-posts">
+					<h3>베스트 게시글</h3>
+					<ul>
+						<c:forEach var="item" items="${bestList}" varStatus="status">
+							<li><a href="detail?id=${item.id}" title="${item.title}">
+									${status.index + 1}. <c:if test="${not empty item.category}">
+						[${item.category}]
+					</c:if> ${item.title} <span
+									style="color: #007bff; font-weight: bold;">
+										(${item.likes - item.dislikes}) </span>
+							</a></li>
+						</c:forEach>
+						<c:if test="${empty bestList}">
+							<li style="color: #aaa;">베스트 게시글이 없습니다.</li>
+						</c:if>
+					</ul>
+				</aside>
 			</div>
 		</main>
 		<%@ include file="footer.jsp"%>
 	</div>
+	<script>
+	window.addEventListener("DOMContentLoaded", function() {
+		// 광고 캐러셀
+		const slides = document.querySelectorAll('.carousel-slide');
+		const dots = document.querySelectorAll('.carousel-dot');
+		let current = 0;
+		let timer = null;
+		function showSlide(idx) {
+			slides.forEach((slide, i) => {
+				slide.classList.remove('active', 'inactive');
+				if (i === idx) slide.classList.add('active');
+				else slide.classList.add('inactive');
+			});
+			dots.forEach((dot, i) => {
+				dot.classList.toggle('active', i === idx);
+			});
+			current = idx;
+		}
+		function nextSlide() {
+			let next = (current + 1) % slides.length;
+			showSlide(next);
+		}
+		function startAuto() {
+			if (timer) clearInterval(timer);
+			timer = setInterval(nextSlide, 10000); // 10초마다 자동 전환
+		}
+		dots.forEach((dot, i) => {
+			dot.addEventListener('click', () => {
+				showSlide(i);
+				startAuto();
+			});
+		});
+		showSlide(0);
+		startAuto();
+
+		// 광고 스크롤 동기화
+		const adSidebar = document.getElementById('adSidebar');
+		const table = document.getElementById('hotdealTable');
+		const anchor = document.querySelector('.layout-anchor');
+
+		let lastScrollY = window.scrollY;
+
+		function clamp(val, min, max) {
+			return Math.max(min, Math.min(max, val));
+		}
+
+		function getTableBounds() {
+			const tableRect = table.getBoundingClientRect();
+			const anchorRect = anchor.getBoundingClientRect();
+			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+			const tableTop = tableRect.top + scrollTop;
+			const tableHeight = table.offsetHeight;
+			const adHeight = adSidebar.offsetHeight;
+			const anchorTop = anchorRect.top + scrollTop;
+			const anchorHeight = anchor.offsetHeight;
+			return {
+				tableTop,
+				tableHeight,
+				adHeight,
+				anchorTop,
+				anchorHeight
+			};
+		}
+
+		// 광고의 top 위치 상태
+		let adTop = 0;
+
+		function updateAdPositionByScroll(deltaY) {
+			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
+			const minTop = tableTop - anchorTop;
+			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
+
+			adTop += deltaY;
+			adTop = clamp(adTop, minTop, maxTop);
+
+			adSidebar.style.top = adTop + "px";
+		}
+
+		function setAdInitialPosition() {
+			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
+			adTop = tableTop + (tableHeight / 2) - (adHeight / 2) - anchorTop;
+			const minTop = tableTop - anchorTop;
+			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
+			adTop = clamp(adTop, minTop, maxTop);
+			adSidebar.style.top = adTop + "px";
+		}
+
+		setAdInitialPosition();
+
+		let ticking = false;
+		window.addEventListener('scroll', function(e) {
+			const nowScrollY = window.scrollY;
+			const deltaY = nowScrollY - lastScrollY;
+			lastScrollY = nowScrollY;
+
+			if (!ticking) {
+				window.requestAnimationFrame(function() {
+					updateAdPositionByScroll(deltaY);
+					ticking = false;
+				});
+				ticking = true;
+			}
+		});
+
+		window.addEventListener('resize', function() {
+			setAdInitialPosition();
+		});
+	});
+	</script>
 </body>
 </html>

@@ -1,133 +1,164 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="topMenu.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>새 핫딜 작성</title>
-<style>
-/* list.jsp와 공통된 스타일 */
-html, body { height: 100%; margin: 0; padding: 0; }
-.wrapper { min-height: 100vh; display: flex; flex-direction: column; }
-main { flex: 1; }
-.content-wrapper { display: flex; flex-wrap: wrap; gap: 24px; width: 95%; max-width: 1200px; margin: 40px auto; }
-.best-posts { flex: 1; min-width: 220px; border: 1px solid #e0e0e0; border-radius: 4px; padding: 16px; background-color: #fdfdfd; height: fit-content; }
-.best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
-.best-posts ul { list-style: none; padding: 0; margin: 0; }
-.best-posts li { margin-bottom: 10px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.best-posts a { text-decoration: none; color: #333; }
-.best-posts a:hover { text-decoration: underline; }
-
-/* 글쓰기 폼 전용 스타일 */
-.write-form-container {
-    flex: 3;
-    min-width: 600px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
-}
-.write-form-container h2 {
-    margin-top: 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #333;
-}
-.form-group {
-    margin-bottom: 15px;
-}
-.form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group input[type="file"],
-.form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-.form-group textarea {
-    height: 200px;
-    resize: vertical;
-}
-.form-actions {
-    text-align: right;
-    margin-top: 20px;
-}
-.form-actions button {
-    padding: 10px 20px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.form-actions button:hover {
-    background-color: #0056b3;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>핫딜 새글 등록</title>
+    <style>
+        .write-box { width: 500px; margin: 40px auto; border:1px solid #ddd; padding:30px; border-radius:8px; background:#fafbfc; }
+        .write-box h2 { margin-bottom:20px; }
+        .write-box label { display:block; margin-bottom:7px; color:#333; font-weight:bold; }
+        .write-box input[type="text"], .write-box input[type="number"], .write-box textarea, .write-box select { width:100%; padding:7px; margin-bottom:15px; border:1px solid #ccc; border-radius:4px; font-size:15px; box-sizing: border-box; }
+        .write-box input[type="file"] { margin-bottom:15px; }
+        .write-box button { width:100%; padding:10px 0; background:#007bff; color:#fff; font-size:16px; border:none; border-radius:4px; margin-top:10px; cursor:pointer; }
+        .write-box button:hover { background:#0056b3; }
+        .write-box .info { font-size: 13px; color: #888; margin-bottom: 10px; }
+        .write-box .section-title { margin: 22px 0 10px 0; font-size: 1.03em; color: #444; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+        .write-box textarea { resize: none; }
+        
+        /* [ADD] 글자 수 카운터 및 경고 메시지 스타일 */
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #888;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        .warning-msg {
+            color: red;
+            display: none; /* 평소에는 숨김 */
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div class="wrapper">
-        <%@ include file="topMenu.jsp"%>
-        <main>
-            <div class="content-wrapper">
-                <div class="write-form-container">
-                    <h2>새 핫딜 등록</h2>
-                    <form action="write" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="title">제목</label>
-                            <input type="text" id="title" name="title" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="productName">상품명</label>
-                            <input type="text" id="productName" name="product.productName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="category">카테고리</label>
-                            <input type="text" id="category" name="product.category" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="shopName">쇼핑몰</label>
-                            <input type="text" id="shopName" name="product.shopName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="price">가격 (원)</label>
-                            <input type="number" id="price" name="product.price" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="deliveryFee">배송료 (원, 무료는 0 입력)</label>
-                            <input type="number" id="deliveryFee" name="product.deliveryFee" placeholder="숫자만 입력 (예: 3000)" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="relatedUrl">관련 URL</label>
-                            <input type="text" id="relatedUrl" name="product.relatedUrl">
-                        </div>
-                        <div class="form-group">
-                            <label for="thumbnailFile">썸네일 이미지</label>
-                            <input type="file" id="thumbnailFile" name="thumbnailFile">
-                        </div>
-                        <div class="form-group">
-                            <label for="content">내용</label>
-                            <textarea id="content" name="content" required></textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit">등록하기</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <%-- bestPosts.jsp 파일을 여기에 포함시킵니다 --%>
-                <%@ include file="bestPosts.jsp" %>
-            </div>
-        </main>
-        <%@ include file="footer.jsp"%>
-    </div>
+<div class="write-box">
+    <h2>핫딜 새글 등록</h2>
+    <form method="post" action="write" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <label for="productCategory">상품 카테고리</label>
+        <select name="product.category" id="productCategory" required>
+            <option value="">-- 카테고리 선택 --</option>
+            <option value="먹거리">먹거리</option>
+            <option value="sw/게임">sw/게임</option>
+            <option value="pc제품">pc제품</option>
+            <option value="가전제품">가전제품</option>
+            <option value="생활용품">생활용품</option>
+            <option value="의류">의류</option>
+            <option value="세일정보">세일정보</option>
+            <option value="화장품">화장품</option>
+            <option value="모바일/상품권">모바일/상품권</option>
+            <option value="해외핫딜">해외핫딜</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <label for="shopName">쇼핑몰명</label>
+        <input type="text" name="product.shopName" id="shopName" maxlength="100" required>
+
+        <label for="productName">상품명</label>
+        <input type="text" name="product.productName" id="productName" maxlength="200" required>
+
+        <label for="price">가격</label>
+        <input type="number" name="product.price" id="price" min="0" step="1" placeholder="숫자만 입력 (예: 3000)" required>
+
+        <label for="deliveryFee">배송비</label>
+        <input type="text" name="product.deliveryFee" id="deliveryFee" maxlength="20" required>
+
+        <label for="relatedUrl">관련 URL</label>
+        <input type="text" name="product.relatedUrl" id="relatedUrl" maxlength="500" placeholder="예: https://www.example.com">
+
+        <label for="title">제목</label>
+        <input type="text" name="title" id="title" required maxlength="200">
+        
+        <%-- [ADD] 글자 수 카운터 및 경고 메시지 표시 영역 --%>
+        <div class="char-counter">
+            <span id="titleWarning" class="warning-msg">허용되는 글자수가 초과되었습니다.</span>
+            <span id="titleCharCount">(0/200)</span>
+        </div>
+
+        <label for="thumbnail">썸네일 이미지 URL</label>
+        <input type="text" name="thumbnail" id="thumbnail" maxlength="500">
+        <div class="info">이미지 URL 또는 파일 업로드 중 하나만 입력하세요. (둘 다 입력하면 파일 업로드가 우선 적용됩니다)</div>
+
+        <label for="thumbnailFile">썸네일 이미지 업로드</label>
+        <input type="file" name="thumbnailFile" id="thumbnailFile" accept="image/*">
+
+        <label for="content">내용</label>
+        <textarea name="content" id="content" rows="8" required></textarea>
+
+        <button type="submit">등록</button>
+    </form>
+</div>
+
+<script>
+// [REVISED] URL 검증과 제목 길이 검증을 함께 처리
+function validateForm() {
+    // URL 유효성 검사
+    const urlInput = document.getElementById('relatedUrl');
+    const urlValue = urlInput.value.trim();
+    if (urlValue !== '' && urlValue !== 'https://') {
+        try {
+            let fullUrl = urlValue;
+            if (!/^https?:\/\//i.test(fullUrl)) {
+                fullUrl = 'http://' + fullUrl;
+            }
+            new URL(fullUrl);
+        } catch (e) {
+            alert('입력된 URL 형식이 올바르지 않습니다.');
+            urlInput.focus();
+            return false;
+        }
+    } else {
+        urlInput.value = '';
+    }
+
+    // 제목 길이 검사
+    const titleInput = document.getElementById('title');
+    if (titleInput.value.length > 200) {
+        alert('제목은 200자를 초과할 수 없습니다.');
+        titleInput.focus();
+        return false;
+    }
+    
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlInput = document.getElementById('relatedUrl');
+    const titleInput = document.getElementById('title');
+    const titleCharCountSpan = document.getElementById('titleCharCount');
+    const titleWarningSpan = document.getElementById('titleWarning');
+    const maxLength = 200;
+
+    // URL 입력 필드 이벤트 리스너
+    urlInput.addEventListener('focus', function() {
+        if (this.value.trim() === '') {
+            this.value = 'https://';
+        }
+    });
+    urlInput.addEventListener('blur', function() {
+        if (this.value.trim() === 'https://') {
+            this.value = '';
+        }
+    });
+
+    // [ADD] 제목 입력 필드 글자 수 카운터 이벤트 리스너
+    titleInput.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        
+        titleCharCountSpan.textContent = `(${currentLength}/${maxLength})`;
+
+        if (currentLength > maxLength) {
+            titleCharCountSpan.style.color = 'red';
+            titleWarningSpan.style.display = 'inline'; // 경고 메시지 표시
+        } else {
+            titleCharCountSpan.style.color = '#888';
+            titleWarningSpan.style.display = 'none'; // 경고 메시지 숨김
+        }
+    });
+});
+</script>
+
 </body>
 </html>
