@@ -9,218 +9,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>핫딜 게시판</title>
 <style>
-html, body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
-}
-
-.wrapper {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
-
-main {
-	flex: 1;
-}
-
-/* [REVISED] 반응형 레이아웃의 핵심 */
-.content-wrapper {
-	display: flex;
-	flex-wrap: wrap; /* 화면이 좁아지면 자식 요소가 아래로 내려가도록 설정 */
-	gap: 24px; /* 컨텐츠와 사이드바 사이 간격 */
-	width: 95%; /* 전체 너비를 화면의 95%로 설정 */
-	max-width: 1200px; /* 최대 너비는 1200px로 제한 */
-	margin: 40px auto;
-}
-
-.hotdeal-board {
-	flex: 3; /* 메인 컨텐츠가 3의 비율을 차지 */
-	min-width: 600px; /* 최소 너비를 지정해 너무 찌그러지는 것 방지 */
-	display: flex;
-	flex-direction: column;
-}
-
-.best-posts {
-	flex: 1; /* 사이드바가 1의 비율을 차지 */
-	min-width: 220px;
-	border: 1px solid #e0e0e0;
-	border-radius: 4px;
-	padding: 16px;
-	background-color: #fdfdfd;
-	height: fit-content; /* 내용물 높이에 맞춤 */
-}
-
-/* 화면 너비가 992px 이하일 때 적용될 스타일 */
+/* CSS 스타일은 이전과 동일하게 유지됩니다. */
+html, body { height: 100%; margin: 0; padding: 0; }
+.wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+.content-wrapper { display: flex; flex-wrap: wrap; gap: 24px; width: 95%; max-width: 1200px; margin: 40px auto; }
+.hotdeal-board { flex: 3; min-width: 600px; display: flex; flex-direction: column; }
+.best-posts { flex: 1; min-width: 220px; border: 1px solid #e0e0e0; border-radius: 4px; padding: 16px; background-color: #fdfdfd; height: fit-content; }
 @media (max-width: 992px) {
-	.content-wrapper {
-		flex-direction: column; /* 세로로 쌓이도록 방향 변경 */
-		width: 90%;
-	}
-	.hotdeal-board, .best-posts {
-		min-width: 100%; /* 화면 너비에 꽉 차도록 설정 */
-		flex: none; /* 비율 무시 */
-		width: 100%;
-	}
+	.content-wrapper { flex-direction: column; width: 90%; }
+	.hotdeal-board, .best-posts { min-width: 100%; flex: none; width: 100%; }
 }
-
-
-.hotdeal-board table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-.hotdeal-board th, .hotdeal-board td {
-	border: 1px solid #e0e0e0;
-	padding: 8px;
-	text-align: left;
-	height: 70px;
-	vertical-align: middle;
-}
-
-.hotdeal-board th {
-	background-color: #f8f8f8;
-	font-weight: bold;
-	text-align: center;
-}
-
-.hotdeal-board img {
-	width: 60px;
-	height: 60px;
-	object-fit: cover;
-	border-radius: 4px;
-	display: block;
-	margin: 0 auto;
-}
-
-.hotdeal-board a {
-	color: #0056b3;
-	text-decoration: none;
-}
-
-.hotdeal-board a:hover {
-	text-decoration: underline;
-}
-
-.pagination-row {
-	margin-top: 20px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.pagination-center {
-	display: flex;
-	justify-content: center;
-	flex: 1;
-}
-
-.pagination {
-	display: flex;
-	align-items: center;
-}
-
-.pagination a, .pagination span {
-	display: inline-block;
-	padding: 6px 12px;
-	margin: 0 2px;
-	border: 1px solid #ddd;
-	color: #333;
-	text-decoration: none;
-}
-
-.pagination .current {
-	background: #007bff;
-	color: #fff;
-	font-weight: bold;
-	border: 1px solid #007bff;
-}
-
-.write-btn {
-	padding: 8px 18px;
-	background: #007bff;
-	color: #fff;
-	border-radius: 4px;
-	text-decoration: none;
-	font-weight: bold;
-	font-size: 15px;
-}
-
-.write-btn:hover {
-	background: #0056b3;
-}
-
-.search-box {
-	text-align: right;
-	margin-bottom: 16px;
-}
-
-.search-box input[type="text"] {
-	padding: 5px;
-	width: 200px;
-}
-
-.search-box button {
-	padding: 5px 10px;
-}
-
-.best-posts h3 {
-	margin-top: 0;
-	font-size: 18px;
-	border-bottom: 2px solid #007bff;
-	padding-bottom: 8px;
-	margin-bottom: 12px;
-}
-
-.best-posts ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-
-.best-posts li {
-	margin-bottom: 10px;
-	font-size: 14px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.best-posts a {
-	text-decoration: none;
-	color: #333;
-}
-
-.best-posts a:hover {
-	text-decoration: underline;
-}
-
-.deal-title-cell {
-    text-align: left; 
-    padding-left: 15px !important;
-}
-.deal-title-link {
-    font-weight: bold;
-    font-size: 1.1em;
-    color: #333;
-    text-decoration: none;
-}
-.deal-title-link:hover {
-    text-decoration: underline;
-}
-.deal-title-link .category {
-    color: #0056b3; 
-}
-.deal-meta-info {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 6px;
-}
-.deal-meta-info .price {
-    font-weight: bold;
-    color: #d9534f; 
-}
+.hotdeal-board table { width: 100%; border-collapse: collapse; }
+.hotdeal-board th, .hotdeal-board td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; height: 70px; vertical-align: middle; }
+.hotdeal-board th { background-color: #f8f8f8; font-weight: bold; text-align: center; }
+.hotdeal-board img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; display: block; margin: 0 auto; }
+.hotdeal-board a { color: #0056b3; text-decoration: none; }
+.hotdeal-board a:hover { text-decoration: underline; }
+.pagination-row { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; }
+.pagination-center { display: flex; justify-content: center; flex: 1; }
+.pagination { display: flex; align-items: center; }
+.pagination a, .pagination span { display: inline-block; padding: 6px 12px; margin: 0 2px; border: 1px solid #ddd; color: #333; text-decoration: none; }
+.pagination .current { background: #007bff; color: #fff; font-weight: bold; border: 1px solid #007bff; }
+.write-btn { padding: 8px 18px; background: #007bff; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 15px; }
+.write-btn:hover { background: #0056b3; }
+.search-box { text-align: right; margin-bottom: 16px; }
+.search-box input[type="text"] { padding: 5px; width: 200px; }
+.search-box button { padding: 5px 10px; }
+.best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
+.best-posts ul { list-style: none; padding: 0; margin: 0; }
+.best-posts li { margin-bottom: 10px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.best-posts a { text-decoration: none; color: #333; }
+.best-posts a:hover { text-decoration: underline; }
+.deal-title-cell { text-align: left; padding-left: 15px !important; }
+.deal-title-link { font-weight: bold; font-size: 1.1em; color: #333; text-decoration: none; }
+.deal-title-link:hover { text-decoration: underline; }
+.deal-title-link .category { color: #0056b3; }
+.deal-meta-info { font-size: 0.9em; color: #666; margin-top: 6px; }
+.deal-meta-info .price { font-weight: bold; color: #d9534f; }
 </style>
 </head>
 <body>
@@ -319,23 +145,9 @@ main {
 					</div>
 				</div>
 
-				<aside class="best-posts">
-					<h3>베스트 게시글</h3>
-					<ul>
-						<c:forEach var="item" items="${bestList}" varStatus="status">
-							<li><a href="detail?id=${item.id}" title="${item.title}">
-									${status.index + 1}. <c:if test="${not empty item.category}">
-                        [${item.category}]
-                    </c:if> ${item.title} <span
-									style="color: #007bff; font-weight: bold;">
-										(${item.likes - item.dislikes}) </span>
-							</a></li>
-						</c:forEach>
-						<c:if test="${empty bestList}">
-							<li style="color: #aaa;">베스트 게시글이 없습니다.</li>
-						</c:if>
-					</ul>
-				</aside>
+				<%-- bestPosts.jsp 파일을 여기에 포함시킵니다 --%>
+				<%@ include file="bestPosts.jsp" %>
+				
 			</div>
 		</main>
 		<%@ include file="footer.jsp"%>
