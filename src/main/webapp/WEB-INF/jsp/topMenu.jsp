@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%-- 외부 다크모드 CSS 파일을 head에 추가 --%>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/darkmode.css">
+
 
 <style>
 .top-menu-bar {
@@ -63,36 +63,7 @@
     margin-left: 10px;
     display: inline-block;
 }
-/* 다크모드 스타일(기본 상단 메뉴용, 상세 다크모드는 외부 CSS에서 추가로 적용) */
-body.dark-mode {
-    background: #181a1b !important;
-    color: #e0e0e0 !important;
-}
-body.dark-mode .top-menu-bar {
-    background: #23272f !important;
-    color: #e0e0e0 !important;
-    border-bottom: 1px solid #444 !important;
-}
-body.dark-mode .menu-links a,
-body.dark-mode .menu-links button,
-body.dark-mode .top-menu-bar .user-info,
-body.dark-mode .top-menu-bar label,
-body.dark-mode .top-menu-bar button[type="submit"] {
-    color: #b0c4de !important;
-    background: none !important;
-}
-body.dark-mode .menu-links a:hover,
-body.dark-mode .menu-links button:hover {
-    color: #fff !important;
-}
-body.dark-mode input[type="text"], body.dark-mode input[type="password"] {
-    background: #222 !important;
-    color: #fff !important;
-    border-color: #444 !important;
-}
-body.dark-mode .login-error {
-    color: #ff5555 !important;
-}
+
 </style>
 <div class="top-menu-bar">
     <div class="menu-links">
