@@ -45,14 +45,14 @@ public class HotdealService {
         return hotdealDAO.getHotdealList();
     }
     
-    public List<HotdealVO> getHotdealList(int page, String keyword) {
-        // 페이징 계산 (예시)
-        int perPageNum = 11;
+    // [REVISED] 목록 조회 서비스 - category 파라미터 추가
+    public List<HotdealVO> getHotdealList(int page, String keyword, String category) {
+        int perPageNum = 10;
         int pageStart = (page - 1) * perPageNum + 1;
         int pageEnd = page * perPageNum;
 
-        // DAO에서 페이징+검색 쿼리 호출
-        return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword);
+        // [REVISED] DAO 호출 시 category 전달
+        return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword, category);
     }
 
     public List<HotdealVO> getHotdealListPaging(Criteria criteria) {
@@ -60,7 +60,7 @@ public class HotdealService {
     }
 
     public List<HotdealVO> getHotdealListPagingByKeyword(Criteria criteria, String keyword) {
-        return hotdealDAO.getHotdealListPagingByKeyword(criteria.getPageStart(), criteria.getPageEnd(), keyword);
+        return hotdealDAO.getHotdealListPagingByKeyword(criteria.getPageStart(), criteria.getPageEnd(), keyword, null);
     }
 
     public int getHotdealTotalCount() {
@@ -68,11 +68,13 @@ public class HotdealService {
     }
 
     public int getHotdealTotalCountByKeyword(String keyword) {
-        return hotdealDAO.getHotdealTotalCountByKeyword(keyword);
+        return hotdealDAO.getHotdealTotalCountByKeyword(keyword, null);
     }
     
-    public int getTotalCount(String keyword) {
-        return hotdealDAO.getHotdealTotalCountByKeyword(keyword);
+    // [REVISED] 전체 개수 조회 서비스 - category 파라미터 추가
+    public int getTotalCount(String keyword, String category) {
+        // [REVISED] DAO 호출 시 category 전달
+        return hotdealDAO.getHotdealTotalCountByKeyword(keyword, category);
     }
 
     public void insertHotdeal(HotdealVO vo) {
@@ -83,7 +85,6 @@ public class HotdealService {
         hotdealDAO.updateHotdeal(vo);
     }
     
- // [ADD] 베스트 게시글 조회를 위한 서비스 메소드 추가
     public List<HotdealVO> getBestHotdealList(int limit) {
         return hotdealDAO.getBestHotdealList(limit);
     }

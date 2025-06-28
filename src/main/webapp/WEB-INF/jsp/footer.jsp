@@ -69,7 +69,7 @@
 </style>
 <div class="footer">
     <div class="footer-inner">
-        <div class="footer-left">상준님의 핫딜 샵</div>
+        <div class="footer-left">커스텀 핫딜</div>
         <div class="footer-links">
             <a href="about">About</a>
             <a href="faq">FAQ</a>
@@ -78,7 +78,7 @@
             <a href="terms">이용약관</a>
         </div>
         <div class="footer-copy">
-            &copy; <span id="footer-year"></span> 상준님의 핫딜 샵
+            &copy; <span id="footer-year"></span> 커스텀딜
         </div>
     </div>
 </div>

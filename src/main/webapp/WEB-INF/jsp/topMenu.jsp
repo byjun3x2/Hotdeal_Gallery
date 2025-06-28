@@ -78,7 +78,7 @@ body.dark-mode .login-error {
 </style>
 <div class="top-menu-bar">
     <div class="menu-links">
-        할인마켓
+        커스텀 핫딜 |
         <a href="join">회원 가입</a> |
         <a href="findPassword">비번 찾기</a> |
         <a href="certMail">인증 메일 재발송</a> |

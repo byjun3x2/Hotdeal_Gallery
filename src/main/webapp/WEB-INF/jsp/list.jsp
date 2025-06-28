@@ -141,7 +141,7 @@ main {
 .pagination .current { background: #007bff; color: #fff; font-weight: bold; border: 1px solid #007bff; }
 .write-btn { padding: 8px 18px; background: #007bff; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 15px; }
 .write-btn:hover { background: #0056b3; }
-.search-box { text-align: right; margin-bottom: 16px; }
+.search-box { text-align: right; }
 .search-box input[type="text"] { padding: 5px; width: 200px; }
 .search-box button { padding: 5px 10px; }
 .best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
@@ -155,6 +155,35 @@ main {
 .deal-title-link .category { color: #0056b3; }
 .deal-meta-info { font-size: 0.9em; color: #666; margin-top: 6px; }
 .deal-meta-info .price { font-weight: bold; color: #d9534f; }
+/* [ADD] 카테고리 필터 스타일 */
+.category-filter {
+    margin-bottom: 16px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.category-filter a {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 15px;
+    background-color: #f1f1f1;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.category-filter a:hover {
+    background-color: #e0e0e0;
+}
+.category-filter a.active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -165,11 +194,17 @@ main {
 
 				<%@ include file="adCarousel.jsp" %>
 				<div class="hotdeal-board" id="hotdealBoard">
-					<form method="get" action="list" class="search-box">
-						<input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
-						<button type="submit">검색</button>
-						<input type="hidden" name="page" value="1" />
-					</form>
+
+                    <!-- [ADD] 카테고리 필터 UI -->
+                    <div class="category-filter">
+                        <a href="list?page=1&keyword=${keyword}" class="${empty selectedCategory ? 'active' : ''}">전체</a>
+                        <c:forEach var="cat" items="${categoryList}">
+                            <a href="list?category=${cat}&page=1&keyword=${keyword}" class="${cat == selectedCategory ? 'active' : ''}">
+                                ${cat}
+                            </a>
+                        </c:forEach>
+                    </div>
+
 					<table id="hotdealTable">
 						<thead>
 							<tr>
@@ -202,7 +237,12 @@ main {
 												</div>
 												<div class="deal-meta-info">
 													가격  <span class="price"><fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</span>
-													<span> | 배송료 ${deal.product.deliveryFee}</span>
+													<span> | 배송료 
+                                                        <c:choose>
+                                                            <c:when test="${deal.product.deliveryFee == '0' || empty deal.product.deliveryFee}">무료</c:when>
+                                                            <c:otherwise>${deal.product.deliveryFee}</c:otherwise>
+                                                        </c:choose>
+                                                    </span>
 													<span> | ${deal.product.shopName}</span>
 												</div>
 											</td>
@@ -222,13 +262,14 @@ main {
 							</c:choose>
 						</tbody>
 					</table>
+
+                    <!-- [MOVE] 검색창 위치 이동 및 페이지네이션/글쓰기 버튼과 함께配置 -->
 					<div class="pagination-row">
 						<div class="pagination-center">
 							<div class="pagination">
-								<c:set var="lastPage"
-									value="${(totalCount/perPageNum) + (totalCount%perPageNum > 0 ? 1 : 0)}" />
+								<c:set var="lastPage" value="${(totalCount + perPageNum - 1) / perPageNum}" />
 								<c:if test="${page > 1}">
-									<a href="list?page=${page-1}&keyword=${keyword}">이전</a>
+									<a href="list?page=${page-1}&keyword=${keyword}&category=${selectedCategory}">이전</a>
 								</c:if>
 								<c:forEach begin="1" end="${lastPage}" var="i">
 									<c:choose>
@@ -236,41 +277,33 @@ main {
 											<span class="current">${i}</span>
 										</c:when>
 										<c:otherwise>
-											<a href="list?page=${i}&keyword=${keyword}">${i}</a>
+											<a href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}">${i}</a>
 										</c:otherwise>
 									</c:choose>
 								</c:forEach>
 								<c:if test="${page < lastPage}">
-									<a href="list?page=${page+1}&keyword=${keyword}">다음</a>
+									<a href="list?page=${page+1}&keyword=${keyword}&category=${selectedCategory}">다음</a>
 								</c:if>
 							</div>
 						</div>
-						<div>
-							<c:if test="${not empty sessionScope.loginUser}">
-								<a href="write" class="write-btn">새글등록</a>
-							</c:if>
-						</div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <!-- [MOVE] 검색창 -->
+						    <form method="get" action="list" class="search-box">
+						    	<input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
+						    	<button type="submit">검색</button>
+						    	<input type="hidden" name="page" value="1" />
+                                <!-- [ADD] 검색 시 현재 카테고리 유지 -->
+                                <input type="hidden" name="category" value="${selectedCategory}" />
+						    </form>
+                            <!-- 글쓰기 버튼 -->
+						    <c:if test="${not empty sessionScope.loginUser}">
+						    	<a href="write" class="write-btn">새글등록</a>
+						    </c:if>
+                        </div>
 					</div>
 				</div>
 
-				<!-- 오른쪽 베스트 게시글 사이드바 -->
-				<aside class="best-posts">
-					<h3>베스트 게시글</h3>
-					<ul>
-						<c:forEach var="item" items="${bestList}" varStatus="status">
-							<li><a href="detail?id=${item.id}" title="${item.title}">
-									${status.index + 1}. <c:if test="${not empty item.category}">
-						[${item.category}]
-					</c:if> ${item.title} <span
-									style="color: #007bff; font-weight: bold;">
-										(${item.likes - item.dislikes}) </span>
-							</a></li>
-						</c:forEach>
-						<c:if test="${empty bestList}">
-							<li style="color: #aaa;">베스트 게시글이 없습니다.</li>
-						</c:if>
-					</ul>
-				</aside>
+				<%@ include file="bestPosts.jsp" %>
 			</div>
 		</main>
 		<%@ include file="footer.jsp"%>

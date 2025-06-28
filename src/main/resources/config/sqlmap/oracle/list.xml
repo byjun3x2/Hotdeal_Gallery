@@ -5,7 +5,6 @@
 
 <mapper namespace="kr.co.hotdeal.board.dao.HotdealDAO">
 
-	<!-- [REVISED] ProductVO 객체를 포함하도록 resultMap 수정 -->
 	<resultMap id="hotdealResultMap" type="kr.co.hotdeal.board.vo.HotdealVO">
 		<id property="id" column="ID" />
 		<result property="thumbnail" column="THUMBNAIL" />
@@ -19,7 +18,6 @@
 		<result property="productId" column="PRODUCT_ID" />
 		<result property="commentCount" column="COMMENT_COUNT"/>
 		
-		<!-- [ADD] ProductVO 객체와의 연관(association) 매핑 -->
 		<association property="product" javaType="kr.co.hotdeal.product.vo.ProductVO">
 			<id property="productId" column="PRODUCT_ID"/>
 			<result property="category" column="CATEGORY"/>
@@ -31,7 +29,6 @@
 		</association>
 	</resultMap>
 
-	<!-- [REVISED] getHotdealById 쿼리에 JOIN 추가 -->
 	<select id="getHotdealById" parameterType="int" resultMap="hotdealResultMap">
 		SELECT
 			h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR, h.CONTENT,
@@ -45,8 +42,6 @@
 		WHERE 
 			h.ID = #{id}
 	</select>
-
-	<!-- (이하 다른 쿼리들은 기존과 동일합니다) -->
 	
 	<insert id="insertHotdeal" parameterType="kr.co.hotdeal.board.vo.HotdealVO">
 		<selectKey keyProperty="id" resultType="int" order="BEFORE">
@@ -75,6 +70,7 @@
 		DELETE FROM HOTDEAL WHERE ID = #{id}
 	</delete>
 
+	<!-- [REVISED] 총 개수 조회 쿼리 - 카테고리 조건 추가 -->
 	<select id="getHotdealTotalCountByKeyword" parameterType="map" resultType="int">
 		SELECT COUNT(*) 
 		FROM HOTDEAL h
@@ -83,12 +79,14 @@
 			<if test="keyword != null and keyword != ''">
 				AND h.TITLE LIKE '%' || #{keyword} || '%'
 			</if>
+			<!-- [ADD] 카테고리 필터링 조건 추가 -->
 			<if test="category != null and category != ''">
 				AND p.CATEGORY = #{category}
 			</if>
 		</where>
 	</select>
 
+	<!-- [REVISED] 목록 조회 쿼리 - 카테고리 조건 추가 -->
 	<select id="getHotdealListPagingByKeyword" parameterType="map" resultMap="hotdealResultMap">
 		SELECT * FROM (
 			SELECT ROWNUM AS RNUM, A.* FROM (
@@ -104,6 +102,7 @@
 					<if test="keyword != null and keyword != ''">
 						AND h.TITLE LIKE '%' || #{keyword} || '%'
 					</if>
+					<!-- [ADD] 카테고리 필터링 조건 추가 -->
 					<if test="category != null and category != ''">
 						AND p.CATEGORY = #{category}
 					</if>

@@ -3,9 +3,7 @@ package kr.co.hotdeal.board.dao;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import kr.co.hotdeal.board.vo.HotdealVO;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,17 +54,23 @@ public class HotdealDAOImpl implements HotdealDAO {
         return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPaging", param);
     }
     
+    // [REVISED] 전체 개수 조회 - category 파라미터를 Map에 추가
     @Override
-    public int getHotdealTotalCountByKeyword(String keyword) {
-        return sqlSessionTemplate.selectOne(NAMESPACE + "getHotdealTotalCountByKeyword", keyword);
+    public int getHotdealTotalCountByKeyword(String keyword, String category) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("keyword", keyword);
+        param.put("category", category);
+        return sqlSessionTemplate.selectOne(NAMESPACE + "getHotdealTotalCountByKeyword", param);
     }
 
+    // [REVISED] 목록 페이징 조회 - category 파라미터를 Map에 추가
     @Override
-    public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword) {
+    public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category) {
         Map<String, Object> param = new HashMap<>();
         param.put("pageStart", pageStart);
         param.put("pageEnd", pageEnd);
         param.put("keyword", keyword);
+        param.put("category", category);
         return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
     }
     
@@ -96,7 +100,6 @@ public class HotdealDAOImpl implements HotdealDAO {
         sqlSessionTemplate.update(NAMESPACE + "increaseDislikes", id);
     }
     
- // [ADD] 베스트 게시글 조회 메소드 구현
     @Override
     public List<HotdealVO> getBestHotdealList(int limit) {
         return sqlSessionTemplate.selectList(NAMESPACE + "getBestHotdealList", limit);
