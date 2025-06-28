@@ -78,7 +78,6 @@ main {
 	opacity: 0;
 	z-index: 0;
 }
-/* 화살표 숨김 */
 .carousel-btn {
 	display: none;
 }
@@ -134,16 +133,36 @@ main {
 .hotdeal-board img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; display: block; margin: 0 auto; }
 .hotdeal-board a { color: #0056b3; text-decoration: none; }
 .hotdeal-board a:hover { text-decoration: underline; }
-.pagination-row { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; }
-.pagination-center { display: flex; justify-content: center; flex: 1; }
+
+/* [REVISED] 하단 컨트롤 영역 스타일 수정 및 추가 */
+.write-btn-container {
+    text-align: right;
+    margin-top: 15px;
+    min-height: 33px; /* 버튼 유무에 상관없이 높이를 유지하여 레이아웃 깨짐 방지 */
+}
+.search-container {
+    text-align: center;
+    margin: 15px 0;
+}
+.search-box {
+    display: inline-block;
+}
+.search-box input[type="text"] { padding: 5px; width: 200px; }
+.search-box button { padding: 5px 10px; }
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
 .pagination { display: flex; align-items: center; }
 .pagination a, .pagination span { display: inline-block; padding: 6px 12px; margin: 0 2px; border: 1px solid #ddd; color: #333; text-decoration: none; }
 .pagination .current { background: #007bff; color: #fff; font-weight: bold; border: 1px solid #007bff; }
+
 .write-btn { padding: 8px 18px; background: #007bff; color: #fff; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 15px; }
 .write-btn:hover { background: #0056b3; }
-.search-box { text-align: right; }
-.search-box input[type="text"] { padding: 5px; width: 200px; }
-.search-box button { padding: 5px 10px; }
+
 .best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
 .best-posts ul { list-style: none; padding: 0; margin: 0; }
 .best-posts li { margin-bottom: 10px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -155,7 +174,6 @@ main {
 .deal-title-link .category { color: #0056b3; }
 .deal-meta-info { font-size: 0.9em; color: #666; margin-top: 6px; }
 .deal-meta-info .price { font-weight: bold; color: #d9534f; }
-/* [ADD] 카테고리 필터 스타일 */
 .category-filter {
     margin-bottom: 16px;
     padding: 10px;
@@ -195,7 +213,6 @@ main {
 				<%@ include file="adCarousel.jsp" %>
 				<div class="hotdeal-board" id="hotdealBoard">
 
-                    <!-- [ADD] 카테고리 필터 UI -->
                     <div class="category-filter">
                         <a href="list?page=1&keyword=${keyword}" class="${empty selectedCategory ? 'active' : ''}">전체</a>
                         <c:forEach var="cat" items="${categoryList}">
@@ -263,43 +280,41 @@ main {
 						</tbody>
 					</table>
 
-                    <!-- [MOVE] 검색창 위치 이동 및 페이지네이션/글쓰기 버튼과 함께配置 -->
-					<div class="pagination-row">
-						<div class="pagination-center">
-							<div class="pagination">
-								<c:set var="lastPage" value="${(totalCount + perPageNum - 1) / perPageNum}" />
-								<c:if test="${page > 1}">
-									<a href="list?page=${page-1}&keyword=${keyword}&category=${selectedCategory}">이전</a>
-								</c:if>
-								<c:forEach begin="1" end="${lastPage}" var="i">
-									<c:choose>
-										<c:when test="${page == i}">
-											<span class="current">${i}</span>
-										</c:when>
-										<c:otherwise>
-											<a href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}">${i}</a>
-										</c:otherwise>
-									</c:choose>
-								</c:forEach>
-								<c:if test="${page < lastPage}">
-									<a href="list?page=${page+1}&keyword=${keyword}&category=${selectedCategory}">다음</a>
-								</c:if>
-							</div>
+                    <div class="write-btn-container">
+                        <c:if test="${not empty sessionScope.loginUser}">
+                            <a href="write" class="write-btn">새글등록</a>
+                        </c:if>
+                    </div>
+
+                    <div class="search-container">
+                        <form method="get" action="list" class="search-box">
+                            <input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
+                            <button type="submit">검색</button>
+                            <input type="hidden" name="page" value="1" />
+                            <input type="hidden" name="category" value="${selectedCategory}" />
+                        </form>
+                    </div>
+
+					<div class="pagination-container">
+						<div class="pagination">
+							<c:set var="lastPage" value="${(totalCount + perPageNum - 1) / perPageNum}" />
+							<c:if test="${page > 1}">
+								<a href="list?page=${page-1}&keyword=${keyword}&category=${selectedCategory}">이전</a>
+							</c:if>
+							<c:forEach begin="1" end="${lastPage}" var="i">
+								<c:choose>
+									<c:when test="${page == i}">
+										<span class="current">${i}</span>
+									</c:when>
+									<c:otherwise>
+										<a href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}">${i}</a>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach>
+							<c:if test="${page < lastPage}">
+								<a href="list?page=${page+1}&keyword=${keyword}&category=${selectedCategory}">다음</a>
+							</c:if>
 						</div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <!-- [MOVE] 검색창 -->
-						    <form method="get" action="list" class="search-box">
-						    	<input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
-						    	<button type="submit">검색</button>
-						    	<input type="hidden" name="page" value="1" />
-                                <!-- [ADD] 검색 시 현재 카테고리 유지 -->
-                                <input type="hidden" name="category" value="${selectedCategory}" />
-						    </form>
-                            <!-- 글쓰기 버튼 -->
-						    <c:if test="${not empty sessionScope.loginUser}">
-						    	<a href="write" class="write-btn">새글등록</a>
-						    </c:if>
-                        </div>
 					</div>
 				</div>
 
@@ -332,7 +347,7 @@ main {
 		}
 		function startAuto() {
 			if (timer) clearInterval(timer);
-			timer = setInterval(nextSlide, 10000); // 10초마다 자동 전환
+			timer = setInterval(nextSlide, 10000);
 		}
 		dots.forEach((dot, i) => {
 			dot.addEventListener('click', () => {
@@ -355,12 +370,13 @@ main {
 		}
 
 		function getTableBounds() {
+			if (!table) return { tableTop: 0, tableHeight: 0, adHeight: 0, anchorTop: 0, anchorHeight: 0 };
 			const tableRect = table.getBoundingClientRect();
 			const anchorRect = anchor.getBoundingClientRect();
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			const tableTop = tableRect.top + scrollTop;
 			const tableHeight = table.offsetHeight;
-			const adHeight = adSidebar.offsetHeight;
+			const adHeight = adSidebar ? adSidebar.offsetHeight : 0;
 			const anchorTop = anchorRect.top + scrollTop;
 			const anchorHeight = anchor.offsetHeight;
 			return {
@@ -372,10 +388,10 @@ main {
 			};
 		}
 
-		// 광고의 top 위치 상태
 		let adTop = 0;
 
 		function updateAdPositionByScroll(deltaY) {
+            if (!adSidebar) return;
 			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
 			const minTop = tableTop - anchorTop;
 			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
@@ -387,8 +403,9 @@ main {
 		}
 
 		function setAdInitialPosition() {
+            if (!adSidebar) return;
 			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
-			adTop = tableTop - anchorTop; // ★ 테이블 상단 경계선에 맞춤
+			adTop = tableTop - anchorTop;
 			const minTop = tableTop - anchorTop;
 			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
 			adTop = clamp(adTop, minTop, maxTop);
@@ -406,7 +423,7 @@ main {
 			if (!ticking) {
 				window.requestAnimationFrame(function() {
 					updateAdPositionByScroll(deltaY);
-					updateBestPositionByScroll(deltaY); // 베스트 게시글도 같이 동기화
+					updateBestPositionByScroll(deltaY);
 					ticking = false;
 				});
 				ticking = true;
@@ -417,10 +434,10 @@ main {
 			setBestInitialPosition();
 		});
 
-		// === [베스트 게시글 사이드바 스크롤 연동] ===
 		const bestSidebar = document.querySelector('.best-posts');
 
 		function getBestTableBounds() {
+            if (!table || !bestSidebar) return { tableTop: 0, tableHeight: 0, bestHeight: 0, anchorTop: 0, anchorHeight: 0 };
 			const tableRect = table.getBoundingClientRect();
 			const anchorRect = anchor.getBoundingClientRect();
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -454,8 +471,8 @@ main {
 
 		function setBestInitialPosition() {
 			if (!bestSidebar) return;
-			const { tableTop, tableHeight, bestHeight, anchorTop, anchorHeight } = getBestTableBounds();
-			bestTop = tableTop - anchorTop; // ★ 테이블 상단 경계선에 맞춤
+			const { tableTop, tableHeight, bestHeight, anchorTop, anchorHeight } = getTableBounds();
+			bestTop = tableTop - anchorTop;
 			const minTop = tableTop - anchorTop;
 			const maxTop = tableTop + tableHeight - bestHeight - anchorTop;
 			bestTop = clamp(bestTop, minTop, maxTop);
