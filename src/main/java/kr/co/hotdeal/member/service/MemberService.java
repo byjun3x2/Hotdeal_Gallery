@@ -26,4 +26,8 @@ public class MemberService {
     public MemberVO login(String username, String password) {
         return memberDAO.login(username, password);
     }
+    
+    public MemberVO getMemberByEmail(String email) {
+        return memberDAO.selectMemberByEmail(email);
+    }
 }

@@ -9,4 +9,6 @@ public interface MemberDAO {
     MemberVO login(String username, String password);
     
     void deleteMemberByUsername(String username);
+    MemberVO selectMemberByEmail(String email);
+
 }

@@ -25,4 +25,8 @@
     <delete id="deleteMemberByUsername" parameterType="string">
         DELETE FROM MEMBER WHERE USERNAME = #{username}
     </delete>
+    
+    <select id="selectMemberByEmail" parameterType="string" resultType="kr.co.hotdeal.member.vo.MemberVO">
+    SELECT * FROM MEMBER WHERE EMAIL = #{email}
+</select>
 </mapper>
