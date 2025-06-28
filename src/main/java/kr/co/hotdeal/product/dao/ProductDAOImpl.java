@@ -51,4 +51,9 @@ public class ProductDAOImpl implements ProductDAO {
     public List<String> getAllCategories() {
         return sqlSessionTemplate.selectList(NAMESPACE + "getAllCategories");
     }
+
+    @Override
+    public void updateProduct(ProductVO vo) {
+        sqlSessionTemplate.update(NAMESPACE + "updateProduct", vo);
+    }
 }

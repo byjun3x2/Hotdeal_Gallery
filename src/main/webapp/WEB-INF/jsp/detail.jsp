@@ -8,256 +8,80 @@
     <meta charset="UTF-8">
     <title>핫딜 상세보기</title>
     <style>
-        body {
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-        }
-        .layout-3col {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            width: 100vw;
-            min-height: 100vh;
-            gap: 32px;
-            box-sizing: border-box;
-        }
-        .ad-sidebar-left {
-            width: 220px;
-            min-width: 220px;
-            max-width: 220px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            background-color: #fffbe8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            box-sizing: border-box;
-            height: fit-content;
-            position: sticky;
-            top: 40px;
-            z-index: 10;
-            overflow: hidden;
-        }
-        .main-content {
-            flex: 0 1 800px;
-            min-width: 600px;
-            max-width: 900px;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-        }
-        .detail-container {
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 30px 40px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin: 0 auto;
-            width: 100%; 
-            box-sizing: border-box;
-        }
-        .deal-header {
-            border-bottom: 2px solid #343a40;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-        .deal-header h1 {
-            font-size: 2em;
-            font-weight: 600;
-            margin: 0;
-            color: #212529;
-        }
-        .deal-header .meta-info {
-            margin-top: 10px;
-            color: #6c757d;
-            font-size: 0.9em;
-        }
-        .deal-header .meta-info span + span::before {
-            content: "|";
-            margin: 0 10px;
-        }
-        .product-info-box {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 20px;
-            margin: 25px 0;
-        }
-        .product-info-box h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #343a40;
-        }
-        .product-info-box p {
-            margin: 8px 0;
-            font-size: 1em;
-        }
-        .product-info-box a {
-            color: #007bff;
-            text-decoration: none;
-            word-break: break-all;
-        }
-        .product-info-box a:hover {
-            text-decoration: underline;
-        }
-        .deal-content {
-            min-height: 150px;
-            line-height: 1.7;
-            font-size: 1.05em;
-            color: #343a40;
-            margin-bottom: 30px;
-        }
-        
-        /* [REVISED] 투표 섹션 스타일 */
-        .vote-section {
-            text-align: center;
-            margin: 30px 0 0; /* 위쪽 여백, 아래쪽 여백은 메시지 래퍼가 담당 */
-        }
-        .vote-buttons {
-            margin-bottom: 10px;
-        }
-        .vote-buttons .vote-btn { 
-            padding:8px 22px; 
-            margin:0 5px; 
-            border-radius:20px; 
-            border:1px solid #ccc; 
-            font-size:15px; 
-            cursor:pointer; 
-            background-color: #fff; 
-            transition: all 0.2s; 
-        }
+        body { background-color: #f4f6f9; margin: 0; padding: 0; }
+        .layout-3col { display: flex; justify-content: center; align-items: flex-start; width: 100vw; min-height: 100vh; gap: 32px; box-sizing: border-box; }
+        .ad-sidebar-left { width: 220px; min-width: 220px; max-width: 220px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #fffbe8; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; height: fit-content; position: sticky; top: 40px; z-index: 10; overflow: hidden; }
+        .main-content { flex: 0 1 800px; min-width: 600px; max-width: 900px; display: flex; flex-direction: column; align-items: stretch; }
+        .detail-container { background-color: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 30px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .deal-header { border-bottom: 2px solid #343a40; padding-bottom: 15px; margin-bottom: 25px; }
+        .deal-header h1 { font-size: 2em; font-weight: 600; margin: 0; color: #212529; }
+        .deal-header .meta-info { margin-top: 10px; color: #6c757d; font-size: 0.9em; }
+        .deal-header .meta-info span + span::before { content: "|"; margin: 0 10px; }
+        .product-info-box { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 20px; margin: 25px 0; }
+        .product-info-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 1.2em; color: #343a40; }
+        .product-info-box p { margin: 8px 0; font-size: 1em; }
+        .product-info-box a { color: #007bff; text-decoration: none; word-break: break-all; }
+        .product-info-box a:hover { text-decoration: underline; }
+        .deal-content { min-height: 150px; line-height: 1.7; font-size: 1.05em; color: #343a40; margin-bottom: 30px; }
+        .vote-section { text-align: center; margin: 30px 0 0; }
+        .vote-buttons { margin-bottom: 10px; }
+        .vote-buttons .vote-btn { padding:8px 22px; margin:0 5px; border-radius:20px; border:1px solid #ccc; font-size:15px; cursor:pointer; background-color: #fff; transition: all 0.2s; }
         .vote-btn.like-btn:hover { background-color:#e7f3ff; border-color:#9ecbff;}
         .vote-btn.dislike-btn:hover { background-color:#ffe3e6; border-color:#ffb3ba;}
-        
-        .vote-msg-wrapper {
-            height: 1.2em; /* 메시지가 표시될 공간 확보 */
-        }
-        .vote-msg {
-            color: #d00;
-            font-size: 14px;
-            visibility: hidden; /* 기본적으로 숨김 */
-        }
-        
-        /* [REVISED] 목록으로 돌아가기 버튼 래퍼 스타일 */
-        .back-link-wrapper {
-            text-align: center;
-            margin-top: 20px; /* 투표 섹션과의 간격 */
-        }
-        .back-link { 
-            display: inline-block; 
-            color: #007bff; 
-            text-decoration: none; 
-            font-size: 15px;
-        }
-        .back-link:hover { text-decoration: underline; }
-
+        .vote-msg-wrapper { height: 1.2em; }
+        .vote-msg { color: #d00; font-size: 14px; visibility: hidden; }
         .comment-section-wrapper { margin-top: 40px; }
-        .comment-section {
-            width: 100%;
-            background: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 28px 32px;
-            box-sizing: border-box;
-        }
+        .comment-section { width: 100%; background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 28px 32px; box-sizing: border-box; }
         .comment-section h3 { margin-bottom: 18px; text-align: left; }
-        #commentForm textarea, .replyForm textarea { 
-            width: 100%; 
-            box-sizing:border-box; 
-            border: 1px solid #ced4da; 
-            border-radius: 4px; 
-            padding: 10px; 
-            margin-bottom: 10px; 
-            resize: none;
-        }
+        #commentForm textarea, .replyForm textarea { width: 100%; box-sizing:border-box; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; margin-bottom: 10px; resize: none; }
         #commentForm button { float: right; }
         .comment-item { border-top: 1px solid #e9ecef; padding: 15px 0; text-align: left; }
         .reply-toggle-btn { font-size: 13px; padding: 2px 8px; cursor: pointer; margin-top: 5px; }
         .replyForm { display: none; margin-top: 8px; }
-        .best-posts {
-            width: 220px;
-            min-width: 220px;
-            max-width: 220px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 16px;
-            background-color: #fff;
-            height: fit-content;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 40px;
-            flex-shrink: 0;
-        }
+        .best-posts { width: 220px; min-width: 220px; max-width: 220px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; background-color: #fff; height: fit-content; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 40px; flex-shrink: 0; }
         .best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
         .best-posts ul { list-style: none; padding: 0; margin: 0; }
         .best-posts li { margin-bottom: 10px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .best-posts a { text-decoration: none; color: #333; }
         .best-posts a:hover { text-decoration: underline; }
-        
-        .carousel-container {
+        .carousel-container { position: relative; width: 220px; height: 600px; overflow: hidden; }
+        .carousel-slide { display: none; position: absolute; width: 100%; height: 100%; left: 0; top: 0; transition: opacity 0.7s; }
+        .carousel-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
+        .carousel-slide.active { display: block; opacity: 1; z-index: 1; }
+        .carousel-slide.inactive { opacity: 0; z-index: 0; }
+        .carousel-btn { display: none; }
+        .carousel-dots { position: absolute; bottom: 12px; left: 0; width: 100%; text-align: center; z-index: 3; }
+        .carousel-dot { display: inline-block; width: 10px; height: 10px; margin: 0 4px; background: #ccc; border-radius: 50%; cursor: pointer; transition: background 0.2s; }
+        .carousel-dot.active { background: #007bff; }
+        @media (max-width: 1400px) { .layout-3col { gap: 12px; } .main-content { min-width: 400px; } .ad-sidebar-left, .best-posts { display: none; } }
+        @media (max-width: 900px) { .main-content { min-width: 100vw; max-width: 100vw; padding: 0 4vw; } .detail-container, .comment-section { padding: 16px 4vw; } }
+        /* 목록/수정/삭제 버튼 중앙+오른쪽 배치 */
+        .bottom-action-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
             position: relative;
-            width: 220px;
-            height: 600px;
-            overflow: hidden;
         }
-        .carousel-slide {
-            display: none;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            transition: opacity 0.7s;
-        }
-        .carousel-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 4px;
-            display: block;
-        }
-        .carousel-slide.active {
-            display: block;
-            opacity: 1;
+        .bottom-action-bar .back-link {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 15px;
             z-index: 1;
         }
-        .carousel-slide.inactive {
-            opacity: 0;
-            z-index: 0;
-        }
-        .carousel-btn { display: none; }
-        .carousel-dots {
+        .bottom-action-bar .back-link:hover { text-decoration: underline; }
+        .edit-delete-btns-bar {
             position: absolute;
-            bottom: 12px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            z-index: 3;
+            right: 0;
+            top: 0;
+            display: flex;
+            gap: 5px;
         }
-        .carousel-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            margin: 0 4px;
-            background: #ccc;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .carousel-dot.active {
-            background: #007bff;
-        }
-        @media (max-width: 1400px) {
-            .layout-3col { gap: 12px; }
-            .main-content { min-width: 400px; }
-            .ad-sidebar-left, .best-posts { display: none; }
-        }
-        @media (max-width: 900px) {
-            .main-content { min-width: 100vw; max-width: 100vw; padding: 0 4vw; }
-            .detail-container, .comment-section { padding: 16px 4vw; }
+        .edit-delete-btns-bar button {
+            font-size: 15px;
+            padding: 7px 18px 7px 14px;
+            /* 기본 버튼 스타일(색상 없음) */
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -315,7 +139,6 @@
                     <pre style="font-family: inherit; font-size: inherit; white-space: pre-wrap; word-wrap: break-word;">${deal.content}</pre>
                 </div>
 
-                <!-- [REVISED] 투표 및 목록가기 버튼 영역 구조 변경 -->
                 <div class="vote-section">
                     <c:if test="${not empty sessionScope.loginUser}">
                         <div class="vote-buttons">
@@ -327,11 +150,22 @@
                         <span id="vote-msg" class="vote-msg"></span>
                     </div>
                 </div>
-
-                <div class="back-link-wrapper">
+                <!-- [여기] 목록/수정/삭제 버튼 중앙+오른쪽 배치, 버튼 기본 스타일 -->
+                <div class="bottom-action-bar">
                     <a href="list?page=1" class="back-link">← 목록으로</a>
+                    <c:if test="${not empty sessionScope.loginUser and sessionScope.loginUser.username == deal.author}">
+                        <div class="edit-delete-btns-bar">
+                            <form action="edit" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="${deal.id}">
+                                <button type="submit">수정</button>
+                            </form>
+                            <form action="delete" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <input type="hidden" name="id" value="${deal.id}">
+                                <button type="submit">삭제</button>
+                            </form>
+                        </div>
+                    </c:if>
                 </div>
-
             </div>
             <div class="comment-section-wrapper">
                 <div class="comment-section">
@@ -433,7 +267,6 @@ $(function() {
         });
     });
 });
-/* 광고 캐러셀 */
 window.addEventListener("DOMContentLoaded", function() {
     const slides = document.querySelectorAll('.carousel-slide');
     const dots = document.querySelectorAll('.carousel-dot');

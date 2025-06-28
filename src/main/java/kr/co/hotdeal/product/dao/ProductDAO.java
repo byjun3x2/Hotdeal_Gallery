@@ -13,6 +13,8 @@ public interface ProductDAO {
     // 상품 상세 조회
     ProductVO getProductById(String productId);
     
+    void updateProduct(ProductVO vo);
+    
     // [ADD] 상품 삭제 메소드 추가
     void deleteProduct(String productId);
     

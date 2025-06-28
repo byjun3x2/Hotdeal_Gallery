@@ -53,5 +53,17 @@
 <select id="getAllCategories" resultType="string">
     SELECT DISTINCT CATEGORY FROM PRODUCT WHERE CATEGORY IS NOT NULL ORDER BY CATEGORY
 </select>
+
+<update id="updateProduct" parameterType="kr.co.hotdeal.product.vo.ProductVO">
+        UPDATE PRODUCT
+        SET
+            CATEGORY = #{category},
+            SHOP_NAME = #{shopName},
+            PRODUCT_NAME = #{productName},
+            PRICE = #{price},
+            DELIVERY_FEE = #{deliveryFee},
+            RELATED_URL = #{relatedUrl}
+        WHERE PRODUCT_ID = #{productId}
+    </update>
 	
 </mapper>

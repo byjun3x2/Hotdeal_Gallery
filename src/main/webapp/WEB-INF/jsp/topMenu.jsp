@@ -1,4 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%-- 외부 다크모드 CSS 파일을 head에 추가 --%>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/darkmode.css">
+
 <style>
 .top-menu-bar {
     width: 100%;
@@ -13,13 +16,21 @@
     display: inline-block;
     margin-right: 20px;
 }
-.top-menu-bar .menu-links a {
+.top-menu-bar .menu-links a, .top-menu-bar .menu-links button {
     margin-right: 8px;
     color: #666;
     text-decoration: none;
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    padding: 0 8px;
+    transition: color 0.2s;
 }
-.top-menu-bar .menu-links a:hover {
+.top-menu-bar .menu-links a:hover, .top-menu-bar .menu-links button:hover {
     text-decoration: underline;
+    color: #0056b3;
 }
 .top-menu-bar .login-form,
 .top-menu-bar .user-info {
@@ -37,10 +48,14 @@
     margin-left: 6px;
     font-size: 13px;
 }
-.top-menu-bar button {
+.top-menu-bar button[type="submit"] {
     padding: 3px 10px;
     margin-left: 6px;
     font-size: 13px;
+    background: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
 }
 .top-menu-bar .login-error {
     color: #c00;
@@ -48,7 +63,7 @@
     margin-left: 10px;
     display: inline-block;
 }
-/* 다크모드 스타일 */
+/* 다크모드 스타일(기본 상단 메뉴용, 상세 다크모드는 외부 CSS에서 추가로 적용) */
 body.dark-mode {
     background: #181a1b !important;
     color: #e0e0e0 !important;
@@ -59,12 +74,15 @@ body.dark-mode .top-menu-bar {
     border-bottom: 1px solid #444 !important;
 }
 body.dark-mode .menu-links a,
+body.dark-mode .menu-links button,
 body.dark-mode .top-menu-bar .user-info,
 body.dark-mode .top-menu-bar label,
-body.dark-mode .top-menu-bar button {
+body.dark-mode .top-menu-bar button[type="submit"] {
     color: #b0c4de !important;
+    background: none !important;
 }
-body.dark-mode .menu-links a:hover {
+body.dark-mode .menu-links a:hover,
+body.dark-mode .menu-links button:hover {
     color: #fff !important;
 }
 body.dark-mode input[type="text"], body.dark-mode input[type="password"] {
@@ -80,10 +98,10 @@ body.dark-mode .login-error {
     <div class="menu-links">
         커스텀 핫딜 |
         <a href="join">회원 가입</a> |
-        <a href="findPassword">비번 찾기</a> |
-        <a href="certMail">인증 메일 재발송</a> |
-        <a href="#" id="darkModeToggle" onclick="toggleDarkMode();return false;">다크OFF</a>
-        
+        <button id="darkModeToggle" type="button">
+            <span id="darkModeIcon">🌙</span>
+            <span id="darkModeText">다크모드 켜기</span>
+        </button>
     </div>
     <c:choose>
         <c:when test="${not empty sessionScope.loginUser}">
@@ -112,10 +130,12 @@ body.dark-mode .login-error {
 function applyDarkMode(enabled) {
     if(enabled) {
         document.body.classList.add('dark-mode');
-        document.getElementById('darkModeToggle').textContent = '다크ON';
+        document.getElementById('darkModeIcon').textContent = '☀️';
+        document.getElementById('darkModeText').textContent = '다크모드 끄기';
     } else {
         document.body.classList.remove('dark-mode');
-        document.getElementById('darkModeToggle').textContent = '다크OFF';
+        document.getElementById('darkModeIcon').textContent = '🌙';
+        document.getElementById('darkModeText').textContent = '다크모드 켜기';
     }
 }
 function toggleDarkMode() {
@@ -128,4 +148,5 @@ function toggleDarkMode() {
     let darkMode = localStorage.getItem('darkMode');
     applyDarkMode(darkMode === 'enabled');
 })();
+document.getElementById('darkModeToggle').onclick = toggleDarkMode;
 </script>
