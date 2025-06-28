@@ -55,6 +55,8 @@
             padding: 30px 40px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin: 0 auto;
+            width: 100%; 
+            box-sizing: border-box;
         }
         .deal-header {
             border-bottom: 2px solid #343a40;
@@ -108,11 +110,50 @@
             color: #343a40;
             margin-bottom: 30px;
         }
-        .vote-section { text-align: center; margin: 30px 0; }
-        .vote-btn { padding:8px 22px; margin:0 10px; border-radius:20px; border:1px solid #ccc; font-size:15px; cursor:pointer; background-color: #fff; transition: all 0.2s; }
+        
+        /* [REVISED] 투표 섹션 스타일 */
+        .vote-section {
+            text-align: center;
+            margin: 30px 0 0; /* 위쪽 여백, 아래쪽 여백은 메시지 래퍼가 담당 */
+        }
+        .vote-buttons {
+            margin-bottom: 10px;
+        }
+        .vote-buttons .vote-btn { 
+            padding:8px 22px; 
+            margin:0 5px; 
+            border-radius:20px; 
+            border:1px solid #ccc; 
+            font-size:15px; 
+            cursor:pointer; 
+            background-color: #fff; 
+            transition: all 0.2s; 
+        }
         .vote-btn.like-btn:hover { background-color:#e7f3ff; border-color:#9ecbff;}
         .vote-btn.dislike-btn:hover { background-color:#ffe3e6; border-color:#ffb3ba;}
-        .vote-msg { color:#d00; font-size:14px; margin-top:10px; display: block; height: 1em;}
+        
+        .vote-msg-wrapper {
+            height: 1.2em; /* 메시지가 표시될 공간 확보 */
+        }
+        .vote-msg {
+            color: #d00;
+            font-size: 14px;
+            visibility: hidden; /* 기본적으로 숨김 */
+        }
+        
+        /* [REVISED] 목록으로 돌아가기 버튼 래퍼 스타일 */
+        .back-link-wrapper {
+            text-align: center;
+            margin-top: 20px; /* 투표 섹션과의 간격 */
+        }
+        .back-link { 
+            display: inline-block; 
+            color: #007bff; 
+            text-decoration: none; 
+            font-size: 15px;
+        }
+        .back-link:hover { text-decoration: underline; }
+
         .comment-section-wrapper { margin-top: 40px; }
         .comment-section {
             width: 100%;
@@ -123,7 +164,15 @@
             box-sizing: border-box;
         }
         .comment-section h3 { margin-bottom: 18px; text-align: left; }
-        #commentForm textarea { width: 100%; box-sizing:border-box; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; margin-bottom: 10px; }
+        #commentForm textarea, .replyForm textarea { 
+            width: 100%; 
+            box-sizing:border-box; 
+            border: 1px solid #ced4da; 
+            border-radius: 4px; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+            resize: none;
+        }
         #commentForm button { float: right; }
         .comment-item { border-top: 1px solid #e9ecef; padding: 15px 0; text-align: left; }
         .reply-toggle-btn { font-size: 13px; padding: 2px 8px; cursor: pointer; margin-top: 5px; }
@@ -147,9 +196,7 @@
         .best-posts li { margin-bottom: 10px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .best-posts a { text-decoration: none; color: #333; }
         .best-posts a:hover { text-decoration: underline; }
-        .back-link { display: inline-block; margin-top: 20px; color: #007bff; text-decoration: none; }
-        .back-link:hover { text-decoration: underline; }
-        /* 광고 캐러셀 스타일 */
+        
         .carousel-container {
             position: relative;
             width: 220px;
@@ -267,14 +314,24 @@
                 <div class="deal-content">
                     <pre style="font-family: inherit; font-size: inherit; white-space: pre-wrap; word-wrap: break-word;">${deal.content}</pre>
                 </div>
+
+                <!-- [REVISED] 투표 및 목록가기 버튼 영역 구조 변경 -->
                 <div class="vote-section">
                     <c:if test="${not empty sessionScope.loginUser}">
-                        <button class="vote-btn like-btn" onclick="vote('LIKE')">👍 추천 <span id="likes-count">${deal.likes}</span></button>
-                        <button class="vote-btn dislike-btn" onclick="vote('DISLIKE')">👎 비추천 <span id="dislikes-count">${deal.dislikes}</span></button>
+                        <div class="vote-buttons">
+                            <button class="vote-btn like-btn" onclick="vote('LIKE')">👍 추천 <span id="likes-count">${deal.likes}</span></button>
+                            <button class="vote-btn dislike-btn" onclick="vote('DISLIKE')">👎 비추천 <span id="dislikes-count">${deal.dislikes}</span></button>
+                        </div>
                     </c:if>
-                    <span id="vote-msg" class="vote-msg"></span>
+                    <div class="vote-msg-wrapper">
+                        <span id="vote-msg" class="vote-msg"></span>
+                    </div>
                 </div>
-                <a href="list?page=1" class="back-link">← 목록으로</a>
+
+                <div class="back-link-wrapper">
+                    <a href="list?page=1" class="back-link">← 목록으로</a>
+                </div>
+
             </div>
             <div class="comment-section-wrapper">
                 <div class="comment-section">
@@ -310,17 +367,33 @@
         <%@ include file="bestPosts.jsp" %>
     </div>
 <script>
+var voteMsgTimer;
 function vote(type) {
     $.post("vote", {id: "${deal.id}", type: type}, function(res) {
+        const msgSpan = $("#vote-msg");
+        let message = "";
+
         if(res.result === "success") {
             $("#likes-count").text(res.likes);
             $("#dislikes-count").text(res.dislikes);
-            $("#vote-msg").text("투표가 반영되었습니다!").show().delay(2000).fadeOut();
+            message = "투표가 반영되었습니다!";
         } else {
-            $("#vote-msg").text(res.result).show().delay(2000).fadeOut();
+            message = res.result;
         }
+
+        msgSpan.text(message).css('visibility', 'visible');
+        
+        if (voteMsgTimer) {
+            clearTimeout(voteMsgTimer);
+        }
+
+        voteMsgTimer = setTimeout(function() {
+            msgSpan.css('visibility', 'hidden');
+        }, 1500);
+
     }, "json");
 }
+
 $(function() {
     $("#commentForm").submit(function(e) {
         e.preventDefault();
@@ -343,8 +416,8 @@ $(function() {
         $("#" + targetId).toggle();
     });
     $(document).on("submit", ".replyForm", function(e) {
-        e.preventDefault();
         var $form = $(this);
+        e.preventDefault();
         $.ajax({
             url: "addComment",
             type: "POST",
