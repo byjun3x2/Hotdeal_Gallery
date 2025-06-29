@@ -1,12 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ include file="topMenu.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>핫딜 상세보기</title>
+    <title>${deal.title}</title>
     <style>
         body { background-color: #f4f6f9; margin: 0; padding: 0; }
         .layout-3col { display: flex; justify-content: center; align-items: flex-start; width: 100vw; min-height: 100vh; gap: 32px; box-sizing: border-box; }
@@ -72,11 +73,40 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
+
+        /* 신고 팝업 스타일 */
+        .report-popup {
+            display: none; /* 기본적으로 숨김 */
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            z-index: 1000;
+            min-width: 150px;
+            text-align: left;
+            /* 버튼 바로 아래에 위치하도록 조정 */
+            /* 이 위치는 JavaScript에서 동적으로 설정됩니다. */
+        }
+        .report-popup ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .report-popup ul li {
+            padding: 8px 15px;
+            cursor: pointer;
+            color: #333;
+            font-size: 14px;
+        }
+        .report-popup ul li:hover {
+            background-color: #f0f0f0;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-    <%@ include file="topMenu.jsp" %>
     <div class="layout-3col">
         <%@ include file="adCarousel.jsp" %>
         <div class="main-content">
@@ -161,6 +191,16 @@
                                     <c:otherwise>종료신고</c:otherwise>
                                 </c:choose>
                             </button>
+                            <%-- [ADD] 신고 버튼 및 팝업 추가 --%>
+                            <button class="btn-info" id="reportButton">신고</button>
+                            <div class="report-popup" id="reportPopup">
+                                <ul>
+                                    <li onclick="selectReportType(${deal.id}, 'VIRAL_POST')">바이럴 게시글</li>
+                                    <li onclick="selectReportType(${deal.id}, 'ILLEGAL_HARMFUL')">불법 유해물</li>
+                                    <li onclick="selectReportType(${deal.id}, 'ADULT_CONTENT')">성인물</li>
+                                    <li onclick="selectReportType(${deal.id}, 'ETC')">기타</li>
+                                </ul>
+                            </div>
                         </c:if>
                     </div>
                 </div>
@@ -321,6 +361,72 @@ function reportEnd() {
         alert("요청 처리 중 오류가 발생했습니다.");
     });
 }
+
+// ===============================================================
+// [ADD] 신고 버튼 및 팝업 관련 JavaScript 추가
+// ===============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const reportButton = document.getElementById('reportButton');
+    const reportPopup = document.getElementById('reportPopup');
+
+    if (reportButton && reportPopup) {
+        reportButton.addEventListener('click', function() {
+            // 팝업 표시/숨김 토글
+            if (reportPopup.style.display === 'block') {
+                reportPopup.style.display = 'none';
+            } else {
+                // 팝업 위치 조정 (버튼 바로 아래 중앙)
+                const buttonRect = reportButton.getBoundingClientRect();
+                const containerRect = reportButton.closest('.edit-delete-btns-bar').getBoundingClientRect(); 
+                
+                reportPopup.style.left = (buttonRect.left - containerRect.left + buttonRect.width / 2) + 'px';
+                reportPopup.style.top = (buttonRect.bottom - containerRect.top + 5) + 'px'; // 5px 간격
+                reportPopup.style.transform = 'translateX(-50%)';
+                reportPopup.style.display = 'block';
+            }
+        });
+
+        // 팝업 외부 클릭 시 팝업 닫기
+        document.addEventListener('click', function(event) {
+            if (!reportButton.contains(event.target) && !reportPopup.contains(event.target)) {
+                reportPopup.style.display = 'none';
+            }
+        });
+    }
+});
+
+// [ADD] 신고 항목 선택 시 호출될 함수
+function selectReportType(hotdealId, reportType) {
+    const reportPopup = document.getElementById('reportPopup');
+    reportPopup.style.display = 'none'; // 팝업 닫기
+
+    if (confirm(`'${reportType}' 항목으로 이 게시글을 신고하시겠습니까?`)) {
+        // 백엔드 URL을 /reportPost로 가정합니다. (Controller에 구현 필요)
+        $.post("reportPost", {hotdealId: hotdealId, reportType: reportType}, function(res) {
+            if (res === "success") { // 백엔드에서 "success" 문자열을 반환한다고 가정
+                alert('게시글 신고가 접수되었습니다. 감사합니다.');
+                // 신고 성공 후 버튼 비활성화 또는 텍스트 변경 등 UI 처리
+                const reportButton = document.getElementById('reportButton');
+                if (reportButton) {
+                    reportButton.innerText = '신고됨';
+                    reportButton.disabled = true;
+                    reportButton.style.backgroundColor = '#ccc';
+                    reportButton.style.cursor = 'not-allowed';
+                }
+            } else if (res === "not_logged_in") {
+                alert("신고하려면 로그인해야 합니다.");
+                window.location.href = "login"; // 로그인 페이지로 리다이렉트
+            }
+            else {
+                alert('게시글 신고에 실패했습니다.');
+            }
+        }).fail(function() {
+            alert("요청 처리 중 오류가 발생했습니다.");
+        });
+    }
+}
+// ===============================================================
+
 </script>
 </body>
 </html>

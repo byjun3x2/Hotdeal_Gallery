@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,8 @@ import kr.co.hotdeal.comment.vo.CommentVO;
 import kr.co.hotdeal.member.vo.MemberVO;
 import kr.co.hotdeal.product.service.ProductService;
 import kr.co.hotdeal.product.vo.ProductVO;
+import kr.co.hotdeal.report.service.ReportService;
+import kr.co.hotdeal.report.vo.ReportVO;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -36,6 +39,9 @@ public class HotdealController {
 	private final HotdealService hotdealService;
 	private final CommentService commentService;
 	private final ProductService productService;
+	
+	@Autowired
+    private ReportService reportService; // ReportService 주입
 
 	@RequestMapping("/hello")
 	public String hello() {
@@ -292,5 +298,30 @@ public class HotdealController {
             response.put("message", "게시글을 찾을 수 없습니다.");
         }
         return response;
+    }
+    
+    @PostMapping("/reportPost")
+    @ResponseBody // AJAX 요청에 대한 응답
+    public String reportPost(@RequestParam("hotdealId") int hotdealId,
+                             @RequestParam("reportType") String reportType,
+                             HttpSession session) {
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "not_logged_in"; // 로그인되지 않은 경우
+        }
+
+        try {
+            ReportVO report = new ReportVO();
+            report.setHotdealId(hotdealId);
+            report.setReporterUserId(loginUser.getMemberId());
+            report.setReportType(reportType);
+            // status는 DB 기본값 'PENDING' 사용
+
+            reportService.addReport(report);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "fail";
+        }
     }
 }
