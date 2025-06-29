@@ -5,20 +5,30 @@
   
 <mapper namespace="kr.co.hotdeal.member.dao.MemberDAO">
 
+    <resultMap id="memberResultMap" type="kr.co.hotdeal.member.vo.MemberVO">
+        <id property="memberId" column="MEMBER_ID"/>
+        <result property="username" column="USERNAME"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="name" column="NAME"/>
+        <result property="email" column="EMAIL"/>
+        <result property="regDate" column="REG_DATE"/>
+        <result property="role" column="ROLE"/>
+    </resultMap>
+
     <insert id="insertMember" parameterType="kr.co.hotdeal.member.vo.MemberVO">
         INSERT INTO MEMBER (MEMBER_ID, USERNAME, PASSWORD, NAME, EMAIL, REG_DATE)
         VALUES (MEMBER_SEQ.NEXTVAL, #{username}, #{password}, #{name}, #{email}, SYSDATE)
     </insert>
 
-    <select id="selectMemberByUsername" parameterType="string" resultType="kr.co.hotdeal.member.vo.MemberVO">
+    <select id="selectMemberByUsername" parameterType="string" resultMap="memberResultMap">
         SELECT * FROM MEMBER WHERE USERNAME = #{username}
     </select>
 
-    <select id="selectMemberById" parameterType="int" resultType="kr.co.hotdeal.member.vo.MemberVO">
+    <select id="selectMemberById" parameterType="int" resultMap="memberResultMap">
         SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
     </select>
 
-    <select id="login" parameterType="map" resultType="kr.co.hotdeal.member.vo.MemberVO">
+    <select id="login" parameterType="map" resultMap="memberResultMap">
     	SELECT * FROM MEMBER WHERE USERNAME = #{username} AND PASSWORD = #{password}
 	</select>
 	
@@ -26,7 +36,11 @@
         DELETE FROM MEMBER WHERE USERNAME = #{username}
     </delete>
     
-    <select id="selectMemberByEmail" parameterType="string" resultType="kr.co.hotdeal.member.vo.MemberVO">
-    SELECT * FROM MEMBER WHERE EMAIL = #{email}
-</select>
+    <select id="selectMemberByEmail" parameterType="string" resultMap="memberResultMap">
+        SELECT * FROM MEMBER WHERE EMAIL = #{email}
+    </select>
+    
+    <select id="selectAllMembers" resultMap="memberResultMap">
+        SELECT * FROM MEMBER ORDER BY MEMBER_ID DESC
+    </select>
 </mapper>

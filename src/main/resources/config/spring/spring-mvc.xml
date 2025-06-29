@@ -10,6 +10,14 @@
 
     <context:component-scan base-package="kr.co.hotdeal" />
 
+    <bean id="adminInterceptor" class="kr.co.hotdeal.member.controller.AdminInterceptor" />
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/admin/**"/> <ref bean="adminInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <mvc:annotation-driven>
         <mvc:message-converters>
             <ref bean="stringHttpMessageConverter" />
@@ -19,8 +27,6 @@
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	
-
-
     <mvc:default-servlet-handler />
 
     <mvc:view-resolvers>
@@ -65,5 +71,4 @@
     <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactory" />
     </bean>
-
 </beans>

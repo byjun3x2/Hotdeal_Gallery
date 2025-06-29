@@ -1,9 +1,12 @@
 package kr.co.hotdeal.member.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import kr.co.hotdeal.member.dao.MemberDAO;
 import kr.co.hotdeal.member.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +32,10 @@ public class MemberService {
     
     public MemberVO getMemberByEmail(String email) {
         return memberDAO.selectMemberByEmail(email);
+    }
+    
+    // [ADD] 관리자용: 전체 회원 목록 조회 서비스
+    public List<MemberVO> getAllMembers() {
+        return memberDAO.selectAllMembers();
     }
 }
