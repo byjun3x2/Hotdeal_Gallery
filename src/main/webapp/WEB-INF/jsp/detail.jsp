@@ -400,7 +400,7 @@ function selectReportType(hotdealId, reportType) {
     const reportPopup = document.getElementById('reportPopup');
     reportPopup.style.display = 'none'; // 팝업 닫기
 
-    if (confirm(`'${reportType}' 항목으로 이 게시글을 신고하시겠습니까?`)) {
+    if (confirm(`이 게시글을 신고하시겠습니까?`)) {
         // 백엔드 URL을 /reportPost로 가정합니다. (Controller에 구현 필요)
         $.post("reportPost", {hotdealId: hotdealId, reportType: reportType}, function(res) {
             if (res === "success") { // 백엔드에서 "success" 문자열을 반환한다고 가정

@@ -15,7 +15,7 @@
                     ${status.index + 1}. 
                     <c:if test="${not empty item.category}">[${item.category}]</c:if> 
                     ${item.title} 
-                    <span style="color: #007bff; font-weight: bold;">(${item.likes - item.dislikes})</span>
+                    <span style="color: #007bff; font-weight: bold;">[+${item.likes - item.dislikes}]</span>
                 </a>
             </li>
         </c:forEach>
