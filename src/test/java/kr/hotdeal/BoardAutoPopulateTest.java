@@ -74,7 +74,7 @@ public class BoardAutoPopulateTest {
         product.setPrice(1000 + RANDOM.nextInt(100000));
         product.setDeliveryFee(RANDOM.nextBoolean() ? "0" : String.valueOf(1000 + RANDOM.nextInt(5000)));
         product.setRelatedUrl("https://shop" + RANDOM.nextInt(100) + ".com");
-        product.setProductImage("test" + RANDOM.nextInt(100) + ".jpg");
+        product.setProductImage("https://picsum.photos/200/300?random=1");
         productDAO.insertProduct(product);
         return product;
     }
@@ -82,7 +82,7 @@ public class BoardAutoPopulateTest {
     /** 게시글 자동 등록, 댓글/추천/비추천 자동 입력 */
     @Test
     public void 게시판_자동_채우기_테스트() {
-        int 게시글_개수 = 10;
+        int 게시글_개수 = 20;
         int 유저_수 = 5;
         int 댓글_최대_개수 = 6;
         int 추천_비추천_최대 = 10;
@@ -100,7 +100,7 @@ public class BoardAutoPopulateTest {
             HotdealVO vo = new HotdealVO();
             vo.setTitle("자동등록 게시글 " + i);
             vo.setAuthor(memberList.get(RANDOM.nextInt(memberList.size())).getUsername());
-            vo.setThumbnail("auto" + i + ".jpg");
+            vo.setThumbnail("https://picsum.photos/200/300?random=1");
             vo.setContent("자동으로 등록된 게시글 내용입니다. [" + i + "]");
             vo.setProductId(product.getProductId());
             vo.setCategory(product.getCategory());

@@ -57,8 +57,7 @@
 <div class="top-menu-bar">
     <div class="menu-container">
         <div class="menu-links">
-            <a href="<c:url value='/' />"><b>커스텀 핫딜</b></a> |
-            <a href="<c:url value='/list' />">게시판</a>
+            <a href="<c:url value='/' />"><b>커스텀 핫딜</b></a>
         </div>
         <div class="user-actions">
             <c:choose>

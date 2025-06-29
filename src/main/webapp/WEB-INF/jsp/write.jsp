@@ -80,7 +80,7 @@
         <label for="thumbnail">썸네일 이미지 URL</label>
         <input type="text" name="thumbnail" id="thumbnail" maxlength="500">
         <div class="info">이미지 URL 또는 파일 업로드 중 하나만 입력하세요. (둘 다 입력하면 파일 업로드가 우선 적용됩니다)</div>
-
+		<div class="info">허용 가능한 이미지 포맷 (jpeg, jpg, png)</div>
         <label for="thumbnailFile">썸네일 이미지 업로드</label>
         <input type="file" name="thumbnailFile" id="thumbnailFile" accept="image/*">
 

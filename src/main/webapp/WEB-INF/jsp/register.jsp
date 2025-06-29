@@ -34,8 +34,10 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 15px;
+            box-sizing: border-box;
         }
-        .register-box button {
+        /* submit 버튼만 100% */
+        .register-box button[type="submit"] {
             width: 100%;
             padding: 10px 0;
             background: #007bff;
@@ -46,7 +48,7 @@
             margin-top: 10px;
             cursor: pointer;
         }
-        .register-box button:hover {
+        .register-box button[type="submit"]:hover {
             background: #0056b3;
         }
         .error-msg {
@@ -62,7 +64,33 @@
         .register-box .flex-row {
             display: flex;
             gap: 8px;
-            align-items: center;
+            align-items: stretch;
+        }
+        .register-box .flex-row input[type="text"],
+        .register-box .flex-row input[type="email"] {
+            flex: 1;
+            height: 36px;
+            font-size: 15px;
+            box-sizing: border-box;
+            margin-bottom: 0;
+        }
+        /* 중복체크 버튼만 width:auto로! */
+        .register-box .flex-row button {
+            width: auto;
+            height: 36px;
+            font-size: 15px;
+            padding: 0 16px;
+            margin-top: 0;
+            border-radius: 4px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .register-box .flex-row button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
@@ -73,7 +101,7 @@
         <label for="username">아이디</label>
         <div class="flex-row">
             <input type="text" name="username" id="username" maxlength="30" required>
-            <button type="button" id="checkIdBtn" style="width:auto; padding:7px 14px; margin-top:0;">중복체크</button>
+            <button type="button" id="checkIdBtn">중복체크</button>
         </div>
         <div id="idCheckMsg" class="error-msg"></div>
 
@@ -91,7 +119,7 @@
         <label for="email">이메일</label>
         <div class="flex-row">
             <input type="email" name="email" id="email" maxlength="50" required>
-            <button type="button" id="checkEmailBtn" style="width:auto; padding:7px 14px; margin-top:0;">중복체크</button>
+            <button type="button" id="checkEmailBtn">중복체크</button>
         </div>
         <div id="emailCheckMsg" class="error-msg"></div>
 
