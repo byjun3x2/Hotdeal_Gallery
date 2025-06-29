@@ -104,4 +104,10 @@ public class HotdealDAOImpl implements HotdealDAO {
     public List<HotdealVO> getBestHotdealList(int limit) {
         return sqlSessionTemplate.selectList(NAMESPACE + "getBestHotdealList", limit);
     }
+    
+    // [ADD] 종료 상태 업데이트 메소드 구현
+    @Override
+    public void updateEndStatus(Map<String, Object> params) {
+        sqlSessionTemplate.update(NAMESPACE + "updateEndStatus", params);
+    }
 }

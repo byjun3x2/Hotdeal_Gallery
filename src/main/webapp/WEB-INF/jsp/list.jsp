@@ -134,7 +134,7 @@ main {
 .hotdeal-board a { color: #0056b3; text-decoration: none; }
 .hotdeal-board a:hover { text-decoration: underline; }
 
-/* [REVISED] 하단 컨트롤 영역 스타일 수정 및 추가 */
+/* 하단 컨트롤 영역 스타일 수정 및 추가 */
 .write-btn-container {
     text-align: right;
     margin-top: 15px;
@@ -202,6 +202,13 @@ main {
     color: #fff;
     font-weight: bold;
 }
+/* [CORRECTED] 종료된 딜 제목 스타일 */
+.deal-title-link.deal-ended { 
+    color: #888; /* 텍스트 색상은 회색으로 유지 */
+    text-decoration: line-through;
+    text-decoration-color: black; /* 취소선 색상을 검정색으로 지정 */
+    text-decoration-thickness: 2px; /* 취소선 두께를 2px로 지정 */
+}
 </style>
 </head>
 <body>
@@ -248,7 +255,7 @@ main {
 											</td>
 											<td class="deal-title-cell">
 												<div>
-													<a href="detail?id=${deal.id}" class="deal-title-link">
+													<a href="detail?id=${deal.id}" class="deal-title-link ${deal.isEnded == 'Y' ? 'deal-ended' : ''}">
 														<span class="category">[${deal.product.category}]</span> ${deal.title}
 													</a>
 												</div>

@@ -1,6 +1,8 @@
 package kr.co.hotdeal.board.dao;
 
 import java.util.List;
+import java.util.Map;
+
 import kr.co.hotdeal.board.vo.HotdealVO;
 
 public interface HotdealDAO {
@@ -22,4 +24,7 @@ public interface HotdealDAO {
     // [REVISED] category 파라미터 추가
     int getHotdealTotalCountByKeyword(String keyword, String category);
     List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category);
+
+    // [ADD] 종료 상태 업데이트 메소드 추가
+    void updateEndStatus(Map<String, Object> params);
 }

@@ -19,9 +19,10 @@ public class HotdealVO {
  // [ADD] 댓글 수를 담기 위한 필드 추가
     private int commentCount;
 
+    // [ADD] 종료 여부를 담기 위한 필드 추가
+    private String isEnded;   
+    
  // [ADD] 상품 정보를 담기 위한 ProductVO 필드 추가
     private ProductVO product;
-    
-
  
 }

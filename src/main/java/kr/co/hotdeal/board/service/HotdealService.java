@@ -1,11 +1,15 @@
 package kr.co.hotdeal.board.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import kr.co.hotdeal.board.commons.paging.Criteria;
 import kr.co.hotdeal.board.dao.HotdealDAO;
 import kr.co.hotdeal.board.vo.HotdealVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +91,24 @@ public class HotdealService {
     
     public List<HotdealVO> getBestHotdealList(int limit) {
         return hotdealDAO.getBestHotdealList(limit);
+    }
+    
+    // [ADD] 종료 상태 토글 서비스 메소드
+    public HotdealVO toggleEndStatus(int id) {
+        HotdealVO deal = hotdealDAO.getHotdealById(id);
+        if (deal != null) {
+            String currentStatus = deal.getIsEnded();
+            String newStatus = "N".equals(currentStatus) ? "Y" : "N";
+            
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", id);
+            params.put("isEnded", newStatus);
+            hotdealDAO.updateEndStatus(params);
+
+            // 변경된 정보를 다시 조회하여 반환
+            return hotdealDAO.getHotdealById(id);
+        }
+        return null;
     }
 
 }

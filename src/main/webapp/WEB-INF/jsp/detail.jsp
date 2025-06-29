@@ -55,33 +55,22 @@
         .carousel-dot.active { background: #007bff; }
         @media (max-width: 1400px) { .layout-3col { gap: 12px; } .main-content { min-width: 400px; } .ad-sidebar-left, .best-posts { display: none; } }
         @media (max-width: 900px) { .main-content { min-width: 100vw; max-width: 100vw; padding: 0 4vw; } .detail-container, .comment-section { padding: 16px 4vw; } }
-        /* 목록/수정/삭제 버튼 중앙+오른쪽 배치 */
-        .bottom-action-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            position: relative;
-        }
-        .bottom-action-bar .back-link {
-            display: inline-block;
-            color: #007bff;
-            text-decoration: none;
-            font-size: 15px;
-            z-index: 1;
-        }
+        .bottom-action-bar { display: flex; justify-content: center; align-items: center; margin-top: 20px; position: relative; }
+        .bottom-action-bar .back-link { display: inline-block; color: #007bff; text-decoration: none; font-size: 15px; z-index: 1; }
         .bottom-action-bar .back-link:hover { text-decoration: underline; }
-        .edit-delete-btns-bar {
-            position: absolute;
-            right: 0;
-            top: 0;
-            display: flex;
-            gap: 5px;
-        }
-        .edit-delete-btns-bar button {
-            font-size: 15px;
-            padding: 7px 18px 7px 14px;
-            /* 기본 버튼 스타일(색상 없음) */
+        .edit-delete-btns-bar { position: absolute; right: 0; top: 0; display: flex; gap: 5px; }
+        .edit-delete-btns-bar button { font-size: 15px; padding: 7px 18px 7px 14px; }
+        
+        /* [ADD] 종료된 핫딜 메시지 스타일 */
+        .ended-deal-msg {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid red;
+            background-color: #ffe3e6;
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -106,6 +95,7 @@
                     </div>
                 </div>
                 <div class="product-info-box">
+                    <div id="ended-deal-msg-box" class="ended-deal-msg" style="${deal.isEnded == 'Y' ? '' : 'display:none;'}">종료가 된 핫딜입니다</div>
                     <h3>상품 정보</h3>
                     <p><strong>상품명:</strong> ${deal.product.productName}</p>
                     <p><strong>쇼핑몰:</strong> ${deal.product.shopName}</p>
@@ -150,21 +140,29 @@
                         <span id="vote-msg" class="vote-msg"></span>
                     </div>
                 </div>
-                <!-- [여기] 목록/수정/삭제 버튼 중앙+오른쪽 배치, 버튼 기본 스타일 -->
+                
                 <div class="bottom-action-bar">
                     <a href="list?page=1" class="back-link">← 목록으로</a>
-                    <c:if test="${not empty sessionScope.loginUser and sessionScope.loginUser.username == deal.author}">
-                        <div class="edit-delete-btns-bar">
-                            <form action="edit" method="get" style="display:inline;">
-                                <input type="hidden" name="id" value="${deal.id}">
-                                <button type="submit">수정</button>
-                            </form>
-                            <form action="delete" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                <input type="hidden" name="id" value="${deal.id}">
-                                <button type="submit">삭제</button>
-                            </form>
-                        </div>
-                    </c:if>
+                    <div class="edit-delete-btns-bar">
+                        <c:if test="${not empty sessionScope.loginUser}">
+                            <c:if test="${sessionScope.loginUser.username == deal.author}">
+                                <form action="edit" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="${deal.id}">
+                                    <button type="submit">수정</button>
+                                </form>
+                                <form action="delete" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                    <input type="hidden" name="id" value="${deal.id}">
+                                    <button type="submit">삭제</button>
+                                </form>
+                            </c:if>
+                            <button type="button" id="reportEndBtn" onclick="reportEnd()">
+                                <c:choose>
+                                    <c:when test="${deal.isEnded == 'Y'}">종료신고 취소</c:when>
+                                    <c:otherwise>종료신고</c:otherwise>
+                                </c:choose>
+                            </button>
+                        </c:if>
+                    </div>
                 </div>
             </div>
             <div class="comment-section-wrapper">
@@ -300,6 +298,29 @@ window.addEventListener("DOMContentLoaded", function() {
     showSlide(0);
     startAuto();
 });
+
+// [ADD] 종료 신고 처리 스크립트
+function reportEnd() {
+    $.post("reportEnd", { id: "${deal.id}" }, function(res) {
+        if (res.status === "success") {
+            const isEnded = res.isEnded;
+            const msgBox = $("#ended-deal-msg-box");
+            const reportBtn = $("#reportEndBtn");
+
+            if (isEnded === 'Y') {
+                msgBox.show();
+                reportBtn.text("종료신고 취소");
+            } else {
+                msgBox.hide();
+                reportBtn.text("종료신고");
+            }
+        } else {
+            alert(res.message); // "로그인이 필요합니다." 또는 "게시글을 찾을 수 없습니다."
+        }
+    }, "json").fail(function() {
+        alert("요청 처리 중 오류가 발생했습니다.");
+    });
+}
 </script>
 </body>
 </html>
