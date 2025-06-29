@@ -202,12 +202,20 @@ main {
     color: #fff;
     font-weight: bold;
 }
-/* [CORRECTED] 종료된 딜 제목 스타일 */
+/* 종료된 딜 제목 스타일 (두껍고 검은 선) */
 .deal-title-link.deal-ended { 
     color: #888; /* 텍스트 색상은 회색으로 유지 */
     text-decoration: line-through;
     text-decoration-color: black; /* 취소선 색상을 검정색으로 지정 */
     text-decoration-thickness: 2px; /* 취소선 두께를 2px로 지정 */
+}
+/* [ADD] 댓글 수 표시 스타일 */
+.comment-count {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 0.95em;
+    color: #007bff;
+    font-weight: normal;
 }
 </style>
 </head>
@@ -258,13 +266,16 @@ main {
 													<a href="detail?id=${deal.id}" class="deal-title-link ${deal.isEnded == 'Y' ? 'deal-ended' : ''}">
 														<span class="category">[${deal.product.category}]</span> ${deal.title}
 													</a>
+													<c:if test="${deal.commentCount > 0}">
+														<span class="comment-count">💬 ${deal.commentCount}</span>
+													</c:if>
 												</div>
 												<div class="deal-meta-info">
 													가격  <span class="price"><fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</span>
 													<span> | 배송료 
                                                         <c:choose>
                                                             <c:when test="${deal.product.deliveryFee == '0' || empty deal.product.deliveryFee}">무료</c:when>
-                                                            <c:otherwise>${deal.product.deliveryFee}</c:otherwise>
+                                                            <c:otherwise><fmt:formatNumber value="${deal.product.deliveryFee}" pattern="#,###" />원</c:otherwise>
                                                         </c:choose>
                                                     </span>
 													<span> | ${deal.product.shopName}</span>
