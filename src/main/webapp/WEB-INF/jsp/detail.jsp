@@ -36,7 +36,15 @@
         .comment-section h3 { margin-bottom: 18px; text-align: left; }
         #commentForm textarea, .replyForm textarea { width: 100%; box-sizing:border-box; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; margin-bottom: 10px; resize: none; }
         #commentForm button { float: right; }
-        .comment-item { border-top: 1px solid #e9ecef; padding: 15px 0; text-align: left; }
+        .comment-item { 
+        border-top: 1px solid #e9ecef; 
+        padding: 15px 0; 
+        text-align: left; 
+          position: relative;
+  margin-bottom: 16px;
+  min-height: 48px;
+  padding-bottom: 8px; /* 버튼과 본문이 겹치지 않게 하단 여백 */
+        }
         .reply-toggle-btn { font-size: 13px; padding: 2px 8px; cursor: pointer; margin-top: 5px; }
         .replyForm { display: none; margin-top: 8px; }
         .best-posts { width: 220px; min-width: 220px; max-width: 220px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; background-color: #fff; height: fit-content; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 40px; flex-shrink: 0; }
@@ -59,9 +67,26 @@
         .bottom-action-bar { display: flex; justify-content: center; align-items: center; margin-top: 20px; position: relative; }
         .bottom-action-bar .back-link { display: inline-block; color: #007bff; text-decoration: none; font-size: 15px; z-index: 1; }
         .bottom-action-bar .back-link:hover { text-decoration: underline; }
-        .edit-delete-btns-bar { position: absolute; right: 0; top: 0; display: flex; gap: 5px; }
-        .edit-delete-btns-bar button { font-size: 15px; padding: 7px 18px 7px 14px; }
-        
+        /* ▼▼▼▼▼ 수정: 버튼 그룹 오른쪽 이동 ▼▼▼▼▼ */
+        .edit-delete-btns-bar { position: absolute; right: -30px; top: 1.5px; display: flex; gap: 5px; }
+        /* ▼▼▼▼▼ 수정: 버튼 크기 통일 ▼▼▼▼▼ */
+        .edit-delete-btns-bar button,
+        .edit-delete-btns-bar .btn-info {
+            font-size: 15px;
+            padding: 7px 18px 7px 14px;
+            height: 38px;
+            min-width: 70px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .edit-delete-btns-bar button:hover,
+        .edit-delete-btns-bar .btn-info:hover {
+            background-color: #f4f6fa;
+        }
         /* [ADD] 종료된 핫딜 메시지 스타일 */
         .ended-deal-msg {
             color: red;
@@ -73,10 +98,9 @@
             border-radius: 5px;
             margin-bottom: 15px;
         }
-
         /* 신고 팝업 스타일 */
         .report-popup {
-            display: none; /* 기본적으로 숨김 */
+            display: none;
             position: absolute;
             background-color: #fff;
             border: 1px solid #ddd;
@@ -86,8 +110,6 @@
             z-index: 1000;
             min-width: 150px;
             text-align: left;
-            /* 버튼 바로 아래에 위치하도록 조정 */
-            /* 이 위치는 JavaScript에서 동적으로 설정됩니다. */
         }
         .report-popup ul {
             list-style: none;
@@ -244,7 +266,6 @@ function vote(type) {
     $.post("vote", {id: "${deal.id}", type: type}, function(res) {
         const msgSpan = $("#vote-msg");
         let message = "";
-
         if(res.result === "success") {
             $("#likes-count").text(res.likes);
             $("#dislikes-count").text(res.dislikes);
@@ -265,7 +286,6 @@ function vote(type) {
 
     }, "json");
 }
-
 $(function() {
     $("#commentForm").submit(function(e) {
         e.preventDefault();
@@ -341,6 +361,17 @@ window.addEventListener("DOMContentLoaded", function() {
 
 // [ADD] 종료 신고 처리 스크립트
 function reportEnd() {
+    // 버튼의 현재 텍스트로 상태 판별
+    var btn = document.getElementById('reportEndBtn');
+    var msg;
+    if (btn.innerText.trim() === '종료신고') {
+        msg = '정말 종료신고 하시겠습니까?';
+    } else {
+        msg = '정말 종료신고를 취소하시겠습니까?';
+    }
+    if (!confirm(msg)) {
+        return;
+    }
     $.post("reportEnd", { id: "${deal.id}" }, function(res) {
         if (res.status === "success") {
             const isEnded = res.isEnded;
@@ -355,38 +386,34 @@ function reportEnd() {
                 reportBtn.text("종료신고");
             }
         } else {
-            alert(res.message); // "로그인이 필요합니다." 또는 "게시글을 찾을 수 없습니다."
+            alert(res.message);
         }
     }, "json").fail(function() {
         alert("요청 처리 중 오류가 발생했습니다.");
     });
 }
 
-// ===============================================================
+
+
 // [ADD] 신고 버튼 및 팝업 관련 JavaScript 추가
-// ===============================================================
 document.addEventListener('DOMContentLoaded', function() {
     const reportButton = document.getElementById('reportButton');
     const reportPopup = document.getElementById('reportPopup');
 
     if (reportButton && reportPopup) {
         reportButton.addEventListener('click', function() {
-            // 팝업 표시/숨김 토글
             if (reportPopup.style.display === 'block') {
                 reportPopup.style.display = 'none';
             } else {
-                // 팝업 위치 조정 (버튼 바로 아래 중앙)
                 const buttonRect = reportButton.getBoundingClientRect();
                 const containerRect = reportButton.closest('.edit-delete-btns-bar').getBoundingClientRect(); 
                 
                 reportPopup.style.left = (buttonRect.left - containerRect.left + buttonRect.width / 2) + 'px';
-                reportPopup.style.top = (buttonRect.bottom - containerRect.top + 5) + 'px'; // 5px 간격
+                reportPopup.style.top = (buttonRect.bottom - containerRect.top + 5) + 'px';
                 reportPopup.style.transform = 'translateX(-50%)';
                 reportPopup.style.display = 'block';
             }
         });
-
-        // 팝업 외부 클릭 시 팝업 닫기
         document.addEventListener('click', function(event) {
             if (!reportButton.contains(event.target) && !reportPopup.contains(event.target)) {
                 reportPopup.style.display = 'none';
@@ -398,14 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // [ADD] 신고 항목 선택 시 호출될 함수
 function selectReportType(hotdealId, reportType) {
     const reportPopup = document.getElementById('reportPopup');
-    reportPopup.style.display = 'none'; // 팝업 닫기
+    reportPopup.style.display = 'none';
 
     if (confirm(`이 게시글을 신고하시겠습니까?`)) {
-        // 백엔드 URL을 /reportPost로 가정합니다. (Controller에 구현 필요)
         $.post("reportPost", {hotdealId: hotdealId, reportType: reportType}, function(res) {
-            if (res === "success") { // 백엔드에서 "success" 문자열을 반환한다고 가정
+            if (res === "success") {
                 alert('게시글 신고가 접수되었습니다. 감사합니다.');
-                // 신고 성공 후 버튼 비활성화 또는 텍스트 변경 등 UI 처리
                 const reportButton = document.getElementById('reportButton');
                 if (reportButton) {
                     reportButton.innerText = '신고됨';
@@ -415,7 +440,7 @@ function selectReportType(hotdealId, reportType) {
                 }
             } else if (res === "not_logged_in") {
                 alert("신고하려면 로그인해야 합니다.");
-                window.location.href = "login"; // 로그인 페이지로 리다이렉트
+                window.location.href = "login";
             }
             else {
                 alert('게시글 신고에 실패했습니다.');
@@ -425,8 +450,6 @@ function selectReportType(hotdealId, reportType) {
         });
     }
 }
-// ===============================================================
-
 </script>
 </body>
 </html>

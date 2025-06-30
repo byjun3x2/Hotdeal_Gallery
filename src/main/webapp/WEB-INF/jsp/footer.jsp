@@ -69,7 +69,7 @@
 </style>
 <div class="footer">
     <div class="footer-inner">
-        <div class="footer-left">커스텀 핫딜</div>
+        <div class="footer-left">핫딜 갤러리</div>
         <div class="footer-links">
             <a href="about">About</a>
             <a href="faq">FAQ</a>
