@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,10 +54,27 @@
                                         ${report.hotdealTitle}
                                     </a>
                                 </td>
-                                <td>${report.reportType}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${report.reportType == 'VIRAL_POST'}">바이럴 게시글</c:when>
+                                        <c:when test="${report.reportType == 'ILLEGAL_HARMFUL'}">불법 유해물</c:when>
+                                        <c:when test="${report.reportType == 'ADULT_CONTENT'}">성인물</c:when>
+                                        <c:when test="${report.reportType == 'ETC'}">기타</c:when>
+                                        <c:otherwise>${report.reportType}</c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td>${report.reporterUsername}</td>
-                                <td>${report.reportDate}</td>
-                                <td>${report.status}</td>
+                                <td><fmt:formatDate value="${report.reportDate}" pattern="yyyy.MM.dd HH:mm"/></td>
+                                <td>
+                                    <%-- [수정] 상태를 한글로 표시 --%>
+                                    <c:choose>
+                                        <c:when test="${report.status == 'PENDING'}">처리 대기</c:when>
+                                        <c:when test="${report.status == 'REVIEWED'}">검토중</c:when>
+                                        <c:when test="${report.status == 'ACTION_TAKEN'}">조치 완료</c:when>
+                                        <c:when test="${report.status == 'REJECTED'}">반려</c:when>
+                                        <c:otherwise>${report.status}</c:otherwise>
+                                    </c:choose>
+                                </td>
                             </tr>
                         </c:forEach>
                     </c:when>
