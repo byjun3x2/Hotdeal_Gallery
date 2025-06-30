@@ -1,9 +1,12 @@
 package kr.co.hotdeal.report.dao;
 
-import kr.co.hotdeal.report.vo.ReportVO;
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import kr.co.hotdeal.report.vo.ReportVO;
 
 @Repository
 public class ReportDAOImpl implements ReportDAO {
@@ -16,5 +19,11 @@ public class ReportDAOImpl implements ReportDAO {
     @Override
     public void insertReport(ReportVO report) {
         sqlSession.insert(NAMESPACE + "insertReport", report);
+    }
+    
+    // [ADD] 관리자용 전체 신고 목록 조회 메서드 구현
+    @Override
+    public List<ReportVO> selectAllReports() {
+        return sqlSession.selectList(NAMESPACE + "selectAllReports");
     }
 }

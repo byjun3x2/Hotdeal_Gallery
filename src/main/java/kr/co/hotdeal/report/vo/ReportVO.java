@@ -1,16 +1,20 @@
 package kr.co.hotdeal.report.vo;
 
 import java.util.Date;
-import lombok.Data; // lombok 사용 시
+import lombok.Data;
 
-@Data // lombok 사용 시 getter, setter, toString 등 자동 생성
+@Data
 public class ReportVO {
     private int reportId;
     private int hotdealId;
-    private int reporterUserId; // 신고한 사용자 ID
-    private String reportType; // 신고 유형 (VIRAL_POST, ILLEGAL_HARMFUL, ADULT_CONTENT, ETC)
+    private int reporterUserId;
+    private String reportType;
     private Date reportDate;
-    private String status; // 처리 상태 (PENDING, REVIEWED, ACTION_TAKEN, REJECTED)
+    private String status;
+
+    // 추가된 필드
+    private String hotdealTitle;     // 신고된 게시글 제목
+    private String reporterUsername; // 신고자 아이디
 
     // 기본 생성자
     public ReportVO() {}
