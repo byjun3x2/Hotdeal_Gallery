@@ -57,4 +57,22 @@ public class MemberDAOImpl implements MemberDAO {
     public List<MemberVO> selectAllMembers() {
         return sqlSessionTemplate.selectList(NAMESPACE + "selectAllMembers");
     }
+    
+
+	 // MemberDAOImpl에 구현
+	 @Override
+	 public void deleteVotesByUsername(String username) {
+	     sqlSessionTemplate.delete(NAMESPACE + "deleteVotesByUsername", username);
+	 }
+	 
+	 @Override
+	 public void deleteCommentsByUsername(String username) {
+	     sqlSessionTemplate.delete(NAMESPACE + "deleteCommentsByUsername", username);
+	 }
+
+	 @Override
+	 public void deleteReportsByUsername(String username) {
+	     sqlSessionTemplate.delete(NAMESPACE + "deleteReportsByUsername", username);
+	 }
+
 }

@@ -63,7 +63,7 @@
         <input type="number" name="product.price" id="price" min="0" step="1" placeholder="숫자만 입력 (예: 3000)" required>
 
         <label for="deliveryFee">배송비</label>
-        <input type="text" name="product.deliveryFee" id="deliveryFee" maxlength="20" required>
+        <input type="number" name="product.deliveryFee" id="deliveryFee" maxlength="20" required placeholder="배송비 무료는 0 을 기입">
 
         <label for="relatedUrl">관련 URL</label>
         <input type="text" name="product.relatedUrl" id="relatedUrl" maxlength="500" placeholder="예: https://www.example.com">

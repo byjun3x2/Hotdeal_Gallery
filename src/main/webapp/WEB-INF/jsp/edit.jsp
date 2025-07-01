@@ -120,11 +120,21 @@
         <input type="text" name="thumbnail" id="thumbnail" value="${deal.thumbnail}" maxlength="500">
         <div class="info">이미지 URL 또는 파일 업로드 중 하나만 입력하세요. (둘 다 입력하면 파일 업로드가 우선 적용됩니다)</div>
 
-        <!-- 미리보기 이미지 영역 -->
         <img id="thumbnailPreview" src="${deal.thumbnail}" alt="현재 썸네일">
 
         <label for="thumbnailFile">썸네일 이미지 업로드</label>
         <input type="file" name="thumbnailFile" id="thumbnailFile" accept="image/*">
+
+        <%-- [수정] 관리자일 경우에만 공지 등록 체크박스 표시 --%>
+        <c:if test="${sessionScope.loginUser.role == 'ROLE_ADMIN'}">
+            <div style="margin-bottom: 15px;">
+                <label for="isNotice" style="display: inline-block; font-weight: normal;">
+                    <input type="checkbox" name="isNotice" id="isNotice" value="Y" 
+                           <c:if test="${deal.isNotice == 'Y'}">checked</c:if> >
+                    이 글을 공지로 등록합니다.
+                </label>
+            </div>
+        </c:if>
 
         <label for="content">내용</label>
         <textarea name="content" id="content" rows="8" required>${deal.content}</textarea>
@@ -143,11 +153,9 @@ document.getElementById('thumbnailFile').addEventListener('change', function(e) 
         };
         reader.readAsDataURL(file);
     } else {
-        // 파일 선택 해제 시 기존 URL로 복원
         preview.src = document.getElementById('thumbnail').value;
     }
 });
-// URL 입력란이 변경되면 파일 미선택 상태에서 미리보기도 변경
 document.getElementById('thumbnail').addEventListener('input', function(e) {
     const fileInput = document.getElementById('thumbnailFile');
     const preview = document.getElementById('thumbnailPreview');

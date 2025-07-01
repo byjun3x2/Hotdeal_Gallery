@@ -43,4 +43,17 @@
     <select id="selectAllMembers" resultMap="memberResultMap">
         SELECT * FROM MEMBER ORDER BY MEMBER_ID DESC
     </select>
+    
+    <delete id="deleteVotesByUsername" parameterType="string">
+        DELETE FROM HOTDEAL_VOTE WHERE USERNAME = #{username}
+    </delete>
+
+    <!-- 필요하다면 댓글, 신고 등도 아래와 같이 추가 -->
+    <delete id="deleteCommentsByUsername" parameterType="string">
+        DELETE FROM HOTDEAL_COMMENT WHERE USERNAME = #{username}
+    </delete>
+    <delete id="deleteReportsByUsername" parameterType="string">
+        DELETE FROM REPORT WHERE REPORTER_USER_ID = #{username}
+    </delete>
+
 </mapper>

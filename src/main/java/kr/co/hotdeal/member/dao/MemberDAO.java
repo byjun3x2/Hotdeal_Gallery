@@ -13,4 +13,11 @@ public interface MemberDAO {
 
     // [ADD] 관리자용: 전체 회원 목록 조회
     List<MemberVO> selectAllMembers();
+    
+    
+    // MemberDAO 인터페이스에 추가
+    void deleteVotesByUsername(String username);
+    
+    void deleteCommentsByUsername(String username);
+    void deleteReportsByUsername(String username);
 }
