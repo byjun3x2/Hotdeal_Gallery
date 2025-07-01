@@ -78,7 +78,7 @@
             <a href="terms">이용약관</a>
         </div>
         <div class="footer-copy">
-            &copy; <span id="footer-year"></span> 커스텀딜
+            &copy; <span id="footer-year"></span> 핫딜갤러리
         </div>
     </div>
 </div>
