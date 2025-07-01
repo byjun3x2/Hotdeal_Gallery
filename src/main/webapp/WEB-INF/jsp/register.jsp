@@ -128,12 +128,31 @@
 </div>
 
 <script>
+// [추가] 아이디, 이메일 중복체크 성공 여부를 추적하는 플래그
+let isIdCheckedAndAvailable = false;
+let isEmailCheckedAndAvailable = false;
+
 function validatePassword(password) {
     // 8~30자, 영문+숫자 혼용, 특수문자 허용
     return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,30}$/.test(password);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+
+    // [추가] 아이디를 수정하면, 중복체크 상태를 리셋
+    usernameInput.addEventListener('input', function() {
+        isIdCheckedAndAvailable = false;
+        document.getElementById('idCheckMsg').textContent = "";
+    });
+
+    // [추가] 이메일을 수정하면, 중복체크 상태를 리셋
+    emailInput.addEventListener('input', function() {
+        isEmailCheckedAndAvailable = false;
+        document.getElementById('emailCheckMsg').textContent = "";
+    });
+
     // 비밀번호 조건 실시간 체크
     document.getElementById('password').addEventListener('input', function() {
         const msg = document.getElementById('pwCheckMsg');
@@ -142,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             msg.textContent = "";
         }
-        // 비밀번호 변경 시 확인란도 다시 체크
         checkPasswordConfirm();
     });
 
@@ -153,11 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const pw = document.getElementById('password').value;
         const pw2 = document.getElementById('passwordConfirm').value;
         const msg = document.getElementById('pwConfirmMsg');
-        if (pw2.length === 0) {
-            msg.textContent = "";
-            return;
-        }
-        if (pw !== pw2) {
+        if (pw2.length > 0 && pw !== pw2) {
             msg.textContent = "비밀번호가 일치하지 않습니다.";
         } else {
             msg.textContent = "";
@@ -166,60 +180,80 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 아이디 중복체크
     document.getElementById('checkIdBtn').onclick = function() {
-        const username = document.getElementById('username').value.trim();
+        const username = usernameInput.value.trim();
         if (username.length < 4) {
             document.getElementById('idCheckMsg').textContent = "아이디는 4자 이상이어야 합니다.";
+            isIdCheckedAndAvailable = false; // [추가]
             return;
         }
         fetch('checkUsername?username=' + encodeURIComponent(username))
             .then(res => res.json())
             .then(data => {
+                const idCheckMsg = document.getElementById('idCheckMsg');
                 if (data.exists) {
-                    document.getElementById('idCheckMsg').textContent = "이미 사용 중인 아이디입니다.";
-                    document.getElementById('idCheckMsg').className = "error-msg";
+                    idCheckMsg.textContent = "이미 사용 중인 아이디입니다.";
+                    idCheckMsg.className = "error-msg";
+                    isIdCheckedAndAvailable = false; // [추가]
                 } else {
-                    document.getElementById('idCheckMsg').textContent = "사용 가능한 아이디입니다.";
-                    document.getElementById('idCheckMsg').className = "success-msg";
+                    idCheckMsg.textContent = "사용 가능한 아이디입니다.";
+                    idCheckMsg.className = "success-msg";
+                    isIdCheckedAndAvailable = true; // [추가]
                 }
             });
     };
 
     // 이메일 중복체크
     document.getElementById('checkEmailBtn').onclick = function() {
-        const email = document.getElementById('email').value.trim();
+        const email = emailInput.value.trim();
         if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
             document.getElementById('emailCheckMsg').textContent = "이메일 형식이 올바르지 않습니다.";
-            document.getElementById('emailCheckMsg').className = "error-msg";
+            isEmailCheckedAndAvailable = false; // [추가]
             return;
         }
         fetch('checkEmail?email=' + encodeURIComponent(email))
             .then(res => res.json())
             .then(data => {
+                const emailCheckMsg = document.getElementById('emailCheckMsg');
                 if (data.exists) {
-                    document.getElementById('emailCheckMsg').textContent = "이미 등록된 이메일입니다.";
-                    document.getElementById('emailCheckMsg').className = "error-msg";
+                    emailCheckMsg.textContent = "이미 등록된 이메일입니다.";
+                    emailCheckMsg.className = "error-msg";
+                    isEmailCheckedAndAvailable = false; // [추가]
                 } else {
-                    document.getElementById('emailCheckMsg').textContent = "사용 가능한 이메일입니다.";
-                    document.getElementById('emailCheckMsg').className = "success-msg";
+                    emailCheckMsg.textContent = "사용 가능한 이메일입니다.";
+                    emailCheckMsg.className = "success-msg";
+                    isEmailCheckedAndAvailable = true; // [추가]
                 }
             });
     };
 
-    // 폼 제출 시 추가 검증
+    // [REVISED] 폼 제출 시 최종 검증 로직 강화
     document.getElementById('registerForm').onsubmit = function(e) {
+        let isValid = true;
         const pw = document.getElementById('password').value;
         const pw2 = document.getElementById('passwordConfirm').value;
-        let valid = true;
 
-        if (!validatePassword(pw)) {
+        // 중복체크 여부 검사
+        if (!isIdCheckedAndAvailable) {
+            alert('아이디 중복체크를 완료해주세요.');
+            isValid = false;
+        } else if (!isEmailCheckedAndAvailable) {
+            alert('이메일 중복체크를 완료해주세요.');
+            isValid = false;
+        }
+        // 비밀번호 유효성 검사
+        else if (!validatePassword(pw)) {
             document.getElementById('pwCheckMsg').textContent = "비밀번호는 8~30자, 영문과 숫자를 모두 포함해야 합니다.";
-            valid = false;
+            isValid = false;
         }
-        if (pw !== pw2) {
+        // 비밀번호 일치 여부 검사
+        else if (pw !== pw2) {
             document.getElementById('pwConfirmMsg').textContent = "비밀번호가 일치하지 않습니다.";
-            valid = false;
+            isValid = false;
         }
-        if (!valid) e.preventDefault();
+
+        if (!isValid) {
+            e.preventDefault(); // 폼 제출 중단
+        }
     };
 });
 </script>

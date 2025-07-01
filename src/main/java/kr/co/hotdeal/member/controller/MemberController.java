@@ -45,8 +45,8 @@ public class MemberController {
         }
 
         memberService.join(member);
-        redirectAttributes.addFlashAttribute("msg", "회원가입이 완료되었습니다!");
-        return "redirect:/list";
+        
+        return "registerSuccess"; 
     }
 
     // 로그인 폼
