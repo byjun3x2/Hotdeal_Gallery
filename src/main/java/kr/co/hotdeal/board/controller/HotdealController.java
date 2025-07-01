@@ -39,9 +39,9 @@ public class HotdealController {
 	private final HotdealService hotdealService;
 	private final CommentService commentService;
 	private final ProductService productService;
-	
+
 	@Autowired
-    private ReportService reportService; // ReportService 주입
+	private ReportService reportService; // ReportService 주입
 
 	@RequestMapping("/hello")
 	public String hello() {
@@ -61,10 +61,14 @@ public class HotdealController {
 	@GetMapping("/list")
 	public String list(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page,
 			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "category", required = false) String category) { // [ADD] category 파라미터 추가
+			@RequestParam(value = "category", required = false) String category,
+			@RequestParam(value = "sortColumn", required = false) String sortColumn, // [추가]
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "DESC") String sortOrder) { // [ADD]
+																											// category
+																											// 파라미터 추가
 
 		// [REVISED] 서비스 호출 시 category 전달
-		List<HotdealVO> hotdealList = hotdealService.getHotdealList(page, keyword, category);
+		List<HotdealVO> hotdealList = hotdealService.getHotdealList(page, keyword, category, sortColumn, sortOrder);
 		int totalCount = hotdealService.getTotalCount(keyword, category);
 		int perPageNum = 10;
 
@@ -81,6 +85,9 @@ public class HotdealController {
 		model.addAttribute("bestList", bestList);
 		model.addAttribute("categoryList", categoryList); // [ADD] 전체 카테고리 목록
 		model.addAttribute("selectedCategory", category); // [ADD] 현재 선택된 카테고리
+
+		model.addAttribute("sortColumn", sortColumn); // [추가] View에서 현재 정렬 상태를 알 수 있도록 전달
+		model.addAttribute("sortOrder", sortOrder); // [추가]
 
 		return "list";
 	}
@@ -153,103 +160,96 @@ public class HotdealController {
 
 		return "redirect:/list";
 	}
-	
-	
+
 	// 수정 폼 진입 (GET)
-    @GetMapping("/edit")
-    public String editForm(@RequestParam("id") int id, Model model, HttpSession session) {
-        HotdealVO deal = hotdealService.getHotdealById(id);
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        if (deal == null || loginUser == null || !deal.getAuthor().equals(loginUser.getUsername())) {
-            model.addAttribute("msg", "수정 권한이 없습니다.");
-            return "redirect:/detail?id=" + id;
-        }
-        model.addAttribute("deal", deal);
-        return "edit"; // edit.jsp
-    }
+	@GetMapping("/edit")
+	public String editForm(@RequestParam("id") int id, Model model, HttpSession session) {
+		HotdealVO deal = hotdealService.getHotdealById(id);
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (deal == null || loginUser == null || !deal.getAuthor().equals(loginUser.getUsername())) {
+			model.addAttribute("msg", "수정 권한이 없습니다.");
+			return "redirect:/detail?id=" + id;
+		}
+		model.addAttribute("deal", deal);
+		return "edit"; // edit.jsp
+	}
 
-    // 수정 처리 (POST)
-    @PostMapping("/edit")
-    public String editHotdeal(
-            @RequestParam("id") int id,
-            @RequestParam("title") String title,
-            @RequestParam("content") String content,
-            @RequestParam("product.productId") String productId,
-            @RequestParam("product.category") String category,
-            @RequestParam("product.shopName") String shopName,
-            @RequestParam("product.productName") String productName,
-            @RequestParam("product.price") int price,
-            @RequestParam("product.deliveryFee") String deliveryFee,
-            @RequestParam("product.relatedUrl") String relatedUrl,
-            @RequestParam(value="thumbnail", required=false) String thumbnailUrl,
-            @RequestParam(value="thumbnailFile", required=false) MultipartFile thumbnailFile,
-            Model model, HttpSession session) {
+	// 수정 처리 (POST)
+	@PostMapping("/edit")
+	public String editHotdeal(@RequestParam("id") int id, @RequestParam("title") String title,
+			@RequestParam("content") String content, @RequestParam("product.productId") String productId,
+			@RequestParam("product.category") String category, @RequestParam("product.shopName") String shopName,
+			@RequestParam("product.productName") String productName, @RequestParam("product.price") int price,
+			@RequestParam("product.deliveryFee") String deliveryFee,
+			@RequestParam("product.relatedUrl") String relatedUrl,
+			@RequestParam(value = "thumbnail", required = false) String thumbnailUrl,
+			@RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile, Model model,
+			HttpSession session) {
 
-        // 권한 체크
-        HotdealVO origin = hotdealService.getHotdealById(id);
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        if (origin == null || loginUser == null || !origin.getAuthor().equals(loginUser.getUsername())) {
-            model.addAttribute("msg", "수정 권한이 없습니다.");
-            return "redirect:/detail?id=" + id;
-        }
+		// 권한 체크
+		HotdealVO origin = hotdealService.getHotdealById(id);
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (origin == null || loginUser == null || !origin.getAuthor().equals(loginUser.getUsername())) {
+			model.addAttribute("msg", "수정 권한이 없습니다.");
+			return "redirect:/detail?id=" + id;
+		}
 
-        // 파일 업로드 처리
-        String thumbnail = thumbnailUrl;
-        if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-            try {
-                String uploadDir = "C:/upload"; // 실제 환경에 맞게 수정
-                String fileName = System.currentTimeMillis() + "_" + thumbnailFile.getOriginalFilename();
-                java.io.File dest = new java.io.File(uploadDir, fileName);
-                dest.getParentFile().mkdirs();
-                thumbnailFile.transferTo(dest);
-                thumbnail = "/upload/" + fileName;
-            } catch (Exception e) {
-                model.addAttribute("msg", "파일 업로드에 실패했습니다.");
-                model.addAttribute("deal", origin);
-                return "edit";
-            }
-        }
+		// 파일 업로드 처리
+		String thumbnail = thumbnailUrl;
+		if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+			try {
+				String uploadDir = "C:/upload"; // 실제 환경에 맞게 수정
+				String fileName = System.currentTimeMillis() + "_" + thumbnailFile.getOriginalFilename();
+				java.io.File dest = new java.io.File(uploadDir, fileName);
+				dest.getParentFile().mkdirs();
+				thumbnailFile.transferTo(dest);
+				thumbnail = "/upload/" + fileName;
+			} catch (Exception e) {
+				model.addAttribute("msg", "파일 업로드에 실패했습니다.");
+				model.addAttribute("deal", origin);
+				return "edit";
+			}
+		}
 
-        // [1] 상품 정보 업데이트
-        ProductVO product = new ProductVO();
-        product.setProductId(productId);
-        product.setCategory(category);
-        product.setShopName(shopName);
-        product.setProductName(productName);
-        product.setPrice(price);
-        product.setDeliveryFee(deliveryFee);
-        product.setRelatedUrl(relatedUrl);
+		// [1] 상품 정보 업데이트
+		ProductVO product = new ProductVO();
+		product.setProductId(productId);
+		product.setCategory(category);
+		product.setShopName(shopName);
+		product.setProductName(productName);
+		product.setPrice(price);
+		product.setDeliveryFee(deliveryFee);
+		product.setRelatedUrl(relatedUrl);
 
-        productService.updateProduct(product);
+		productService.updateProduct(product);
 
-        // [2] 핫딜 정보 업데이트
-        HotdealVO vo = new HotdealVO();
-        vo.setId(id);
-        vo.setTitle(title);
-        vo.setContent(content);
-        vo.setThumbnail(thumbnail);
-        vo.setProductId(productId);
+		// [2] 핫딜 정보 업데이트
+		HotdealVO vo = new HotdealVO();
+		vo.setId(id);
+		vo.setTitle(title);
+		vo.setContent(content);
+		vo.setThumbnail(thumbnail);
+		vo.setProductId(productId);
 
-        hotdealService.updateHotdeal(vo);
+		hotdealService.updateHotdeal(vo);
 
-        return "redirect:/detail?id=" + id;
-    }
+		return "redirect:/detail?id=" + id;
+	}
 
+	@PostMapping("/delete")
+	public String deleteHotdeal(@RequestParam("id") int id, HttpSession session, Model model) {
+		HotdealVO deal = hotdealService.getHotdealById(id);
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		// 권한 체크: 작성자 본인만 삭제 가능
+		if (deal == null || loginUser == null || !deal.getAuthor().equals(loginUser.getUsername())) {
+			model.addAttribute("msg", "삭제 권한이 없습니다.");
+			return "redirect:/detail?id=" + id;
+		}
+		hotdealService.deleteHotdeal(id);
+		// 삭제 후 목록으로 이동
+		return "redirect:/list?page=1";
+	}
 
-    @PostMapping("/delete")
-    public String deleteHotdeal(@RequestParam("id") int id, HttpSession session, Model model) {
-        HotdealVO deal = hotdealService.getHotdealById(id);
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        // 권한 체크: 작성자 본인만 삭제 가능
-        if (deal == null || loginUser == null || !deal.getAuthor().equals(loginUser.getUsername())) {
-            model.addAttribute("msg", "삭제 권한이 없습니다.");
-            return "redirect:/detail?id=" + id;
-        }
-        hotdealService.deleteHotdeal(id);
-        // 삭제 후 목록으로 이동
-        return "redirect:/list?page=1";
-    }
-	
 	// 상세보기 (조회수 증가 포함)
 	@RequestMapping("/detail")
 	public String detail(@RequestParam("id") int id, HttpSession session, Model model) {
@@ -275,53 +275,52 @@ public class HotdealController {
 		model.addAttribute("commentList", commentList);
 		return "detail";
 	}
-	
-    // [ADD] 종료 신고 처리 AJAX 엔드포인트
-    @PostMapping("/reportEnd")
-    @ResponseBody
-    public Map<String, Object> reportEnd(@RequestParam("id") int id, HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            response.put("status", "error");
-            response.put("message", "로그인이 필요합니다.");
-            return response;
-        }
 
-        HotdealVO updatedDeal = hotdealService.toggleEndStatus(id);
+	// [ADD] 종료 신고 처리 AJAX 엔드포인트
+	@PostMapping("/reportEnd")
+	@ResponseBody
+	public Map<String, Object> reportEnd(@RequestParam("id") int id, HttpSession session) {
+		Map<String, Object> response = new HashMap<>();
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			response.put("status", "error");
+			response.put("message", "로그인이 필요합니다.");
+			return response;
+		}
 
-        if (updatedDeal != null) {
-            response.put("status", "success");
-            response.put("isEnded", updatedDeal.getIsEnded());
-        } else {
-            response.put("status", "error");
-            response.put("message", "게시글을 찾을 수 없습니다.");
-        }
-        return response;
-    }
-    
-    @PostMapping("/reportPost")
-    @ResponseBody // AJAX 요청에 대한 응답
-    public String reportPost(@RequestParam("hotdealId") int hotdealId,
-                             @RequestParam("reportType") String reportType,
-                             HttpSession session) {
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "not_logged_in"; // 로그인되지 않은 경우
-        }
+		HotdealVO updatedDeal = hotdealService.toggleEndStatus(id);
 
-        try {
-            ReportVO report = new ReportVO();
-            report.setHotdealId(hotdealId);
-            report.setReporterUserId(loginUser.getMemberId());
-            report.setReportType(reportType);
-            // status는 DB 기본값 'PENDING' 사용
+		if (updatedDeal != null) {
+			response.put("status", "success");
+			response.put("isEnded", updatedDeal.getIsEnded());
+		} else {
+			response.put("status", "error");
+			response.put("message", "게시글을 찾을 수 없습니다.");
+		}
+		return response;
+	}
 
-            reportService.addReport(report);
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
-        }
-    }
+	@PostMapping("/reportPost")
+	@ResponseBody // AJAX 요청에 대한 응답
+	public String reportPost(@RequestParam("hotdealId") int hotdealId, @RequestParam("reportType") String reportType,
+			HttpSession session) {
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "not_logged_in"; // 로그인되지 않은 경우
+		}
+
+		try {
+			ReportVO report = new ReportVO();
+			report.setHotdealId(hotdealId);
+			report.setReporterUserId(loginUser.getMemberId());
+			report.setReportType(reportType);
+			// status는 DB 기본값 'PENDING' 사용
+
+			reportService.addReport(report);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+	}
 }

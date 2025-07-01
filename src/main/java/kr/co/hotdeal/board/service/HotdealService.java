@@ -15,100 +15,105 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HotdealService {
 
-    private final HotdealDAO hotdealDAO;
+	private final HotdealDAO hotdealDAO;
 
-    public void deleteHotdeal(int id) {
-        hotdealDAO.deleteHotdeal(id);
-    }
+	public void deleteHotdeal(int id) {
+		hotdealDAO.deleteHotdeal(id);
+	}
 
-    public void decreaseLikes(int id) {
-        hotdealDAO.decreaseLikes(id);
-    }
-    public void decreaseDislikes(int id) {
-        hotdealDAO.decreaseDislikes(id);
-    }
-    
-    
-    public void increaseDislikes(int id) {
-        hotdealDAO.increaseDislikes(id);
-    }
+	public void decreaseLikes(int id) {
+		hotdealDAO.decreaseLikes(id);
+	}
 
-    public void increaseLikes(int id) {
-        hotdealDAO.increaseLikes(id);
-    }
+	public void decreaseDislikes(int id) {
+		hotdealDAO.decreaseDislikes(id);
+	}
 
-    public void increaseViews(int id) {
-        hotdealDAO.increaseViews(id);
-    }
+	public void increaseDislikes(int id) {
+		hotdealDAO.increaseDislikes(id);
+	}
 
-    public HotdealVO getHotdealById(int id) {
-        return hotdealDAO.getHotdealById(id);
-    }
+	public void increaseLikes(int id) {
+		hotdealDAO.increaseLikes(id);
+	}
 
-    public List<HotdealVO> getHotdealList() {
-        return hotdealDAO.getHotdealList();
-    }
-    
-    // [REVISED] 목록 조회 서비스 - category 파라미터 추가
-    public List<HotdealVO> getHotdealList(int page, String keyword, String category) {
-        int perPageNum = 10;
-        int pageStart = (page - 1) * perPageNum + 1;
-        int pageEnd = page * perPageNum;
+	public void increaseViews(int id) {
+		hotdealDAO.increaseViews(id);
+	}
 
-        // [REVISED] DAO 호출 시 category 전달
-        return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword, category);
-    }
+	public HotdealVO getHotdealById(int id) {
+		return hotdealDAO.getHotdealById(id);
+	}
 
-    public List<HotdealVO> getHotdealListPaging(Criteria criteria) {
-        return hotdealDAO.getHotdealListPaging(criteria.getPageStart(), criteria.getPageEnd());
-    }
+	public List<HotdealVO> getHotdealList(int page, String keyword, String category, String sortColumn,
+			String sortOrder) {
+		int perPageNum = 10;
+		int pageStart = (page - 1) * perPageNum + 1;
+		int pageEnd = page * perPageNum;
 
-    public List<HotdealVO> getHotdealListPagingByKeyword(Criteria criteria, String keyword) {
-        return hotdealDAO.getHotdealListPagingByKeyword(criteria.getPageStart(), criteria.getPageEnd(), keyword, null);
-    }
+		return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword, category, sortColumn, sortOrder);
+	}
 
-    public int getHotdealTotalCount() {
-        return hotdealDAO.getHotdealTotalCount();
-    }
+	// [REVISED] 목록 조회 서비스 - category 파라미터 추가
+	public List<HotdealVO> getHotdealList(int page, String keyword, String category) {
+		int perPageNum = 10;
+		int pageStart = (page - 1) * perPageNum + 1;
+		int pageEnd = page * perPageNum;
 
-    public int getHotdealTotalCountByKeyword(String keyword) {
-        return hotdealDAO.getHotdealTotalCountByKeyword(keyword, null);
-    }
-    
-    // [REVISED] 전체 개수 조회 서비스 - category 파라미터 추가
-    public int getTotalCount(String keyword, String category) {
-        // [REVISED] DAO 호출 시 category 전달
-        return hotdealDAO.getHotdealTotalCountByKeyword(keyword, category);
-    }
+		// [REVISED] DAO 호출 시 category 전달
+		return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword, category);
+	}
 
-    public void insertHotdeal(HotdealVO vo) {
-        hotdealDAO.insertHotdeal(vo);
-    }
+	public List<HotdealVO> getHotdealListPaging(Criteria criteria) {
+		return hotdealDAO.getHotdealListPaging(criteria.getPageStart(), criteria.getPageEnd());
+	}
 
-    public void updateHotdeal(HotdealVO vo) {
-        hotdealDAO.updateHotdeal(vo);
-    }
-    
-    public List<HotdealVO> getBestHotdealList(int limit) {
-        return hotdealDAO.getBestHotdealList(limit);
-    }
-    
-    // [ADD] 종료 상태 토글 서비스 메소드
-    public HotdealVO toggleEndStatus(int id) {
-        HotdealVO deal = hotdealDAO.getHotdealById(id);
-        if (deal != null) {
-            String currentStatus = deal.getIsEnded();
-            String newStatus = "N".equals(currentStatus) ? "Y" : "N";
-            
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", id);
-            params.put("isEnded", newStatus);
-            hotdealDAO.updateEndStatus(params);
+	public List<HotdealVO> getHotdealListPagingByKeyword(Criteria criteria, String keyword) {
+		return hotdealDAO.getHotdealListPagingByKeyword(criteria.getPageStart(), criteria.getPageEnd(), keyword, null);
+	}
 
-            // 변경된 정보를 다시 조회하여 반환
-            return hotdealDAO.getHotdealById(id);
-        }
-        return null;
-    }
+	public int getHotdealTotalCount() {
+		return hotdealDAO.getHotdealTotalCount();
+	}
+
+	public int getHotdealTotalCountByKeyword(String keyword) {
+		return hotdealDAO.getHotdealTotalCountByKeyword(keyword, null);
+	}
+
+	// [REVISED] 전체 개수 조회 서비스 - category 파라미터 추가
+	public int getTotalCount(String keyword, String category) {
+		// [REVISED] DAO 호출 시 category 전달
+		return hotdealDAO.getHotdealTotalCountByKeyword(keyword, category);
+	}
+
+	public void insertHotdeal(HotdealVO vo) {
+		hotdealDAO.insertHotdeal(vo);
+	}
+
+	public void updateHotdeal(HotdealVO vo) {
+		hotdealDAO.updateHotdeal(vo);
+	}
+
+	public List<HotdealVO> getBestHotdealList(int limit) {
+		return hotdealDAO.getBestHotdealList(limit);
+	}
+
+	// [ADD] 종료 상태 토글 서비스 메소드
+	public HotdealVO toggleEndStatus(int id) {
+		HotdealVO deal = hotdealDAO.getHotdealById(id);
+		if (deal != null) {
+			String currentStatus = deal.getIsEnded();
+			String newStatus = "N".equals(currentStatus) ? "Y" : "N";
+
+			Map<String, Object> params = new HashMap<>();
+			params.put("id", id);
+			params.put("isEnded", newStatus);
+			hotdealDAO.updateEndStatus(params);
+
+			// 변경된 정보를 다시 조회하여 반환
+			return hotdealDAO.getHotdealById(id);
+		}
+		return null;
+	}
 
 }

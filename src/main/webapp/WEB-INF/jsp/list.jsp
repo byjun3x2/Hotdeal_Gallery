@@ -396,12 +396,44 @@ main {
 							<tr class="table-header-row">
 								<th style="width: 9%;">글번호</th>
 								<th style="width: 9%;">이미지</th>
-								<th>글제목</th>
+								<th style="width: 40%;">글제목</th>
 								<th style="width: 9%;">작성자</th>
 								<th style="width: 9%;">등록일</th>
-								<th style="width: 9%;">조회수</th>
-								<th style="width: 9%;">추천</th>
-								<th style="width: 9%;">비추천</th>
+        <%-- ▼▼▼▼▼ 조회수, 추천, 비추천 헤더를 아래 코드로 교체 ▼▼▼▼▼ --%>
+        <th style="width: 9%;">
+            조회수
+            <%-- 현재 '조회수 내림차순'으로 정렬된 경우, '오름차순(▲)' 정렬 링크를 보여줍니다. --%>
+            <c:if test="${sortColumn == 'views' && sortOrder == 'DESC'}">
+                <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=ASC">▲</a>
+            </c:if>
+            <%-- 그 외 모든 경우(초기 상태 또는 오름차순 정렬 상태), '내림차순(▼)' 정렬 링크를 보여줍니다. --%>
+            <c:if test="${sortColumn != 'views' || sortOrder != 'DESC'}">
+                <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=DESC">▼</a>
+            </c:if>
+        </th>
+        <th style="width: 9%;">
+            추천
+            <%-- 현재 '추천 내림차순'으로 정렬된 경우, '오름차순(▲)' 정렬 링크를 보여줍니다. --%>
+            <c:if test="${sortColumn == 'likes' && sortOrder == 'DESC'}">
+                <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=ASC">▲</a>
+            </c:if>
+            <%-- 그 외 모든 경우, '내림차순(▼)' 정렬 링크를 보여줍니다. --%>
+            <c:if test="${sortColumn != 'likes' || sortOrder != 'DESC'}">
+                <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=DESC">▼</a>
+            </c:if>
+        </th>
+        <th style="width: 9%;">
+            비추천
+            <%-- 현재 '비추천 내림차순'으로 정렬된 경우, '오름차순(▲)' 정렬 링크를 보여줍니다. --%>
+            <c:if test="${sortColumn == 'dislikes' && sortOrder == 'DESC'}">
+                <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=dislikes&sortOrder=ASC">▲</a>
+            </c:if>
+            <%-- 그 외 모든 경우, '내림차순(▼)' 정렬 링크를 보여줍니다. --%>
+            <c:if test="${sortColumn != 'dislikes' || sortOrder != 'DESC'}">
+                <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=dislikes&sortOrder=DESC">▼</a>
+            </c:if>
+        </th>
+        <%-- ▲▲▲▲▲ 교체 완료 ▲▲▲▲▲ --%>
 							</tr>
 						</thead>
 						<tbody>
@@ -474,29 +506,24 @@ main {
 					</div>
 
 					<div class="pagination-container">
-						<div class="pagination">
-							<c:set var="lastPage"
-								value="${(totalCount + perPageNum - 1) / perPageNum}" />
-							<c:if test="${page > 1}">
-								<a
-									href="list?page=${page-1}&keyword=${keyword}&category=${selectedCategory}">이전</a>
-							</c:if>
-							<c:forEach begin="1" end="${lastPage}" var="i">
-								<c:choose>
-									<c:when test="${page == i}">
-										<span class="current">${i}</span>
-									</c:when>
-									<c:otherwise>
-										<a
-											href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}">${i}</a>
-									</c:otherwise>
-								</c:choose>
-							</c:forEach>
-							<c:if test="${page < lastPage}">
-								<a
-									href="list?page=${page+1}&keyword=${keyword}&category=${selectedCategory}">다음</a>
-							</c:if>
-						</div>
+<div class="pagination">
+    <c:if test="${page > 1}">
+        <a href="list?page=${page-1}&keyword=${keyword}&category=${selectedCategory}&sortColumn=${sortColumn}&sortOrder=${sortOrder}">이전</a>
+    </c:if>
+    <c:forEach begin="1" end="${lastPage}" var="i">
+        <c:choose>
+            <c:when test="${page == i}">
+                <span class="current">${i}</span>
+            </c:when>
+            <c:otherwise>
+                <a href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}&sortColumn=${sortColumn}&sortOrder=${sortOrder}">${i}</a>
+            </c:otherwise>
+        </c:choose>
+    </c:forEach>
+    <c:if test="${page < lastPage}">
+        <a href="list?page=${page+1}&keyword=${keyword}&category=${selectedCategory}&sortColumn=${sortColumn}&sortOrder=${sortOrder}">다음</a>
+    </c:if>
+</div>
 					</div>
 				</div>
 
