@@ -51,16 +51,16 @@ public class HotdealService {
 		return hotdealDAO.getHotdealListPaging(criteria.getPageStart(), criteria.getPageEnd());
 	}
 
-	public List<HotdealVO> getHotdealList(Criteria criteria, String keyword, String category, String sort) {
+	public List<HotdealVO> getHotdealList(Criteria criteria, String keyword, String category, String sortColumn, String sortOrder) {
 	    return hotdealDAO.getHotdealListPagingByKeyword(
 	        criteria.getPageStart(),
 	        criteria.getPageEnd(),
 	        keyword,
 	        category,
-	        sort // [수정] sort 파라미터 전달
+	        sortColumn, // [수정] sortColumn 전달
+	        sortOrder   // [수정] sortOrder 전달
 	    );
 	}
-
 	public int getHotdealTotalCount() {
 		return hotdealDAO.getHotdealTotalCount();
 	}

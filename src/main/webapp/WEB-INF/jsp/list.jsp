@@ -67,10 +67,11 @@ main { flex: 1 0 auto; padding-top: 40px; }
 .notice-row:hover { background-color: #dceddc !important; }
 .notice-tag { display: inline-block; background-color: #007bff; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-right: 8px; vertical-align: middle; }
 .notice-row td { height: 38px; padding-top: 4px; padding-bottom: 4px; }
-
-/* [ADD] 정렬 버튼 스타일 */
-.sort-filter a { text-decoration: none; color: #555; font-size: 14px; margin-left: 15px; }
-.sort-filter a.active { color: #007bff; font-weight: bold; }
+.hotdeal-board th { position: relative; }
+.sort-arrows { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; }
+.sort-arrows a { line-height: 0.8; padding: 2px 0; font-size: 10px; }
+.sort-arrow { text-decoration: none; color: #aaa; }
+.sort-arrow.active { color: #007bff; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -81,28 +82,40 @@ main { flex: 1 0 auto; padding-top: 40px; }
 				<%@ include file="adCarousel.jsp"%>
 				<div class="hotdeal-board" id="hotdealBoard">
 					<div class="category-filter">
-						<a href="list?page=1&keyword=${keyword}&sort=${sort}" class="${empty selectedCategory ? 'active' : ''}">전체</a>
+						<a href="list?page=1&keyword=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}" class="${empty selectedCategory ? 'active' : ''}">전체</a>
 						<c:forEach var="cat" items="${categoryList}">
-							<a href="list?category=${cat}&page=1&keyword=${keyword}&sort=${sort}" class="${cat == selectedCategory ? 'active' : ''}">${cat}</a>
+							<a href="list?category=${cat}&page=1&keyword=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}" class="${cat == selectedCategory ? 'active' : ''}">${cat}</a>
 						</c:forEach>
 					</div>
-
-                    <div class="sort-filter" style="margin-bottom: 10px; text-align: right;">
-                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sort=latest" class="${sort == 'latest' ? 'active' : ''}">최신순</a>
-                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sort=likes"  class="${sort == 'likes' ? 'active' : ''}">추천순</a>
-                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sort=views"  class="${sort == 'views' ? 'active' : ''}">조회순</a>
-                    </div>
 
 					<table id="hotdealTable">
 						<thead>
 							<tr class="table-header-row">
-								<th style="width: 9%;">글번호</th>
+								<th style="width: 9%;">
+                                    글번호
+                                    <span class="sort-arrows">
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=regDate&sortOrder=asc" class="sort-arrow ${sortColumn == 'regDate' && sortOrder == 'asc' ? 'active' : ''}"> ▲ </a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=regDate&sortOrder=desc" class="sort-arrow ${sortColumn == 'regDate' && sortOrder == 'desc' ? 'active' : ''}"> ▼ </a>
+                                    </span>
+                                </th>
 								<th style="width: 9%;">이미지</th>
 								<th>글제목</th>
 								<th style="width: 9%;">작성자</th>
 								<th style="width: 9%;">등록일</th>
-								<th style="width: 9%;">조회수</th>
-								<th style="width: 9%;">추천</th>
+								<th style="width: 9%;">
+                                    조회수
+                                    <span class="sort-arrows">
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=asc" class="sort-arrow ${sortColumn == 'views' && sortOrder == 'asc' ? 'active' : ''}"> ▲ </a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=desc" class="sort-arrow ${sortColumn == 'views' && sortOrder == 'desc' ? 'active' : ''}"> ▼ </a>
+                                    </span>
+                                </th>
+								<th style="width: 9%;">
+                                    추천
+                                    <span class="sort-arrows">
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=asc" class="sort-arrow ${sortColumn == 'likes' && sortOrder == 'asc' ? 'active' : ''}"> ▲ </a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=desc" class="sort-arrow ${sortColumn == 'likes' && sortOrder == 'desc' ? 'active' : ''}"> ▼ </a>
+                                    </span>
+                                </th>
 								<th style="width: 9%;">비추천</th>
 							</tr>
 						</thead>
@@ -111,19 +124,19 @@ main { flex: 1 0 auto; padding-top: 40px; }
 								<c:when test="${not empty hotdealList}">
 									<c:forEach var="deal" items="${hotdealList}">
                                         <tr class="${deal.isNotice == 'Y' ? 'notice-row' : ''}" onclick="location.href='detail?id=${deal.id}'">
-											<td style="text-align: center;">${deal.id}</td>
-											<td><c:if test="${not empty deal.thumbnail}"><img src="${deal.thumbnail}" alt="썸네일"></c:if></td>
-											<td class="deal-title-cell">
-												<div>
-													<a href="detail?id=${deal.id}" class="deal-title-link ${deal.isEnded == 'Y' ? 'deal-ended' : ''}">
+                                            <td style="text-align: center;">${deal.id}</td>
+                                            <td><c:if test="${not empty deal.thumbnail}"><img src="${deal.thumbnail}" alt="썸네일"></c:if></td>
+                                            <td class="deal-title-cell">
+                                                <div>
+                                                    <a href="detail?id=${deal.id}" class="deal-title-link ${deal.isEnded == 'Y' ? 'deal-ended' : ''}">
                                                         <c:choose>
                                                             <c:when test="${deal.isNotice == 'Y'}"><span class="notice-tag">공지</span></c:when>
                                                             <c:otherwise><span class="category">[${deal.product.category}]</span></c:otherwise>
                                                         </c:choose>
-														${deal.title}
-													</a>
-													<c:if test="${deal.commentCount > 0}"><span class="comment-count">💬 ${deal.commentCount}</span></c:if>
-												</div>
+                                                        ${deal.title}
+                                                    </a>
+                                                    <c:if test="${deal.commentCount > 0}"><span class="comment-count">💬 ${deal.commentCount}</span></c:if>
+                                                </div>
                                                 <c:if test="${deal.isNotice != 'Y'}">
                                                     <div class="deal-meta-info">
                                                         가격 <span class="price"><fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</span> <span>
@@ -131,13 +144,13 @@ main { flex: 1 0 auto; padding-top: 40px; }
                                                         </span> <span> | ${deal.product.shopName}</span>
                                                     </div>
                                                 </c:if>
-											</td>
-											<td style="text-align: center;">${deal.author}</td>
-											<td style="text-align: center;"><fmt:parseDate value="${deal.regDate}" var="regDateObj" pattern="yyyy-MM-dd HH:mm:ss" /><fmt:formatDate value="${regDateObj}" pattern="yyyy.MM.dd" /></td>
-											<td style="text-align: center;">${deal.views}</td>
-											<td style="text-align: center;">${deal.likes}</td>
-											<td style="text-align: center;">${deal.dislikes}</td>
-										</tr>
+                                            </td>
+                                            <td style="text-align: center;">${deal.author}</td>
+                                            <td style="text-align: center;"><fmt:parseDate value="${deal.regDate}" var="regDateObj" pattern="yyyy-MM-dd HH:mm:ss" /><fmt:formatDate value="${regDateObj}" pattern="yyyy.MM.dd" /></td>
+                                            <td style="text-align: center;">${deal.views}</td>
+                                            <td style="text-align: center;">${deal.likes}</td>
+                                            <td style="text-align: center;">${deal.dislikes}</td>
+                                        </tr>
 									</c:forEach>
 								</c:when>
 								<c:otherwise>
@@ -146,35 +159,33 @@ main { flex: 1 0 auto; padding-top: 40px; }
 							</c:choose>
 						</tbody>
 					</table>
-
 					<div class="write-btn-container">
 						<c:if test="${not empty sessionScope.loginUser}"><a href="write" class="write-btn">새글등록</a></c:if>
 					</div>
-
 					<div class="search-container">
 						<form method="get" action="list" class="search-box">
 							<input type="text" name="keyword" value="${keyword}" placeholder="제목 검색">
 							<button type="submit">검색</button>
 							<input type="hidden" name="page" value="1" />
 							<input type="hidden" name="category" value="${selectedCategory}" />
-                            <input type="hidden" name="sort" value="${sort}" />
+                            <input type="hidden" name="sortColumn" value="${sortColumn}" />
+                            <input type="hidden" name="sortOrder" value="${sortOrder}" />
 						</form>
 					</div>
-
 					<div class="pagination-container">
 						<div class="pagination">
 							<c:set var="lastPage" value="${(totalCount + criteria.perPageNum - 1) / criteria.perPageNum}" />
 							<c:if test="${criteria.page > 1}">
-								<a href="list?page=${criteria.page-1}&keyword=${keyword}&category=${selectedCategory}&sort=${sort}">이전</a>
+								<a href="list?page=${criteria.page-1}&keyword=${keyword}&category=${selectedCategory}&sortColumn=${sortColumn}&sortOrder=${sortOrder}">이전</a>
 							</c:if>
 							<c:forEach begin="1" end="${lastPage}" var="i">
 								<c:choose>
 									<c:when test="${criteria.page == i}"><span class="current">${i}</span></c:when>
-									<c:otherwise><a href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}&sort=${sort}">${i}</a></c:otherwise>
+									<c:otherwise><a href="list?page=${i}&keyword=${keyword}&category=${selectedCategory}&sortColumn=${sortColumn}&sortOrder=${sortOrder}">${i}</a></c:otherwise>
 								</c:choose>
 							</c:forEach>
 							<c:if test="${criteria.page < lastPage}">
-								<a href="list?page=${criteria.page+1}&keyword=${keyword}&category=${selectedCategory}&sort=${sort}">다음</a>
+								<a href="list?page=${criteria.page+1}&keyword=${keyword}&category=${selectedCategory}&sortColumn=${sortColumn}&sortOrder=${sortOrder}">다음</a>
 							</c:if>
 						</div>
 					</div>

@@ -109,13 +109,14 @@ public class HotdealDAOImpl implements HotdealDAO {
 
 	// [수정] 정렬 파라미터(sort)를 받도록 수정
 	@Override
-	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category, String sort) {
+	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category, String sortColumn, String sortOrder) {
 	    Map<String, Object> param = new HashMap<>();
 	    param.put("pageStart", pageStart);
 	    param.put("pageEnd", pageEnd);
 	    param.put("keyword", keyword);
 	    param.put("category", category);
-	    param.put("sort", sort); // 맵에 정렬 기준 추가
+	    param.put("sortColumn", sortColumn);
+	    param.put("sortOrder", sortOrder);
 	    return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
 	}
 }

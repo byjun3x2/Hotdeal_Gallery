@@ -61,21 +61,21 @@ public class HotdealController {
 	// HotdealController.java의 list 메서드만 수정
 	@GetMapping("/list")
 	public String list(Model model, Criteria criteria,
-			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "category", required = false) String category,
-			@RequestParam(value = "sort", required = false, defaultValue = "latest") String sort) {
+	        @RequestParam(value = "keyword", required = false) String keyword,
+	        @RequestParam(value = "category", required = false) String category,
+	        @RequestParam(value = "sortColumn", required = false, defaultValue = "regDate") String sortColumn,
+	        @RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 
-		// 1. 게시글 목록과 총 개수 가져오기 (페이지네이션 + 정렬)
-		List<HotdealVO> hotdealList = hotdealService.getHotdealList(criteria, keyword, category, sort);
-		int totalCount = hotdealService.getTotalCount(keyword, category);
-		
-		model.addAttribute("hotdealList", hotdealList);
-		model.addAttribute("totalCount", totalCount);
-		model.addAttribute("criteria", criteria);
-		model.addAttribute("keyword", keyword);
-		model.addAttribute("selectedCategory", category);
-		model.addAttribute("sort", sort);
-
+	    List<HotdealVO> hotdealList = hotdealService.getHotdealList(criteria, keyword, category, sortColumn, sortOrder);
+	    int totalCount = hotdealService.getTotalCount(keyword, category);
+	    
+	    model.addAttribute("hotdealList", hotdealList);
+	    model.addAttribute("totalCount", totalCount);
+	    model.addAttribute("criteria", criteria);
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("selectedCategory", category);
+	    model.addAttribute("sortColumn", sortColumn); // View로 전달
+	    model.addAttribute("sortOrder", sortOrder);   // View로 전달
 		// [수정] 누락되었던 카테고리 목록과 베스트 게시글 조회 로직 복구
 		// 2. 베스트 게시글 목록 가져오기
 		List<HotdealVO> bestList = hotdealService.getBestHotdealList(10);

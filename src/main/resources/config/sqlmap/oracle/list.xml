@@ -105,29 +105,29 @@
         SELECT ROWNUM AS RNUM, A.* FROM (
             SELECT
                 h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR,
-                TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH:MI:SS') AS REGDATE,
+                TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS REGDATE,
                 h.VIEWS, h.LIKES, h.DISLIKES, h.PRODUCT_ID, h.IS_ENDED, h.IS_NOTICE,
                 p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
                 (SELECT COUNT(*) FROM HOTDEAL_COMMENT c WHERE c.HOTDEAL_ID = h.ID) AS COMMENT_COUNT
             FROM HOTDEAL h
             JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
             <where>
-                <if test="keyword != null and keyword != ''">
-                    AND h.TITLE LIKE '%' || #{keyword} || '%'
-                </if>
-                <if test="category != null and category != ''">
-                    AND p.CATEGORY = #{category}
-                </if>
+                <if test="keyword != null and keyword != ''">AND h.TITLE LIKE '%' || #{keyword} || '%'</if>
+                <if test="category != null and category != ''">AND p.CATEGORY = #{category}</if>
             </where>
             
             ORDER BY
             <choose>
-                <when test="sort == 'likes'">h.LIKES DESC, h.ID DESC</when>
-                <when test="sort == 'views'">h.VIEWS DESC, h.ID DESC</when>
-                <otherwise>h.IS_NOTICE DESC, h.ID DESC</otherwise>
+                <when test="sortColumn == 'regDate'">h.ID</when>
+                <when test="sortColumn == 'views'">h.VIEWS</when>
+                <when test="sortColumn == 'likes'">h.LIKES</when>
+                <otherwise>h.IS_NOTICE</otherwise>
             </choose>
-            
-        ) A
+            <choose>
+                <when test="sortOrder == 'asc'">ASC</when>
+                <otherwise>DESC</otherwise>
+            </choose>
+            <if test="sortColumn != null">, h.ID DESC</if> ) A
         WHERE ROWNUM &lt;= #{pageEnd}
     )
     WHERE RNUM &gt;= #{pageStart}
