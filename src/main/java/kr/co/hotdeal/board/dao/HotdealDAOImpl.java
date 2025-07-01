@@ -64,15 +64,8 @@ public class HotdealDAOImpl implements HotdealDAO {
 	}
 
 	// [REVISED] 목록 페이징 조회 - category 파라미터를 Map에 추가
-	@Override
-	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category) {
-		Map<String, Object> param = new HashMap<>();
-		param.put("pageStart", pageStart);
-		param.put("pageEnd", pageEnd);
-		param.put("keyword", keyword);
-		param.put("category", category);
-		return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
-	}
+	// [수정] 정렬 파라미터(sort)를 받도록 수정
+	
 
 	@Override
 	public void increaseViews(int id) {
@@ -112,16 +105,17 @@ public class HotdealDAOImpl implements HotdealDAO {
 
 	// kr.co.hotdeal.board.dao.HotdealDAOImpl
 	// ...
+	
+
+	// [수정] 정렬 파라미터(sort)를 받도록 수정
 	@Override
-	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category,
-			String sortColumn, String sortOrder) {
-		Map<String, Object> param = new HashMap<>();
-		param.put("pageStart", pageStart);
-		param.put("pageEnd", pageEnd);
-		param.put("keyword", keyword);
-		param.put("category", category);
-		param.put("sortColumn", sortColumn); // 이 부분이 있어야 합니다.
-		param.put("sortOrder", sortOrder); // 이 부분이 있어야 합니다.
-		return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
+	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category, String sort) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("pageStart", pageStart);
+	    param.put("pageEnd", pageEnd);
+	    param.put("keyword", keyword);
+	    param.put("category", category);
+	    param.put("sort", sort); // 맵에 정렬 기준 추가
+	    return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
 	}
 }

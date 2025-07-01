@@ -36,13 +36,12 @@ public interface HotdealDAO {
 	// [REVISED] category 파라미터 추가
 	int getHotdealTotalCountByKeyword(String keyword, String category);
 
-	List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category);
+	
 
 	// [ADD] 종료 상태 업데이트 메소드 추가
 	void updateEndStatus(Map<String, Object> params);
 
 	// ▼▼▼▼▼ 이 메소드의 파라미터가 6개인지 확인하고, 다르다면 아래 코드로 수정해주세요. ▼▼▼▼▼
-	List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category,
-			String sortColumn, String sortOrder);
+	List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category, String sort);
 	// ▲▲▲▲▲ 수정 완료 ▲▲▲▲▲
 }

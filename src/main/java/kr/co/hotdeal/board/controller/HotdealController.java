@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
+import kr.co.hotdeal.board.commons.paging.Criteria;
 import kr.co.hotdeal.board.service.HotdealService;
 import kr.co.hotdeal.board.vo.HotdealVO;
 import kr.co.hotdeal.comment.service.CommentService;
@@ -39,7 +40,7 @@ public class HotdealController {
 	private final HotdealService hotdealService;
 	private final CommentService commentService;
 	private final ProductService productService;
-
+	
 	@Autowired
 	private ReportService reportService; // ReportService 주입
 
@@ -57,37 +58,32 @@ public class HotdealController {
 		}
 	}
 
-	// [REVISED] 게시글 목록 - 카테고리 필터링 기능 추가
+	// HotdealController.java의 list 메서드만 수정
 	@GetMapping("/list")
-	public String list(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+	public String list(Model model, Criteria criteria,
 			@RequestParam(value = "keyword", required = false) String keyword,
 			@RequestParam(value = "category", required = false) String category,
-			@RequestParam(value = "sortColumn", required = false) String sortColumn, // [추가]
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "DESC") String sortOrder) { // [ADD]
-																											// category
-																											// 파라미터 추가
+			@RequestParam(value = "sort", required = false, defaultValue = "latest") String sort) {
 
-		// [REVISED] 서비스 호출 시 category 전달
-		List<HotdealVO> hotdealList = hotdealService.getHotdealList(page, keyword, category, sortColumn, sortOrder);
+		// 1. 게시글 목록과 총 개수 가져오기 (페이지네이션 + 정렬)
+		List<HotdealVO> hotdealList = hotdealService.getHotdealList(criteria, keyword, category, sort);
 		int totalCount = hotdealService.getTotalCount(keyword, category);
-		int perPageNum = 10;
-
-		List<HotdealVO> bestList = hotdealService.getBestHotdealList(10);
-
-		// [ADD] DB에서 전체 카테고리 목록을 가져와 View에 전달
-		List<String> categoryList = productService.getAllCategories();
-
+		
 		model.addAttribute("hotdealList", hotdealList);
 		model.addAttribute("totalCount", totalCount);
-		model.addAttribute("perPageNum", perPageNum);
-		model.addAttribute("page", page);
+		model.addAttribute("criteria", criteria);
 		model.addAttribute("keyword", keyword);
-		model.addAttribute("bestList", bestList);
-		model.addAttribute("categoryList", categoryList); // [ADD] 전체 카테고리 목록
-		model.addAttribute("selectedCategory", category); // [ADD] 현재 선택된 카테고리
+		model.addAttribute("selectedCategory", category);
+		model.addAttribute("sort", sort);
 
-		model.addAttribute("sortColumn", sortColumn); // [추가] View에서 현재 정렬 상태를 알 수 있도록 전달
-		model.addAttribute("sortOrder", sortOrder); // [추가]
+		// [수정] 누락되었던 카테고리 목록과 베스트 게시글 조회 로직 복구
+		// 2. 베스트 게시글 목록 가져오기
+		List<HotdealVO> bestList = hotdealService.getBestHotdealList(10);
+		model.addAttribute("bestList", bestList);
+
+		// 3. 전체 카테고리 목록 가져오기
+		List<String> categoryList = productService.getAllCategories();
+		model.addAttribute("categoryList", categoryList);
 
 		return "list";
 	}

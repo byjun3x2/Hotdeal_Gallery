@@ -105,8 +105,9 @@
         SELECT ROWNUM AS RNUM, A.* FROM (
             SELECT
                 h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR,
-                TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS REGDATE,
-                h.VIEWS, h.LIKES, h.DISLIKES, h.PRODUCT_ID, h.IS_ENDED, p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
+                TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH:MI:SS') AS REGDATE,
+                h.VIEWS, h.LIKES, h.DISLIKES, h.PRODUCT_ID, h.IS_ENDED, h.IS_NOTICE,
+                p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
                 (SELECT COUNT(*) FROM HOTDEAL_COMMENT c WHERE c.HOTDEAL_ID = h.ID) AS COMMENT_COUNT
             FROM HOTDEAL h
             JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
@@ -121,17 +122,16 @@
             
             ORDER BY
             <choose>
-                <when test="sortColumn != null and sortColumn == 'views'">h.VIEWS ${sortOrder}</when>
-                <when test="sortColumn != null and sortColumn == 'likes'">h.LIKES ${sortOrder}</when>
-                <when test="sortColumn != null and sortColumn == 'dislikes'">h.DISLIKES ${sortOrder}</when>
-                <otherwise>h.ID DESC</otherwise>
+                <when test="sort == 'likes'">h.LIKES DESC, h.ID DESC</when>
+                <when test="sort == 'views'">h.VIEWS DESC, h.ID DESC</when>
+                <otherwise>h.IS_NOTICE DESC, h.ID DESC</otherwise>
             </choose>
-            ) A
+            
+        ) A
         WHERE ROWNUM &lt;= #{pageEnd}
     )
     WHERE RNUM &gt;= #{pageStart}
 </select>
-
 	<update id="increaseViews" parameterType="int">
 		UPDATE HOTDEAL SET
 		VIEWS = VIEWS + 1 WHERE ID = #{id}

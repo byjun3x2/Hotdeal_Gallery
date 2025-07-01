@@ -45,31 +45,20 @@ public class HotdealService {
 		return hotdealDAO.getHotdealById(id);
 	}
 
-	public List<HotdealVO> getHotdealList(int page, String keyword, String category, String sortColumn,
-			String sortOrder) {
-		int perPageNum = 10;
-		int pageStart = (page - 1) * perPageNum + 1;
-		int pageEnd = page * perPageNum;
-
-		return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword, category, sortColumn, sortOrder);
-	}
-
-	// [REVISED] 목록 조회 서비스 - category 파라미터 추가
-	public List<HotdealVO> getHotdealList(int page, String keyword, String category) {
-		int perPageNum = 10;
-		int pageStart = (page - 1) * perPageNum + 1;
-		int pageEnd = page * perPageNum;
-
-		// [REVISED] DAO 호출 시 category 전달
-		return hotdealDAO.getHotdealListPagingByKeyword(pageStart, pageEnd, keyword, category);
-	}
+	
 
 	public List<HotdealVO> getHotdealListPaging(Criteria criteria) {
 		return hotdealDAO.getHotdealListPaging(criteria.getPageStart(), criteria.getPageEnd());
 	}
 
-	public List<HotdealVO> getHotdealListPagingByKeyword(Criteria criteria, String keyword) {
-		return hotdealDAO.getHotdealListPagingByKeyword(criteria.getPageStart(), criteria.getPageEnd(), keyword, null);
+	public List<HotdealVO> getHotdealList(Criteria criteria, String keyword, String category, String sort) {
+	    return hotdealDAO.getHotdealListPagingByKeyword(
+	        criteria.getPageStart(),
+	        criteria.getPageEnd(),
+	        keyword,
+	        category,
+	        sort // [수정] sort 파라미터 전달
+	    );
 	}
 
 	public int getHotdealTotalCount() {

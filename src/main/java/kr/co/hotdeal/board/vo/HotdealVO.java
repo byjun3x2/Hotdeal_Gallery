@@ -24,5 +24,7 @@ public class HotdealVO {
     
  // [ADD] 상품 정보를 담기 위한 ProductVO 필드 추가
     private ProductVO product;
+    
+    private String isNotice;
  
 }
