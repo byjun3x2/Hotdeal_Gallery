@@ -119,4 +119,9 @@ public class HotdealDAOImpl implements HotdealDAO {
 	    param.put("sortOrder", sortOrder);
 	    return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
 	}
+	
+	@Override
+    public List<HotdealVO> selectNoticeList() { // [ADD]
+        return sqlSessionTemplate.selectList(NAMESPACE + "selectNoticeList");
+    }
 }

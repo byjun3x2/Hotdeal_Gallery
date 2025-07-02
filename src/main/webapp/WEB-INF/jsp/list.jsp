@@ -63,15 +63,18 @@ main { flex: 1 0 auto; padding-top: 40px; }
 .deal-title-link.deal-ended { color: #888; text-decoration: line-through; text-decoration-color: black; text-decoration-thickness: 2px; }
 .comment-count { display: inline-block; margin-left: 8px; font-size: 0.95em; color: #007bff; font-weight: normal; }
 .table-header-row th { height: 28px !important; padding-top: 4px !important; padding-bottom: 4px !important; }
-.notice-row { background-color: #dceddc !important; }
-.notice-row:hover { background-color: #dceddc !important; }
-.notice-tag { display: inline-block; background-color: #007bff; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-right: 8px; vertical-align: middle; }
-.notice-row td { height: 38px; padding-top: 4px; padding-bottom: 4px; }
 .hotdeal-board th { position: relative; }
 .sort-arrows { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; }
 .sort-arrows a { line-height: 0.8; padding: 2px 0; font-size: 10px; }
 .sort-arrow { text-decoration: none; color: #aaa; }
 .sort-arrow.active { color: #007bff; font-weight: bold; }
+.notice-board { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 16px; padding: 0 15px; overflow: hidden; }
+.notice-carousel-wrapper { position: relative; height: 180px; overflow: hidden; }
+.notice-carousel-track { position: absolute; left: 0; top: 0; width: 100%; }
+.notice-item { display: flex; align-items: center; height: 45px; color: #333; }
+.notice-item:hover { background-color: #f8f9fa; }
+.notice-tag { background-color: #28a745; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-right: 10px; }
+.notice-title { font-size: 15px; font-weight: 500; }
 </style>
 </head>
 <body>
@@ -88,14 +91,29 @@ main { flex: 1 0 auto; padding-top: 40px; }
 						</c:forEach>
 					</div>
 
+                    <c:if test="${not empty noticeList}">
+                        <div class="notice-board">
+                            <div class="notice-carousel-wrapper">
+                                <div class="notice-carousel-track">
+                                    <c:forEach var="notice" items="${noticeList}">
+                                        <a href="detail?id=${notice.id}" class="notice-item">
+                                            <div class="notice-tag">공지</div>
+                                            <div class="notice-title">${notice.title}</div>
+                                        </a>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+
 					<table id="hotdealTable">
 						<thead>
 							<tr class="table-header-row">
 								<th style="width: 9%;">
                                     글번호
                                     <span class="sort-arrows">
-                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=regDate&sortOrder=asc" class="sort-arrow ${sortColumn == 'regDate' && sortOrder == 'asc' ? 'active' : ''}"> ▲ </a>
-                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=regDate&sortOrder=desc" class="sort-arrow ${sortColumn == 'regDate' && sortOrder == 'desc' ? 'active' : ''}"> ▼ </a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=regDate&sortOrder=asc" class="sort-arrow ${sortColumn == 'regDate' && sortOrder == 'asc' ? 'active' : ''}">▲</a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=regDate&sortOrder=desc" class="sort-arrow ${sortColumn == 'regDate' && sortOrder == 'desc' ? 'active' : ''}">▼</a>
                                     </span>
                                 </th>
 								<th style="width: 9%;">이미지</th>
@@ -105,15 +123,15 @@ main { flex: 1 0 auto; padding-top: 40px; }
 								<th style="width: 9%;">
                                     조회수
                                     <span class="sort-arrows">
-                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=asc" class="sort-arrow ${sortColumn == 'views' && sortOrder == 'asc' ? 'active' : ''}"> ▲ </a>
-                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=desc" class="sort-arrow ${sortColumn == 'views' && sortOrder == 'desc' ? 'active' : ''}"> ▼ </a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=asc" class="sort-arrow ${sortColumn == 'views' && sortOrder == 'asc' ? 'active' : ''}">▲</a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=views&sortOrder=desc" class="sort-arrow ${sortColumn == 'views' && sortOrder == 'desc' ? 'active' : ''}">▼</a>
                                     </span>
                                 </th>
 								<th style="width: 9%;">
                                     추천
                                     <span class="sort-arrows">
-                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=asc" class="sort-arrow ${sortColumn == 'likes' && sortOrder == 'asc' ? 'active' : ''}"> ▲ </a>
-                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=desc" class="sort-arrow ${sortColumn == 'likes' && sortOrder == 'desc' ? 'active' : ''}"> ▼ </a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=asc" class="sort-arrow ${sortColumn == 'likes' && sortOrder == 'asc' ? 'active' : ''}">▲</a>
+                                        <a href="list?page=1&keyword=${keyword}&category=${selectedCategory}&sortColumn=likes&sortOrder=desc" class="sort-arrow ${sortColumn == 'likes' && sortOrder == 'desc' ? 'active' : ''}">▼</a>
                                     </span>
                                 </th>
 								<th style="width: 9%;">비추천</th>
@@ -123,27 +141,22 @@ main { flex: 1 0 auto; padding-top: 40px; }
 							<c:choose>
 								<c:when test="${not empty hotdealList}">
 									<c:forEach var="deal" items="${hotdealList}">
-                                        <tr class="${deal.isNotice == 'Y' ? 'notice-row' : ''}" onclick="location.href='detail?id=${deal.id}'">
+                                        <tr onclick="location.href='detail?id=${deal.id}'">
                                             <td style="text-align: center;">${deal.id}</td>
                                             <td><c:if test="${not empty deal.thumbnail}"><img src="${deal.thumbnail}" alt="썸네일"></c:if></td>
                                             <td class="deal-title-cell">
                                                 <div>
                                                     <a href="detail?id=${deal.id}" class="deal-title-link ${deal.isEnded == 'Y' ? 'deal-ended' : ''}">
-                                                        <c:choose>
-                                                            <c:when test="${deal.isNotice == 'Y'}"><span class="notice-tag">공지</span></c:when>
-                                                            <c:otherwise><span class="category">[${deal.product.category}]</span></c:otherwise>
-                                                        </c:choose>
+                                                        <span class="category">[${deal.product.category}]</span>
                                                         ${deal.title}
                                                     </a>
                                                     <c:if test="${deal.commentCount > 0}"><span class="comment-count">💬 ${deal.commentCount}</span></c:if>
                                                 </div>
-                                                <c:if test="${deal.isNotice != 'Y'}">
-                                                    <div class="deal-meta-info">
-                                                        가격 <span class="price"><fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</span> <span>
-                                                            | 배송료 <c:choose><c:when test="${deal.product.deliveryFee == '0' || empty deal.product.deliveryFee}">무료</c:when><c:otherwise><fmt:formatNumber value="${deal.product.deliveryFee}" pattern="#,###" />원</c:otherwise></c:choose>
-                                                        </span> <span> | ${deal.product.shopName}</span>
-                                                    </div>
-                                                </c:if>
+                                                <div class="deal-meta-info">
+                                                    가격 <span class="price"><fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</span> <span>
+                                                        | 배송료 <c:choose><c:when test="${deal.product.deliveryFee == '0' || empty deal.product.deliveryFee}">무료</c:when><c:otherwise><fmt:formatNumber value="${deal.product.deliveryFee}" pattern="#,###" />원</c:otherwise></c:choose>
+                                                    </span> <span> | ${deal.product.shopName}</span>
+                                                </div>
                                             </td>
                                             <td style="text-align: center;">${deal.author}</td>
                                             <td style="text-align: center;"><fmt:parseDate value="${deal.regDate}" var="regDateObj" pattern="yyyy-MM-dd HH:mm:ss" /><fmt:formatDate value="${regDateObj}" pattern="yyyy.MM.dd" /></td>
@@ -195,164 +208,165 @@ main { flex: 1 0 auto; padding-top: 40px; }
 		</main>
 		<%@ include file="footer.jsp"%>
 	</div>
-	<script>
-	window.addEventListener("DOMContentLoaded", function() {
-		// 광고 캐러셀
-		const slides = document.querySelectorAll('.carousel-slide');
-		const dots = document.querySelectorAll('.carousel-dot');
-		let current = 0;
-		let timer = null;
-		function showSlide(idx) {
-			slides.forEach((slide, i) => {
-				slide.classList.remove('active', 'inactive');
-				if (i === idx) slide.classList.add('active');
-				else slide.classList.add('inactive');
-			});
-			dots.forEach((dot, i) => {
-				dot.classList.toggle('active', i === idx);
-			});
-			current = idx;
-		}
-		function nextSlide() {
-			let next = (current + 1) % slides.length;
-			showSlide(next);
-		}
-		function startAuto() {
-			if (timer) clearInterval(timer);
-			timer = setInterval(nextSlide, 10000);
-		}
-		dots.forEach((dot, i) => {
-			dot.addEventListener('click', () => {
-				showSlide(i);
-				startAuto();
-			});
-		});
-		showSlide(0);
-		startAuto();
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+    // ----------------- 광고 캐러셀 로직 -----------------
+    const ad_slides = document.querySelectorAll('.carousel-slide');
+    const ad_dots = document.querySelectorAll('.carousel-dot');
+    if (ad_slides.length > 0) {
+        let ad_current = 0;
+        let ad_timer = null;
 
-		// 광고 스크롤 동기화
-		const adSidebar = document.getElementById('adSidebar');
-		const table = document.getElementById('hotdealTable');
-		const anchor = document.querySelector('.layout-anchor');
+        function showAdSlide(idx) {
+            ad_slides.forEach((slide, i) => {
+                slide.classList.remove('active', 'inactive');
+                if (i === idx) slide.classList.add('active');
+                else slide.classList.add('inactive');
+            });
+            ad_dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+            ad_current = idx;
+        }
 
-		let lastScrollY = window.scrollY;
+        function nextAdSlide() {
+            let next = (ad_current + 1) % ad_slides.length;
+            showAdSlide(next);
+        }
 
-		function clamp(val, min, max) {
-			return Math.max(min, Math.min(max, val));
-		}
+        function startAdAuto() {
+            if (ad_timer) clearInterval(ad_timer);
+            ad_timer = setInterval(nextAdSlide, 10000);
+        }
 
-		function getTableBounds() {
-			if (!table) return { tableTop: 0, tableHeight: 0, adHeight: 0, anchorTop: 0, anchorHeight: 0 };
-			const tableRect = table.getBoundingClientRect();
-			const anchorRect = anchor.getBoundingClientRect();
-			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-			const tableTop = tableRect.top + scrollTop;
-			const tableHeight = table.offsetHeight;
-			const adHeight = adSidebar ? adSidebar.offsetHeight : 0;
-			const anchorTop = anchorRect.top + scrollTop;
-			const anchorHeight = anchor.offsetHeight;
-			return {
-				tableTop,
-				tableHeight,
-				adHeight,
-				anchorTop,
-				anchorHeight
-			};
-		}
+        ad_dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                showAdSlide(i);
+                startAdAuto();
+            });
+        });
+        showAdSlide(0);
+        startAdAuto();
+    }
 
-		let adTop = 0;
+    // ----------------- [수정] 공지사항 수직 캐러셀 로직 (더 안정적인 버전) -----------------
+    const noticeWrapper = document.querySelector('.notice-carousel-wrapper');
+    if (noticeWrapper) {
+        const track = noticeWrapper.querySelector('.notice-carousel-track');
+        const items = track.querySelectorAll('.notice-item');
 
-		function updateAdPositionByScroll(deltaY) {
-            if (!adSidebar) return;
-			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
-			const minTop = tableTop - anchorTop;
-			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
+        if (items.length > 1) {
+            const itemHeight = 45; // CSS에 정의된 아이템 높이(px)로 고정하여 안정성 확보
+            let currentIndex = 0;
 
-			adTop += deltaY;
-			adTop = clamp(adTop, minTop, maxTop);
+            // 무한 루프 효과를 위해 첫 번째 아이템을 복제하여 맨 뒤에 추가
+            track.appendChild(items[0].cloneNode(true));
+            const totalItems = items.length; // 원본 아이템 개수
 
-			adSidebar.style.top = adTop + "px";
-		}
+            setInterval(() => {
+                currentIndex++;
+                track.style.transform = `translateY(-${itemHeight * currentIndex}px)`;
 
-		function setAdInitialPosition() {
-            if (!adSidebar) return;
-			const { tableTop, tableHeight, adHeight, anchorTop, anchorHeight } = getTableBounds();
-			adTop = tableTop - anchorTop;
-			const minTop = tableTop - anchorTop;
-			const maxTop = tableTop + tableHeight - adHeight - anchorTop;
-			adTop = clamp(adTop, minTop, maxTop);
-			adSidebar.style.top = adTop + "px";
-		}
+                // 트랙이 마지막 아이템(복제된 첫 아이템)으로 이동했을 때
+                if (currentIndex === totalItems) {
+                    // 애니메이션이 끝나는 시점에 맞춰 조용히 처음으로 리셋
+                    setTimeout(() => {
+                        track.style.transition = 'none'; // 리셋 시에는 애니메이션 효과를 잠시 제거
+                        currentIndex = 0;
+                        track.style.transform = 'translateY(30)';
+                        
+                        // 아주 약간의 시간차를 두고 다시 트랜지션 효과를 복원
+                        setTimeout(() => {
+                            track.style.transition = 'transform 0.5s ease-in-out';
+                        }, 50);
 
-		setAdInitialPosition();
+                    }, 500); // CSS transition 시간과 일치
+                }
+            }, 3000); // 3초 간격으로 실행
+        }
+    }
 
-		let ticking = false;
-		window.addEventListener('scroll', function(e) {
-			const nowScrollY = window.scrollY;
-			const deltaY = nowScrollY - lastScrollY;
-			lastScrollY = nowScrollY;
+    // ----------------- 사이드바 스크롤 동기화 로직 -----------------
+    const adSidebar = document.getElementById('adSidebar');
+    const bestSidebar = document.querySelector('.best-posts');
+    const table = document.getElementById('hotdealTable');
+    const anchor = document.querySelector('.layout-anchor');
 
-			if (!ticking) {
-				window.requestAnimationFrame(function() {
-					updateAdPositionByScroll(deltaY);
-					updateBestPositionByScroll(deltaY);
-					ticking = false;
-				});
-				ticking = true;
-			}
-		});
-		window.addEventListener('resize', function() {
-			setAdInitialPosition();
-			setBestInitialPosition();
-		});
+    if (!adSidebar && !bestSidebar) return;
 
-		const bestSidebar = document.querySelector('.best-posts');
+    let lastScrollY = window.scrollY;
+    let adTop = 0;
+    let bestTop = 0;
+    let ticking = false;
 
-		function getBestTableBounds() {
-            if (!table || !bestSidebar) return { tableTop: 0, tableHeight: 0, bestHeight: 0, anchorTop: 0, anchorHeight: 0 };
-			const tableRect = table.getBoundingClientRect();
-			const anchorRect = anchor.getBoundingClientRect();
-			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-			const tableTop = tableRect.top + scrollTop;
-			const tableHeight = table.offsetHeight;
-			const bestHeight = bestSidebar.offsetHeight;
-			const anchorTop = anchorRect.top + scrollTop;
-			const anchorHeight = anchor.offsetHeight;
-			return {
-				tableTop,
-				tableHeight,
-				bestHeight,
-				anchorTop,
-				anchorHeight
-			};
-		}
+    function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+    }
 
-		let bestTop = 0;
+    function getBounds() {
+        if (!table || !anchor) return null;
+        const tableRect = table.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        return {
+            tableTop: tableRect.top + scrollTop,
+            tableHeight: table.offsetHeight,
+            adHeight: adSidebar ? adSidebar.offsetHeight : 0,
+            bestHeight: bestSidebar ? bestSidebar.offsetHeight : 0,
+            anchorTop: anchor.getBoundingClientRect().top + scrollTop
+        };
+    }
+    
+    function updatePositions(deltaY) {
+        const bounds = getBounds();
+        if (!bounds) return;
 
-		function updateBestPositionByScroll(deltaY) {
-			if (!bestSidebar) return;
-			const { tableTop, tableHeight, bestHeight, anchorTop, anchorHeight } = getBestTableBounds();
-			const minTop = tableTop - anchorTop;
-			const maxTop = tableTop + tableHeight - bestHeight - anchorTop;
+        if (adSidebar) {
+            const minAdTop = bounds.tableTop - bounds.anchorTop;
+            const maxAdTop = bounds.tableTop + bounds.tableHeight - bounds.adHeight - bounds.anchorTop;
+            adTop += deltaY;
+            adTop = clamp(adTop, minAdTop, maxAdTop);
+            adSidebar.style.top = adTop + "px";
+        }
+        if (bestSidebar) {
+            const minBestTop = bounds.tableTop - bounds.anchorTop;
+            const maxBestTop = bounds.tableTop + bounds.tableHeight - bounds.bestHeight - bounds.anchorTop;
+            bestTop += deltaY;
+            bestTop = clamp(bestTop, minBestTop, maxBestTop);
+            bestSidebar.style.top = bestTop + "px";
+        }
+    }
+    
+    function setInitialPositions() {
+        const bounds = getBounds();
+        if (!bounds) return;
 
-			bestTop += deltaY;
-			bestTop = clamp(bestTop, minTop, maxTop);
+        if (adSidebar) {
+            adTop = clamp(bounds.tableTop - bounds.anchorTop, 0, Infinity);
+            adSidebar.style.top = adTop + "px";
+        }
+        if (bestSidebar) {
+            bestTop = clamp(bounds.tableTop - bounds.anchorTop, 0, Infinity);
+            bestSidebar.style.top = bestTop + "px";
+        }
+    }
 
-			bestSidebar.style.top = bestTop + "px";
-		}
+    setInitialPositions();
 
-		function setBestInitialPosition() {
-		    if (!bestSidebar) return;
-		    const { tableTop, tableHeight, bestHeight, anchorTop, anchorHeight } = getBestTableBounds();
-		    bestTop = tableTop - anchorTop;
-		    const minTop = tableTop - anchorTop;
-		    const maxTop = tableTop + tableHeight - bestHeight - anchorTop;
-		    bestTop = clamp(bestTop, minTop, maxTop);
-		    bestSidebar.style.top = bestTop + "px";
-		}
+    window.addEventListener('scroll', function() {
+        const nowScrollY = window.scrollY;
+        const deltaY = nowScrollY - lastScrollY;
+        lastScrollY = nowScrollY;
 
-		setBestInitialPosition();
-	});
-	</script>
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                updatePositions(deltaY);
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    
+    window.addEventListener('resize', setInitialPositions);
+});
+</script>
 </body>
 </html>

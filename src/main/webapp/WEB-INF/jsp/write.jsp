@@ -8,17 +8,14 @@
     <title>핫딜 새글 등록</title>
     <style>
         .write-box { width: 500px; margin: 40px auto; border:1px solid #ddd; padding:30px; border-radius:8px; background:#fafbfc; }
-        .write-box h2 { margin-bottom:20px; }
+        .write-box h2 { margin-bottom:20px; text-align: center; }
         .write-box label { display:block; margin-bottom:7px; color:#333; font-weight:bold; }
         .write-box input[type="text"], .write-box input[type="number"], .write-box textarea, .write-box select { width:100%; padding:7px; margin-bottom:15px; border:1px solid #ccc; border-radius:4px; font-size:15px; box-sizing: border-box; }
         .write-box input[type="file"] { margin-bottom:15px; }
         .write-box button { width:100%; padding:10px 0; background:#007bff; color:#fff; font-size:16px; border:none; border-radius:4px; margin-top:10px; cursor:pointer; }
         .write-box button:hover { background:#0056b3; }
         .write-box .info { font-size: 13px; color: #888; margin-bottom: 10px; }
-        .write-box .section-title { margin: 22px 0 10px 0; font-size: 1.03em; color: #444; border-bottom: 1px solid #eee; padding-bottom: 4px; }
         .write-box textarea { resize: none; }
-        
-        /* [ADD] 글자 수 카운터 및 경고 메시지 스타일 */
         .char-counter {
             text-align: right;
             font-size: 12px;
@@ -31,14 +28,21 @@
             display: none; /* 평소에는 숨김 */
             margin-left: 5px;
         }
+        .error-msg {
+            color: #c00;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 <div class="write-box">
     <h2>핫딜 새글 등록</h2>
+    <c:if test="${not empty msg}"><div class="error-msg">${msg}</div></c:if>
     <form method="post" action="write" enctype="multipart/form-data" onsubmit="return validateForm()">
         <label for="productCategory">상품 카테고리</label>
-        <select name="product.category" id="productCategory" required>
+        <select name="product.category" id="productCategory">
             <option value="">-- 카테고리 선택 --</option>
             <option value="먹거리">먹거리</option>
             <option value="sw/게임">sw/게임</option>
@@ -54,16 +58,16 @@
         </select>
 
         <label for="shopName">쇼핑몰명</label>
-        <input type="text" name="product.shopName" id="shopName" maxlength="100" required>
+        <input type="text" name="product.shopName" id="shopName" maxlength="100">
 
         <label for="productName">상품명</label>
-        <input type="text" name="product.productName" id="productName" maxlength="200" required>
+        <input type="text" name="product.productName" id="productName" maxlength="200">
 
         <label for="price">가격</label>
-        <input type="number" name="product.price" id="price" min="0" step="1" placeholder="숫자만 입력 (예: 3000)" required>
+        <input type="number" name="product.price" id="price" min="0" step="1" placeholder="숫자만 입력 (예: 3000)">
 
         <label for="deliveryFee">배송비</label>
-        <input type="number" name="product.deliveryFee" id="deliveryFee" maxlength="20" required placeholder="배송비 무료는 0 을 기입">
+        <input type="text" name="product.deliveryFee" id="deliveryFee" maxlength="20">
 
         <label for="relatedUrl">관련 URL</label>
         <input type="text" name="product.relatedUrl" id="relatedUrl" maxlength="500" placeholder="예: https://www.example.com">
@@ -71,7 +75,6 @@
         <label for="title">제목</label>
         <input type="text" name="title" id="title" required maxlength="200">
         
-        <%-- [ADD] 글자 수 카운터 및 경고 메시지 표시 영역 --%>
         <div class="char-counter">
             <span id="titleWarning" class="warning-msg">허용되는 글자수가 초과되었습니다.</span>
             <span id="titleCharCount">(0/200)</span>
@@ -84,17 +87,23 @@
         <label for="thumbnailFile">썸네일 이미지 업로드</label>
         <input type="file" name="thumbnailFile" id="thumbnailFile" accept="image/*">
 
+        <c:if test="${sessionScope.loginUser.role == 'ROLE_ADMIN'}">
+            <div style="margin-bottom: 15px;">
+                <label for="isNotice" style="display: inline-block; font-weight: normal;">
+                    <input type="checkbox" name="isNotice" id="isNotice" value="Y">
+                    이 글을 공지로 등록합니다.
+                </label>
+            </div>
+        </c:if>
+
         <label for="content">내용</label>
         <textarea name="content" id="content" rows="8" required></textarea>
 
         <button type="submit">등록</button>
     </form>
 </div>
-
 <script>
-// [REVISED] URL 검증과 제목 길이 검증을 함께 처리
 function validateForm() {
-    // URL 유효성 검사
     const urlInput = document.getElementById('relatedUrl');
     const urlValue = urlInput.value.trim();
     if (urlValue !== '' && urlValue !== 'https://') {
@@ -113,7 +122,6 @@ function validateForm() {
         urlInput.value = '';
     }
 
-    // 제목 길이 검사
     const titleInput = document.getElementById('title');
     if (titleInput.value.length > 200) {
         alert('제목은 200자를 초과할 수 없습니다.');
@@ -131,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const titleWarningSpan = document.getElementById('titleWarning');
     const maxLength = 200;
 
-    // URL 입력 필드 이벤트 리스너
     urlInput.addEventListener('focus', function() {
         if (this.value.trim() === '') {
             this.value = 'https://';
@@ -143,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // [ADD] 제목 입력 필드 글자 수 카운터 이벤트 리스너
     titleInput.addEventListener('input', function() {
         const currentLength = this.value.length;
         
@@ -151,14 +157,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (currentLength > maxLength) {
             titleCharCountSpan.style.color = 'red';
-            titleWarningSpan.style.display = 'inline'; // 경고 메시지 표시
+            titleWarningSpan.style.display = 'inline';
         } else {
             titleCharCountSpan.style.color = '#888';
-            titleWarningSpan.style.display = 'none'; // 경고 메시지 숨김
+            titleWarningSpan.style.display = 'none';
         }
     });
 });
 </script>
-
 </body>
 </html>

@@ -51,7 +51,9 @@
 	<!-- [ADD] 전체 카테고리 목록 조회 쿼리 -->
 <!-- PRODUCT 테이블에서 중복을 제외한 모든 카테고리 이름을 가져옵니다. -->
 <select id="getAllCategories" resultType="string">
-    SELECT DISTINCT CATEGORY FROM PRODUCT WHERE CATEGORY IS NOT NULL ORDER BY CATEGORY
+    SELECT DISTINCT CATEGORY FROM PRODUCT 
+    WHERE CATEGORY IS NOT NULL AND CATEGORY != '공지'
+    ORDER BY CATEGORY
 </select>
 
 <update id="updateProduct" parameterType="kr.co.hotdeal.product.vo.ProductVO">

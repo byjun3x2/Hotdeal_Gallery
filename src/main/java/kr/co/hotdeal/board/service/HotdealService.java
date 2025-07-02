@@ -104,5 +104,9 @@ public class HotdealService {
 		}
 		return null;
 	}
+	
+	public List<HotdealVO> getNoticeList() { // [ADD]
+        return hotdealDAO.selectNoticeList();
+    }
 
 }

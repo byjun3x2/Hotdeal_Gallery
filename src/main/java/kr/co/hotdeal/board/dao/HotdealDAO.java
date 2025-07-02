@@ -44,4 +44,6 @@ public interface HotdealDAO {
 	// ▼▼▼▼▼ 이 메소드의 파라미터가 6개인지 확인하고, 다르다면 아래 코드로 수정해주세요. ▼▼▼▼▼
 	List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category, String sortColumn, String sortOrder);
 	// ▲▲▲▲▲ 수정 완료 ▲▲▲▲▲
+	
+	List<HotdealVO> selectNoticeList(); // [ADD]
 }
