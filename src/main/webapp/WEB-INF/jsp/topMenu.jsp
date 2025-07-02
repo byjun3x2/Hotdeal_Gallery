@@ -6,7 +6,9 @@
 .top-menu-bar {
     width: 100%;
     background: #fff;
-    border-bottom: 1px solid #eee;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1) /* 그림자 효과 추가 */
+    position: relative; /* 그림자가 다른 요소에 가려지지 않게 함 */
+    z-index: 100;       /* 다른 요소들보다 위에 있도록 설정 */
     padding: 8px 0;
     font-size: 13px;
     color: #666;

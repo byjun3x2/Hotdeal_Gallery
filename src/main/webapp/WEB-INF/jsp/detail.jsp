@@ -36,7 +36,16 @@
         .comment-section h3 { margin-bottom: 18px; text-align: left; }
         #commentForm textarea, .replyForm textarea { width: 100%; box-sizing:border-box; border: 1px solid #ced4da; border-radius: 4px; padding: 10px; margin-bottom: 10px; resize: none; }
         #commentForm button { float: right; }
-        .comment-item { border-top: 1px solid #e9ecef; padding: 15px 0; text-align: left; position: relative; margin-bottom: 16px; min-height: 48px; padding-bottom: 8px; }
+        .comment-item { 
+        border-top: 1px solid #e9ecef; 
+        padding: 15px 0; 
+        text-align: left; 
+          position: relative;
+  margin-bottom: 16px;
+  min-height: 48px;
+  padding-bottom: 8px; /* 버튼과 본문이 겹치지 않게 하단 여백 */
+        }
+        .reply-toggle-btn { font-size: 13px; padding: 2px 8px; cursor: pointer; margin-top: 5px; }
         .replyForm { display: none; margin-top: 8px; }
         .best-posts { width: 220px; min-width: 220px; max-width: 220px; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; background-color: #fff; height: fit-content; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 40px; flex-shrink: 0; }
         .best-posts h3 { margin-top: 0; font-size: 18px; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 12px; }
@@ -58,19 +67,64 @@
         .bottom-action-bar { display: flex; justify-content: center; align-items: center; margin-top: 20px; position: relative; }
         .bottom-action-bar .back-link { display: inline-block; color: #007bff; text-decoration: none; font-size: 15px; z-index: 1; }
         .bottom-action-bar .back-link:hover { text-decoration: underline; }
+        /* ▼▼▼▼▼ 수정: 버튼 그룹 오른쪽 이동 ▼▼▼▼▼ */
         .edit-delete-btns-bar { position: absolute; right: -30px; top: 1.5px; display: flex; gap: 5px; }
-        .edit-delete-btns-bar button, .edit-delete-btns-bar .btn-info { font-size: 15px; padding: 7px 18px 7px 14px; height: 38px; min-width: 70px; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; cursor: pointer; transition: background 0.2s; }
-        .edit-delete-btns-bar button:hover, .edit-delete-btns-bar .btn-info:hover { background-color: #f4f6fa; }
-        .ended-deal-msg { color: red; font-weight: bold; text-align: center; padding: 10px; border: 1px solid red; background-color: #ffe3e6; border-radius: 5px; margin-bottom: 15px; }
-        .report-popup { display: none; position: absolute; background-color: #fff; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 10px 0; z-index: 1000; min-width: 150px; text-align: left; }
-        .report-popup ul { list-style: none; padding: 0; margin: 0; }
-        .report-popup ul li { padding: 8px 15px; cursor: pointer; color: #333; font-size: 14px; }
-        .report-popup ul li:hover { background-color: #f0f0f0; }
-        .comment-actions { margin-top: 5px; }
-        .action-btn { font-size: 13px; padding: 2px 8px; cursor: pointer; background: none; border: 1px solid #ccc; border-radius: 4px; }
-        .action-btn:hover { background-color: #f0f0f0; }
-        .comment-edit-form { display: none; }
-        .comment-edit-form button { font-size: 13px; padding: 2px 8px; cursor: pointer; }
+        /* ▼▼▼▼▼ 수정: 버튼 크기 통일 ▼▼▼▼▼ */
+        .edit-delete-btns-bar button,
+        .edit-delete-btns-bar .btn-info {
+            font-size: 15px;
+            padding: 7px 18px 7px 14px;
+            height: 38px;
+            min-width: 70px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .edit-delete-btns-bar button:hover,
+        .edit-delete-btns-bar .btn-info:hover {
+            background-color: #f4f6fa;
+        }
+        /* [ADD] 종료된 핫딜 메시지 스타일 */
+        .ended-deal-msg {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid red;
+            background-color: #ffe3e6;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        /* 신고 팝업 스타일 */
+        .report-popup {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            z-index: 1000;
+            min-width: 150px;
+            text-align: left;
+        }
+        .report-popup ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .report-popup ul li {
+            padding: 8px 15px;
+            cursor: pointer;
+            color: #333;
+            font-size: 14px;
+        }
+        .report-popup ul li:hover {
+            background-color: #f0f0f0;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
@@ -81,16 +135,9 @@
             <div class="detail-container">
                 <div class="deal-header">
                     <h1>
-                        <c:choose>
-                            <c:when test="${deal.isNotice == 'Y'}">
-                                <span style="color: #28a745;">[공지]</span>
-                            </c:when>
-                            <c:otherwise>
-                                <c:if test="${not empty deal.product.category}">
-                                    <span style="color: #007bff;">[${deal.product.category}]</span>
-                                </c:if>
-                            </c:otherwise>
-                        </c:choose>
+                        <c:if test="${not empty deal.product.category}">
+                            <span style="color: #007bff;">[${deal.product.category}]</span>
+                        </c:if>
                         ${deal.title}
                     </h1>
                     <div class="meta-info">
@@ -99,36 +146,32 @@
                         <span>조회: ${deal.views}</span>
                     </div>
                 </div>
-
-                <c:if test="${deal.isNotice != 'Y'}">
-                    <div class="product-info-box">
-                        <div id="ended-deal-msg-box" class="ended-deal-msg" style="${deal.isEnded == 'Y' ? '' : 'display:none;'}">종료가 된 핫딜입니다</div>
-                        <h3>상품 정보</h3>
-                        <p><strong>상품명:</strong> ${deal.product.productName}</p>
-                        <p><strong>쇼핑몰:</strong> ${deal.product.shopName}</p>
-                        <p><strong>가격:</strong> <fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</p>
-                        <p><strong>배송료:</strong> 
-                            <c:choose>
-                                <c:when test="${deal.product.deliveryFee == '0'}">무료</c:when>
-                                <c:otherwise>
-                                    <fmt:formatNumber value="${deal.product.deliveryFee}" pattern="#,###" />원
-                                </c:otherwise>
-                            </c:choose>
-                        </p>
-                        <p>
-                            <strong>상품페이지 링크 :</strong>
-                            <c:choose>
-                                <c:when test="${not empty deal.product.relatedUrl}">
-                                    <a href="${deal.product.relatedUrl}" target="_blank">${deal.product.relatedUrl}</a>
-                                </c:when>
-                                <c:otherwise>
-                                    <span>없음</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </p>
-                    </div>
-                </c:if>
-                
+                <div class="product-info-box">
+                    <div id="ended-deal-msg-box" class="ended-deal-msg" style="${deal.isEnded == 'Y' ? '' : 'display:none;'}">종료가 된 핫딜입니다</div>
+                    <h3>상품 정보</h3>
+                    <p><strong>상품명:</strong> ${deal.product.productName}</p>
+                    <p><strong>쇼핑몰:</strong> ${deal.product.shopName}</p>
+                    <p><strong>가격:</strong> <fmt:formatNumber value="${deal.product.price}" pattern="#,###" />원</p>
+                    <p><strong>배송료:</strong> 
+                        <c:choose>
+                            <c:when test="${deal.product.deliveryFee == '0'}">무료</c:when>
+                            <c:otherwise>
+                                <fmt:formatNumber value="${deal.product.deliveryFee}" pattern="#,###" />원
+                            </c:otherwise>
+                        </c:choose>
+                    </p>
+                    <p>
+                        <strong>상품페이지 링크 :</strong>
+                        <c:choose>
+                            <c:when test="${not empty deal.product.relatedUrl}">
+                                <a href="${deal.product.relatedUrl}" target="_blank">${deal.product.relatedUrl}</a>
+                            </c:when>
+                            <c:otherwise>
+                                <span>없음</span>
+                            </c:otherwise>
+                        </c:choose>
+                    </p>
+                </div>
                 <c:if test="${not empty deal.thumbnail}">
                     <div style="text-align:center; margin-bottom: 25px;">
                         <img src="${deal.thumbnail}" alt="썸네일" style="max-width:100%; border-radius:6px;">
@@ -164,24 +207,22 @@
                                     <button type="submit">삭제</button>
                                 </form>
                             </c:if>
-                            
-                            <c:if test="${deal.isNotice != 'Y'}">
-                                <button type="button" id="reportEndBtn" onclick="reportEnd()">
-                                    <c:choose>
-                                        <c:when test="${deal.isEnded == 'Y'}">종료신고 취소</c:when>
-                                        <c:otherwise>종료신고</c:otherwise>
-                                    </c:choose>
-                                </button>
-                                <button class="btn-info" id="reportButton">신고</button>
-                                <div class="report-popup" id="reportPopup">
-                                    <ul>
-                                        <li onclick="selectReportType(${deal.id}, 'VIRAL_POST')">바이럴 게시글</li>
-                                        <li onclick="selectReportType(${deal.id}, 'ILLEGAL_HARMFUL')">불법 유해물</li>
-                                        <li onclick="selectReportType(${deal.id}, 'ADULT_CONTENT')">성인물</li>
-                                        <li onclick="selectReportType(${deal.id}, 'ETC')">기타</li>
-                                    </ul>
-                                </div>
-                            </c:if>
+                            <button type="button" id="reportEndBtn" onclick="reportEnd()">
+                                <c:choose>
+                                    <c:when test="${deal.isEnded == 'Y'}">종료신고 취소</c:when>
+                                    <c:otherwise>종료신고</c:otherwise>
+                                </c:choose>
+                            </button>
+                            <%-- [ADD] 신고 버튼 및 팝업 추가 --%>
+                            <button class="btn-info" id="reportButton">신고</button>
+                            <div class="report-popup" id="reportPopup">
+                                <ul>
+                                    <li onclick="selectReportType(${deal.id}, 'VIRAL_POST')">바이럴 게시글</li>
+                                    <li onclick="selectReportType(${deal.id}, 'ILLEGAL_HARMFUL')">불법 유해물</li>
+                                    <li onclick="selectReportType(${deal.id}, 'ADULT_CONTENT')">성인물</li>
+                                    <li onclick="selectReportType(${deal.id}, 'ETC')">기타</li>
+                                </ul>
+                            </div>
                         </c:if>
                     </div>
                 </div>
@@ -232,18 +273,19 @@ function vote(type) {
         } else {
             message = res.result;
         }
+
         msgSpan.text(message).css('visibility', 'visible');
-        if (voteMsgTimer) clearTimeout(voteMsgTimer);
+        
+        if (voteMsgTimer) {
+            clearTimeout(voteMsgTimer);
+        }
+
         voteMsgTimer = setTimeout(function() {
             msgSpan.css('visibility', 'hidden');
         }, 1500);
+
     }, "json");
 }
-
-function reloadComments() {
-    $("#comment-list").load(location.href + " #comment-list > *");
-}
-
 $(function() {
     $("#commentForm").submit(function(e) {
         e.preventDefault();
@@ -251,20 +293,20 @@ $(function() {
             url: "addComment",
             type: "POST",
             data: $(this).serialize(),
-            success: function() {
-                reloadComments();
+            success: function(res) {
+                $("#comment-list").load(location.href + " #comment-list>*");
                 $("#commentForm textarea").val("");
             },
-            error: function() { alert("댓글 등록에 실패했습니다."); }
+            error: function() {
+                alert("댓글 등록에 실패했습니다.");
+            }
         });
     });
-
     $(document).on("click", ".reply-toggle-btn", function() {
         var targetId = $(this).data("target");
-        $(".replyForm, .comment-edit-form").not("#" + targetId).hide();
+        $(".replyForm").not("#" + targetId).hide();
         $("#" + targetId).toggle();
     });
-
     $(document).on("submit", ".replyForm", function(e) {
         var $form = $(this);
         e.preventDefault();
@@ -272,55 +314,17 @@ $(function() {
             url: "addComment",
             type: "POST",
             data: $form.serialize(),
-            success: function() { reloadComments(); },
-            error: function() { alert("답글 등록에 실패했습니다."); }
-        });
-    });
-
-    $(document).on("click", ".edit-btn", function() {
-        var $commentItem = $(this).closest('.comment-item');
-        $commentItem.find('.comment-content-area, .comment-actions').hide();
-        $commentItem.find('.comment-edit-form').show();
-    });
-
-    $(document).on("click", ".edit-cancel-btn", function() {
-        var $commentItem = $(this).closest('.comment-item');
-        $commentItem.find('.comment-edit-form').hide();
-        $commentItem.find('.comment-content-area, .comment-actions').show();
-    });
-    
-    $(document).on("click", ".edit-submit-btn", function() {
-        var commentId = $(this).data("comment-id");
-        var newContent = $(this).closest('.comment-edit-form').find('.edit-textarea').val();
-        $.ajax({
-            url: "updateComment",
-            type: "POST",
-            data: { commentId: commentId, content: newContent },
             success: function(res) {
-                if(res.status === 'success') reloadComments();
-                else alert(res.message);
+                $("#comment-list").load(location.href + " #comment-list>*");
+                $form.find("textarea").val("");
+                $form.hide();
             },
-            error: function() { alert("댓글 수정 요청에 실패했습니다."); }
+            error: function() {
+                alert("답글 등록에 실패했습니다.");
+            }
         });
-    });
-
-    $(document).on("click", ".delete-btn", function() {
-        var commentId = $(this).data("comment-id");
-        if (confirm("정말 이 댓글을 삭제하시겠습니까?")) {
-            $.ajax({
-                url: "deleteComment",
-                type: "POST",
-                data: { commentId: commentId },
-                success: function(res) {
-                    if(res.status === 'success') reloadComments();
-                    else alert(res.message);
-                },
-                error: function() { alert("댓글 삭제 요청에 실패했습니다."); }
-            });
-        }
     });
 });
-
 window.addEventListener("DOMContentLoaded", function() {
     const slides = document.querySelectorAll('.carousel-slide');
     const dots = document.querySelectorAll('.carousel-dot');
@@ -345,27 +349,42 @@ window.addEventListener("DOMContentLoaded", function() {
         if (timer) clearInterval(timer);
         timer = setInterval(nextSlide, 10000);
     }
-    if(slides.length > 0) {
-        dots.forEach((dot, i) => {
-            dot.addEventListener('click', () => {
-                showSlide(i);
-                startAuto();
-            });
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            showSlide(i);
+            startAuto();
         });
-        showSlide(0);
-        startAuto();
-    }
+    });
+    showSlide(0);
+    startAuto();
 });
 
+// [ADD] 종료 신고 처리 스크립트
 function reportEnd() {
+    // 버튼의 현재 텍스트로 상태 판별
     var btn = document.getElementById('reportEndBtn');
-    var msg = (btn.innerText.trim() === '종료신고') ? '정말 종료신고 하시겠습니까?' : '정말 종료신고를 취소하시겠습니까?';
-    if (!confirm(msg)) return;
-
+    var msg;
+    if (btn.innerText.trim() === '종료신고') {
+        msg = '정말 종료신고 하시겠습니까?';
+    } else {
+        msg = '정말 종료신고를 취소하시겠습니까?';
+    }
+    if (!confirm(msg)) {
+        return;
+    }
     $.post("reportEnd", { id: "${deal.id}" }, function(res) {
         if (res.status === "success") {
-            $("#ended-deal-msg-box").toggle(res.isEnded === 'Y');
-            $("#reportEndBtn").text(res.isEnded === 'Y' ? "종료신고 취소" : "종료신고");
+            const isEnded = res.isEnded;
+            const msgBox = $("#ended-deal-msg-box");
+            const reportBtn = $("#reportEndBtn");
+
+            if (isEnded === 'Y') {
+                msgBox.show();
+                reportBtn.text("종료신고 취소");
+            } else {
+                msgBox.hide();
+                reportBtn.text("종료신고");
+            }
         } else {
             alert(res.message);
         }
@@ -374,35 +393,41 @@ function reportEnd() {
     });
 }
 
+
+
+// [ADD] 신고 버튼 및 팝업 관련 JavaScript 추가
 document.addEventListener('DOMContentLoaded', function() {
     const reportButton = document.getElementById('reportButton');
     const reportPopup = document.getElementById('reportPopup');
 
     if (reportButton && reportPopup) {
-        reportButton.addEventListener('click', function(event) {
-            event.stopPropagation();
+        reportButton.addEventListener('click', function() {
             if (reportPopup.style.display === 'block') {
                 reportPopup.style.display = 'none';
             } else {
                 const buttonRect = reportButton.getBoundingClientRect();
-                reportPopup.style.left = buttonRect.left + 'px';
-                reportPopup.style.top = buttonRect.bottom + 5 + 'px';
+                const containerRect = reportButton.closest('.edit-delete-btns-bar').getBoundingClientRect(); 
+                
+                reportPopup.style.left = (buttonRect.left - containerRect.left + buttonRect.width / 2) + 'px';
+                reportPopup.style.top = (buttonRect.bottom - containerRect.top + 5) + 'px';
+                reportPopup.style.transform = 'translateX(-50%)';
                 reportPopup.style.display = 'block';
             }
         });
         document.addEventListener('click', function(event) {
-            if (!reportPopup.contains(event.target)) {
+            if (!reportButton.contains(event.target) && !reportPopup.contains(event.target)) {
                 reportPopup.style.display = 'none';
             }
         });
     }
 });
 
+// [ADD] 신고 항목 선택 시 호출될 함수
 function selectReportType(hotdealId, reportType) {
     const reportPopup = document.getElementById('reportPopup');
-    if(reportPopup) reportPopup.style.display = 'none';
+    reportPopup.style.display = 'none';
 
-    if (confirm("이 게시글을 '" + reportType + "' 유형으로 신고하시겠습니까?")) {
+    if (confirm(`이 게시글을 신고하시겠습니까?`)) {
         $.post("reportPost", {hotdealId: hotdealId, reportType: reportType}, function(res) {
             if (res === "success") {
                 alert('게시글 신고가 접수되었습니다. 감사합니다.');
@@ -410,7 +435,7 @@ function selectReportType(hotdealId, reportType) {
                 if (reportButton) {
                     reportButton.innerText = '신고됨';
                     reportButton.disabled = true;
-                    reportButton.style.backgroundColor = '#e9ecef';
+                    reportButton.style.backgroundColor = '#ccc';
                     reportButton.style.cursor = 'not-allowed';
                 }
             } else if (res === "not_logged_in") {

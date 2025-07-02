@@ -7,7 +7,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>커스텀 핫딜</title>
+<title>핫딜 갤러리</title>
+<link rel="shortcut icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon"/>
+<link rel="icon" href="<c:url value='/resources/favicon.ico'/>" type="image/x-icon"/>
 <style>
 html, body { height: 100%; margin: 0; padding: 0; background-color: #f4f6f9; }
 .wrapper { min-height: 100vh; display: flex; flex-direction: column; }
@@ -68,7 +70,7 @@ main { flex: 1 0 auto; padding-top: 40px; }
 .sort-arrows a { line-height: 0.8; padding: 2px 0; font-size: 10px; }
 .sort-arrow { text-decoration: none; color: #aaa; }
 .sort-arrow.active { color: #007bff; font-weight: bold; }
-.notice-board { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 16px; padding: 0 15px; overflow: hidden; }
+.notice-board { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 16px; padding: 0 15px; overflow: hidden; height: 43px}
 .notice-carousel-wrapper { position: relative; height: 180px; overflow: hidden; }
 .notice-carousel-track { position: absolute; left: 0; top: 0; width: 100%; }
 .notice-item { display: flex; align-items: center; height: 45px; color: #333; }

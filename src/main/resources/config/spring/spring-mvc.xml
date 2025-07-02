@@ -26,6 +26,7 @@
     </mvc:annotation-driven>
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/favicon.ico" location="/resources/favicon.ico" />
 	
     <mvc:default-servlet-handler />
 
