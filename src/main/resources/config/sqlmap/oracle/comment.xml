@@ -6,32 +6,34 @@
 <mapper namespace="kr.co.hotdeal.comment.dao.CommentDAO">
 
 
-	<insert id="insertComment" parameterType="kr.co.hotdeal.comment.vo.CommentVO">
-    	INSERT INTO HOTDEAL_COMMENT (
-        	COMMENT_ID, HOTDEAL_ID, PARENT_ID, USERNAME, CONTENT, REG_DATE
-    	) VALUES (
-        	HOTDEAL_COMMENT_SEQ.NEXTVAL,
-        	#{hotdealId},
-        	#{parentId, jdbcType=NUMERIC},
-        	#{username},
-        	#{content},
-        	SYSDATE
-    	)
+	<insert id="insertComment"
+		parameterType="kr.co.hotdeal.comment.vo.CommentVO">
+		INSERT INTO HOTDEAL_COMMENT (
+		COMMENT_ID, HOTDEAL_ID, PARENT_ID, USERNAME, CONTENT, REG_DATE
+		) VALUES (
+		HOTDEAL_COMMENT_SEQ.NEXTVAL,
+		#{hotdealId},
+		#{parentId, jdbcType=NUMERIC},
+		#{username},
+		#{content},
+		SYSDATE
+		)
 	</insert>
-	
-	<select id="getCommentList" parameterType="int" resultType="kr.co.hotdeal.comment.vo.CommentVO">
-    	SELECT COMMENT_ID AS commentId,
-           HOTDEAL_ID AS hotdealId,
-           PARENT_ID AS parentId,
-           USERNAME,
-           CONTENT,
-           TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI') AS regDate
-    	FROM HOTDEAL_COMMENT
-    	WHERE HOTDEAL_ID = #{hotdealId}
-    	ORDER BY COMMENT_ID ASC
+
+	<select id="getCommentList" parameterType="int"
+		resultType="kr.co.hotdeal.comment.vo.CommentVO">
+		SELECT COMMENT_ID AS commentId,
+		HOTDEAL_ID AS hotdealId,
+		PARENT_ID AS parentId,
+		USERNAME,
+		CONTENT,
+		TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI') AS regDate
+		FROM HOTDEAL_COMMENT
+		WHERE HOTDEAL_ID = #{hotdealId}
+		ORDER BY COMMENT_ID ASC
 	</select>
-	
+
 	<delete id="deleteAllComments">
-    	DELETE FROM HOTDEAL_COMMENT
+		DELETE FROM HOTDEAL_COMMENT
 	</delete>
 </mapper>

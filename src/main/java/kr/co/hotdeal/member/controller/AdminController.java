@@ -14,30 +14,24 @@ import kr.co.hotdeal.report.vo.ReportVO;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/admin") // 이 컨트롤러의 모든 경로는 /admin으로 시작
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final MemberService memberService;
-    private final ReportService reportService; // ReportService 의존성 주입 추가
+	private final MemberService memberService;
+	private final ReportService reportService;
 
-    /**
-     * 관리자 메인 페이지 (회원 관리 페이지)
-     */
-    @GetMapping("/members")
-    public String memberList(Model model) {
-        List<MemberVO> memberList = memberService.getAllMembers();
-        model.addAttribute("memberList", memberList);
-        return "admin/memberList"; // /WEB-INF/jsp/admin/memberList.jsp 파일을 찾아 렌더링
-    }
-    
-    /**
-     * [ADD] 관리자 신고 관리 페이지
-     */
-    @GetMapping("/reports")
-    public String reportList(Model model) {
-        List<ReportVO> reportList = reportService.getAllReports();
-        model.addAttribute("reportList", reportList);
-        return "admin/reportList"; // /WEB-INF/jsp/admin/reportList.jsp 렌더링
-    }
+	@GetMapping("/members")
+	public String memberList(Model model) {
+		List<MemberVO> memberList = memberService.getAllMembers();
+		model.addAttribute("memberList", memberList);
+		return "admin/memberList";
+	}
+
+	@GetMapping("/reports")
+	public String reportList(Model model) {
+		List<ReportVO> reportList = reportService.getAllReports();
+		model.addAttribute("reportList", reportList);
+		return "admin/reportList";
+	}
 }

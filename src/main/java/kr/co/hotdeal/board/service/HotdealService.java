@@ -45,22 +45,16 @@ public class HotdealService {
 		return hotdealDAO.getHotdealById(id);
 	}
 
-	
-
 	public List<HotdealVO> getHotdealListPaging(Criteria criteria) {
 		return hotdealDAO.getHotdealListPaging(criteria.getPageStart(), criteria.getPageEnd());
 	}
 
-	public List<HotdealVO> getHotdealList(Criteria criteria, String keyword, String category, String sortColumn, String sortOrder) {
-	    return hotdealDAO.getHotdealListPagingByKeyword(
-	        criteria.getPageStart(),
-	        criteria.getPageEnd(),
-	        keyword,
-	        category,
-	        sortColumn, // [수정] sortColumn 전달
-	        sortOrder   // [수정] sortOrder 전달
-	    );
+	public List<HotdealVO> getHotdealList(Criteria criteria, String keyword, String category, String sortColumn,
+			String sortOrder) {
+		return hotdealDAO.getHotdealListPagingByKeyword(criteria.getPageStart(), criteria.getPageEnd(), keyword,
+				category, sortColumn, sortOrder);
 	}
+
 	public int getHotdealTotalCount() {
 		return hotdealDAO.getHotdealTotalCount();
 	}
@@ -69,9 +63,8 @@ public class HotdealService {
 		return hotdealDAO.getHotdealTotalCountByKeyword(keyword, null);
 	}
 
-	// [REVISED] 전체 개수 조회 서비스 - category 파라미터 추가
 	public int getTotalCount(String keyword, String category) {
-		// [REVISED] DAO 호출 시 category 전달
+
 		return hotdealDAO.getHotdealTotalCountByKeyword(keyword, category);
 	}
 
@@ -87,7 +80,6 @@ public class HotdealService {
 		return hotdealDAO.getBestHotdealList(limit);
 	}
 
-	// [ADD] 종료 상태 토글 서비스 메소드
 	public HotdealVO toggleEndStatus(int id) {
 		HotdealVO deal = hotdealDAO.getHotdealById(id);
 		if (deal != null) {
@@ -99,14 +91,13 @@ public class HotdealService {
 			params.put("isEnded", newStatus);
 			hotdealDAO.updateEndStatus(params);
 
-			// 변경된 정보를 다시 조회하여 반환
 			return hotdealDAO.getHotdealById(id);
 		}
 		return null;
 	}
-	
-	public List<HotdealVO> getNoticeList() { // [ADD]
-        return hotdealDAO.selectNoticeList();
-    }
+
+	public List<HotdealVO> getNoticeList() {
+		return hotdealDAO.selectNoticeList();
+	}
 
 }

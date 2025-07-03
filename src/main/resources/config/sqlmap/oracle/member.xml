@@ -2,58 +2,65 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
 <mapper namespace="kr.co.hotdeal.member.dao.MemberDAO">
 
-    <resultMap id="memberResultMap" type="kr.co.hotdeal.member.vo.MemberVO">
-        <id property="memberId" column="MEMBER_ID"/>
-        <result property="username" column="USERNAME"/>
-        <result property="password" column="PASSWORD"/>
-        <result property="name" column="NAME"/>
-        <result property="email" column="EMAIL"/>
-        <result property="regDate" column="REG_DATE"/>
-        <result property="role" column="ROLE"/>
-    </resultMap>
+	<resultMap id="memberResultMap"
+		type="kr.co.hotdeal.member.vo.MemberVO">
+		<id property="memberId" column="MEMBER_ID" />
+		<result property="username" column="USERNAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="name" column="NAME" />
+		<result property="email" column="EMAIL" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="role" column="ROLE" />
+	</resultMap>
 
-    <insert id="insertMember" parameterType="kr.co.hotdeal.member.vo.MemberVO">
-        INSERT INTO MEMBER (MEMBER_ID, USERNAME, PASSWORD, NAME, EMAIL, REG_DATE)
-        VALUES (MEMBER_SEQ.NEXTVAL, #{username}, #{password}, #{name}, #{email}, SYSDATE)
-    </insert>
+	<insert id="insertMember"
+		parameterType="kr.co.hotdeal.member.vo.MemberVO">
+		INSERT INTO MEMBER (MEMBER_ID, USERNAME, PASSWORD, NAME, EMAIL, REG_DATE)
+		VALUES (MEMBER_SEQ.NEXTVAL, #{username}, #{password}, #{name},
+		#{email}, SYSDATE)
+	</insert>
 
-    <select id="selectMemberByUsername" parameterType="string" resultMap="memberResultMap">
-        SELECT * FROM MEMBER WHERE USERNAME = #{username}
-    </select>
-
-    <select id="selectMemberById" parameterType="int" resultMap="memberResultMap">
-        SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
-    </select>
-
-    <select id="login" parameterType="map" resultMap="memberResultMap">
-    	SELECT * FROM MEMBER WHERE USERNAME = #{username} AND PASSWORD = #{password}
+	<select id="selectMemberByUsername" parameterType="string"
+		resultMap="memberResultMap">
+		SELECT * FROM MEMBER WHERE USERNAME = #{username}
 	</select>
-	
-    <delete id="deleteMemberByUsername" parameterType="string">
-        DELETE FROM MEMBER WHERE USERNAME = #{username}
-    </delete>
-    
-    <select id="selectMemberByEmail" parameterType="string" resultMap="memberResultMap">
-        SELECT * FROM MEMBER WHERE EMAIL = #{email}
-    </select>
-    
-    <select id="selectAllMembers" resultMap="memberResultMap">
-        SELECT * FROM MEMBER ORDER BY MEMBER_ID DESC
-    </select>
-    
-    <delete id="deleteVotesByUsername" parameterType="string">
-        DELETE FROM HOTDEAL_VOTE WHERE USERNAME = #{username}
-    </delete>
 
-    <!-- 필요하다면 댓글, 신고 등도 아래와 같이 추가 -->
-    <delete id="deleteCommentsByUsername" parameterType="string">
-        DELETE FROM HOTDEAL_COMMENT WHERE USERNAME = #{username}
-    </delete>
-    <delete id="deleteReportsByUsername" parameterType="string">
-        DELETE FROM REPORT WHERE REPORTER_USER_ID = #{username}
-    </delete>
+	<select id="selectMemberById" parameterType="int"
+		resultMap="memberResultMap">
+		SELECT * FROM MEMBER WHERE MEMBER_ID = #{memberId}
+	</select>
+
+	<select id="login" parameterType="map"
+		resultMap="memberResultMap">
+		SELECT * FROM MEMBER WHERE USERNAME = #{username} AND PASSWORD = #{password}
+	</select>
+
+	<delete id="deleteMemberByUsername" parameterType="string">
+		DELETE FROM MEMBER WHERE USERNAME = #{username}
+	</delete>
+
+	<select id="selectMemberByEmail" parameterType="string"
+		resultMap="memberResultMap">
+		SELECT * FROM MEMBER WHERE EMAIL = #{email}
+	</select>
+
+	<select id="selectAllMembers" resultMap="memberResultMap">
+		SELECT * FROM MEMBER ORDER BY MEMBER_ID DESC
+	</select>
+
+	<delete id="deleteVotesByUsername" parameterType="string">
+		DELETE FROM HOTDEAL_VOTE WHERE USERNAME = #{username}
+	</delete>
+
+	<!-- 필요하다면 댓글, 신고 등도 아래와 같이 추가 -->
+	<delete id="deleteCommentsByUsername" parameterType="string">
+		DELETE FROM HOTDEAL_COMMENT WHERE USERNAME = #{username}
+	</delete>
+	<delete id="deleteReportsByUsername" parameterType="string">
+		DELETE FROM REPORT WHERE REPORTER_USER_ID = #{username}
+	</delete>
 
 </mapper>

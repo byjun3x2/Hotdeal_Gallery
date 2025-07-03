@@ -13,14 +13,13 @@ public class MemberVO {
 	private String email;
 	private String regDate;
 
-	// [ADD] 역할(Role) 필드 추가
 	private String role;
-	
-	// Getter/Setter 추가
-    public String getRole() {
-        return role;
-    }
-    public void setRole(String role) {
-        this.role = role;
-    }
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 }

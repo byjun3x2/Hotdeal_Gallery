@@ -54,7 +54,6 @@ public class HotdealDAOImpl implements HotdealDAO {
 		return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPaging", param);
 	}
 
-	// [REVISED] 전체 개수 조회 - category 파라미터를 Map에 추가
 	@Override
 	public int getHotdealTotalCountByKeyword(String keyword, String category) {
 		Map<String, Object> param = new HashMap<>();
@@ -62,10 +61,6 @@ public class HotdealDAOImpl implements HotdealDAO {
 		param.put("category", category);
 		return sqlSessionTemplate.selectOne(NAMESPACE + "getHotdealTotalCountByKeyword", param);
 	}
-
-	// [REVISED] 목록 페이징 조회 - category 파라미터를 Map에 추가
-	// [수정] 정렬 파라미터(sort)를 받도록 수정
-	
 
 	@Override
 	public void increaseViews(int id) {
@@ -97,31 +92,26 @@ public class HotdealDAOImpl implements HotdealDAO {
 		return sqlSessionTemplate.selectList(NAMESPACE + "getBestHotdealList", limit);
 	}
 
-	// [ADD] 종료 상태 업데이트 메소드 구현
 	@Override
 	public void updateEndStatus(Map<String, Object> params) {
 		sqlSessionTemplate.update(NAMESPACE + "updateEndStatus", params);
 	}
 
-	// kr.co.hotdeal.board.dao.HotdealDAOImpl
-	// ...
-	
-
-	// [수정] 정렬 파라미터(sort)를 받도록 수정
 	@Override
-	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category, String sortColumn, String sortOrder) {
-	    Map<String, Object> param = new HashMap<>();
-	    param.put("pageStart", pageStart);
-	    param.put("pageEnd", pageEnd);
-	    param.put("keyword", keyword);
-	    param.put("category", category);
-	    param.put("sortColumn", sortColumn);
-	    param.put("sortOrder", sortOrder);
-	    return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
+	public List<HotdealVO> getHotdealListPagingByKeyword(int pageStart, int pageEnd, String keyword, String category,
+			String sortColumn, String sortOrder) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("pageStart", pageStart);
+		param.put("pageEnd", pageEnd);
+		param.put("keyword", keyword);
+		param.put("category", category);
+		param.put("sortColumn", sortColumn);
+		param.put("sortOrder", sortOrder);
+		return sqlSessionTemplate.selectList(NAMESPACE + "getHotdealListPagingByKeyword", param);
 	}
-	
+
 	@Override
-    public List<HotdealVO> selectNoticeList() { // [ADD]
-        return sqlSessionTemplate.selectList(NAMESPACE + "selectNoticeList");
-    }
+	public List<HotdealVO> selectNoticeList() { // [ADD]
+		return sqlSessionTemplate.selectList(NAMESPACE + "selectNoticeList");
+	}
 }

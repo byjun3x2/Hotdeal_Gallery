@@ -5,7 +5,8 @@
 
 <mapper namespace="kr.co.hotdeal.board.dao.HotdealDAO">
 
-	<resultMap id="hotdealResultMap" type="kr.co.hotdeal.board.vo.HotdealVO">
+	<resultMap id="hotdealResultMap"
+		type="kr.co.hotdeal.board.vo.HotdealVO">
 		<id property="id" column="ID" />
 		<result property="thumbnail" column="THUMBNAIL" />
 		<result property="title" column="TITLE" />
@@ -17,9 +18,10 @@
 		<result property="content" column="CONTENT" />
 		<result property="productId" column="PRODUCT_ID" />
 		<result property="commentCount" column="COMMENT_COUNT" />
-        <result property="isEnded" column="IS_ENDED" />
-        <result property="isNotice" column="IS_NOTICE" />
-		<association property="product" javaType="kr.co.hotdeal.product.vo.ProductVO">
+		<result property="isEnded" column="IS_ENDED" />
+		<result property="isNotice" column="IS_NOTICE" />
+		<association property="product"
+			javaType="kr.co.hotdeal.product.vo.ProductVO">
 			<id property="productId" column="PRODUCT_ID" />
 			<result property="category" column="CATEGORY" />
 			<result property="shopName" column="SHOP_NAME" />
@@ -30,114 +32,137 @@
 		</association>
 	</resultMap>
 
-    <select id="selectNoticeList" resultMap="hotdealResultMap">
-        SELECT
-            h.ID, h.TITLE
-        FROM HOTDEAL h
-        WHERE h.IS_NOTICE = 'Y'
-        ORDER BY h.ID DESC
-    </select>
-    
-	<select id="getHotdealById" parameterType="int" resultMap="hotdealResultMap">
+	<select id="selectNoticeList" resultMap="hotdealResultMap">
 		SELECT
-		    h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR, h.CONTENT,
-		    TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS REGDATE,
-		    h.VIEWS, h.LIKES, h.DISLIKES, h.IS_ENDED, h.IS_NOTICE,
-            p.PRODUCT_ID, p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
-		    p.RELATED_URL
-		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
+		h.ID, h.TITLE
+		FROM HOTDEAL h
+		WHERE h.IS_NOTICE = 'Y'
+		ORDER BY h.ID DESC
+	</select>
+
+	<select id="getHotdealById" parameterType="int"
+		resultMap="hotdealResultMap">
+		SELECT
+		h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR, h.CONTENT,
+		TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS REGDATE,
+		h.VIEWS, h.LIKES, h.DISLIKES, h.IS_ENDED, h.IS_NOTICE,
+		p.PRODUCT_ID, p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
+		p.RELATED_URL
+		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID =
+		p.PRODUCT_ID
 		WHERE h.ID = #{id}
 	</select>
 
-	<insert id="insertHotdeal" parameterType="kr.co.hotdeal.board.vo.HotdealVO">
+	<insert id="insertHotdeal"
+		parameterType="kr.co.hotdeal.board.vo.HotdealVO">
 		<selectKey keyProperty="id" resultType="int" order="BEFORE">
-			SELECT HOTDEAL_SEQ.NEXTVAL FROM DUAL
+			SELECT
+			HOTDEAL_SEQ.NEXTVAL FROM DUAL
 		</selectKey>
-		INSERT INTO HOTDEAL (ID, THUMBNAIL, TITLE, AUTHOR, REG_DATE, VIEWS, LIKES, DISLIKES, CONTENT, PRODUCT_ID, IS_NOTICE) 
-        VALUES (#{id}, #{thumbnail}, #{title}, #{author}, SYSDATE, 0, 0, 0, #{content}, #{productId}, #{isNotice})
+		INSERT INTO HOTDEAL (ID, THUMBNAIL, TITLE, AUTHOR, REG_DATE, VIEWS,
+		LIKES, DISLIKES, CONTENT, PRODUCT_ID, IS_NOTICE)
+		VALUES (#{id}, #{thumbnail}, #{title}, #{author}, SYSDATE, 0, 0, 0,
+		#{content}, #{productId}, #{isNotice})
 	</insert>
 
-	<update id="updateHotdeal" parameterType="kr.co.hotdeal.board.vo.HotdealVO">
+	<update id="updateHotdeal"
+		parameterType="kr.co.hotdeal.board.vo.HotdealVO">
 		UPDATE HOTDEAL
-		SET THUMBNAIL = #{thumbnail}, TITLE = #{title}, CONTENT = #{content}, PRODUCT_ID = #{productId}, IS_NOTICE = #{isNotice}
+		SET THUMBNAIL = #{thumbnail}, TITLE =
+		#{title}, CONTENT = #{content}, PRODUCT_ID = #{productId}, IS_NOTICE =
+		#{isNotice}
 		WHERE ID = #{id}
-    </update>
-    
-    <update id="updateEndStatus" parameterType="map">
-        UPDATE HOTDEAL SET IS_ENDED = #{isEnded} WHERE ID = #{id}
-    </update>
+	</update>
+
+	<update id="updateEndStatus" parameterType="map">
+		UPDATE HOTDEAL SET IS_ENDED = #{isEnded} WHERE ID = #{id}
+	</update>
 
 	<delete id="deleteHotdeal" parameterType="int">
-        DELETE FROM HOTDEAL WHERE ID = #{id}
-    </delete>
+		DELETE FROM HOTDEAL WHERE ID = #{id}
+	</delete>
 
-	<select id="getHotdealTotalCountByKeyword" parameterType="map" resultType="int">
+	<select id="getHotdealTotalCountByKeyword" parameterType="map"
+		resultType="int">
 		SELECT COUNT(*)
-		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
+		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID =
+		p.PRODUCT_ID
 		<where>
-            AND h.IS_NOTICE = 'N' <if test="keyword != null and keyword != ''">AND h.TITLE LIKE '%' || #{keyword} || '%'</if>
+			AND h.IS_NOTICE = 'N'
+			<if test="keyword != null and keyword != ''">AND h.TITLE LIKE '%' || #{keyword} || '%'</if>
 			<if test="category != null and category != ''">AND p.CATEGORY = #{category}</if>
 		</where>
 	</select>
 
-	<select id="getHotdealListPagingByKeyword" parameterType="map" resultMap="hotdealResultMap">
+	<select id="getHotdealListPagingByKeyword" parameterType="map"
+		resultMap="hotdealResultMap">
 		SELECT * FROM (
-		    SELECT ROWNUM AS RNUM, A.* FROM (
-		        SELECT
-		            h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR,
-		            TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS REGDATE,
-		            h.VIEWS, h.LIKES, h.DISLIKES, h.PRODUCT_ID, h.IS_ENDED, h.IS_NOTICE,
-		            p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
-		            (SELECT COUNT(*) FROM HOTDEAL_COMMENT c WHERE c.HOTDEAL_ID = h.ID) AS COMMENT_COUNT
-		        FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
-		        <where>
-                    AND h.IS_NOTICE = 'N' <if test="keyword != null and keyword != ''">AND h.TITLE LIKE '%' || #{keyword} || '%'</if>
-			        <if test="category != null and category != ''">AND p.CATEGORY = #{category}</if>
-		        </where>
-		        ORDER BY
-                <choose>
-                    <when test="sortColumn == 'likes'">h.LIKES DESC, h.ID DESC</when>
-                    <when test="sortColumn == 'views'">h.VIEWS DESC, h.ID DESC</when>
-                    <otherwise>h.ID DESC</otherwise>
-                </choose>
-		    ) A
-		    WHERE ROWNUM &lt;= #{pageEnd}
+		SELECT ROWNUM AS RNUM, A.* FROM (
+		SELECT
+		h.ID, h.THUMBNAIL, h.TITLE, h.AUTHOR,
+		TO_CHAR(h.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS REGDATE,
+		h.VIEWS, h.LIKES, h.DISLIKES, h.PRODUCT_ID, h.IS_ENDED, h.IS_NOTICE,
+		p.CATEGORY, p.SHOP_NAME, p.PRODUCT_NAME, p.PRICE, p.DELIVERY_FEE,
+		(SELECT COUNT(*) FROM HOTDEAL_COMMENT c WHERE c.HOTDEAL_ID = h.ID) AS
+		COMMENT_COUNT
+		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
+		<where>
+			AND h.IS_NOTICE = 'N'
+			<if test="keyword != null and keyword != ''">AND h.TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="category != null and category != ''">AND p.CATEGORY = #{category}</if>
+		</where>
+		ORDER BY
+		<choose>
+			<when test="sortColumn == 'likes'">h.LIKES DESC, h.ID DESC</when>
+			<when test="sortColumn == 'views'">h.VIEWS DESC, h.ID DESC</when>
+			<otherwise>h.ID DESC</otherwise>
+		</choose>
+		) A
+		WHERE ROWNUM &lt;= #{pageEnd}
 		)
 		WHERE RNUM &gt;= #{pageStart}
 	</select>
 
 	<update id="increaseViews" parameterType="int">
-		UPDATE HOTDEAL SET VIEWS = VIEWS + 1 WHERE ID = #{id}
+		UPDATE HOTDEAL SET
+		VIEWS = VIEWS + 1 WHERE ID = #{id}
 	</update>
 
 	<update id="decreaseLikes" parameterType="int">
-		UPDATE HOTDEAL SET LIKES = LIKES - 1 WHERE ID = #{id} AND LIKES > 0
+		UPDATE HOTDEAL SET
+		LIKES = LIKES - 1 WHERE ID = #{id} AND LIKES > 0
 	</update>
 
 	<update id="decreaseDislikes" parameterType="int">
-		UPDATE HOTDEAL SET DISLIKES = DISLIKES - 1 WHERE ID = #{id} AND DISLIKES > 0
+		UPDATE HOTDEAL SET
+		DISLIKES = DISLIKES - 1 WHERE ID = #{id} AND DISLIKES > 0
 	</update>
 
 	<update id="increaseLikes" parameterType="int">
-		UPDATE HOTDEAL SET LIKES = LIKES + 1 WHERE ID = #{id}
+		UPDATE HOTDEAL SET
+		LIKES = LIKES + 1 WHERE ID = #{id}
 	</update>
 
 	<update id="increaseDislikes" parameterType="int">
-		UPDATE HOTDEAL SET DISLIKES = DISLIKES + 1 WHERE ID = #{id}
+		UPDATE HOTDEAL SET
+		DISLIKES = DISLIKES + 1 WHERE ID = #{id}
 	</update>
 
 	<delete id="deleteAllHotdeals">
 		DELETE FROM HOTDEAL
 	</delete>
 
-	<select id="getBestHotdealList" parameterType="int" resultMap="hotdealResultMap">
+	<select id="getBestHotdealList" parameterType="int"
+		resultMap="hotdealResultMap">
 		SELECT * FROM (
-    		SELECT
-    		    h.ID, h.TITLE, h.LIKES, h.DISLIKES, p.CATEGORY,
-    		    (SELECT COUNT(*) FROM HOTDEAL_COMMENT c WHERE c.HOTDEAL_ID = h.ID) AS COMMENT_COUNT,
-    		    (h.LIKES - h.DISLIKES) AS POPULARITY
-    		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
-    		WHERE (h.LIKES - h.DISLIKES) > 0 AND h.IS_NOTICE = 'N' ORDER BY POPULARITY DESC, h.ID DESC
+		SELECT
+		h.ID, h.TITLE, h.LIKES, h.DISLIKES, p.CATEGORY,
+		(SELECT COUNT(*) FROM HOTDEAL_COMMENT c WHERE c.HOTDEAL_ID = h.ID) AS
+		COMMENT_COUNT,
+		(h.LIKES - h.DISLIKES) AS POPULARITY
+		FROM HOTDEAL h JOIN PRODUCT p ON h.PRODUCT_ID = p.PRODUCT_ID
+		WHERE (h.LIKES - h.DISLIKES) > 0 AND h.IS_NOTICE = 'N' ORDER BY POPULARITY
+		DESC, h.ID DESC
 		)
 		WHERE ROWNUM &lt;= #{limit}
 	</select>

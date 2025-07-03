@@ -12,30 +12,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberDAO memberDAO;
+	private final MemberDAO memberDAO;
 
-    public void join(MemberVO member) {
-        memberDAO.insertMember(member);
-    }
+	public void join(MemberVO member) {
+		memberDAO.insertMember(member);
+	}
 
-    public MemberVO getMemberByUsername(String username) {
-        return memberDAO.selectMemberByUsername(username);
-    }
+	public MemberVO getMemberByUsername(String username) {
+		return memberDAO.selectMemberByUsername(username);
+	}
 
-    public MemberVO getMemberById(int memberId) {
-        return memberDAO.selectMemberById(memberId);
-    }
+	public MemberVO getMemberById(int memberId) {
+		return memberDAO.selectMemberById(memberId);
+	}
 
-    public MemberVO login(String username, String password) {
-        return memberDAO.login(username, password);
-    }
-    
-    public MemberVO getMemberByEmail(String email) {
-        return memberDAO.selectMemberByEmail(email);
-    }
-    
-    // [ADD] 관리자용: 전체 회원 목록 조회 서비스
-    public List<MemberVO> getAllMembers() {
-        return memberDAO.selectAllMembers();
-    }
+	public MemberVO login(String username, String password) {
+		return memberDAO.login(username, password);
+	}
+
+	public MemberVO getMemberByEmail(String email) {
+		return memberDAO.selectMemberByEmail(email);
+	}
+
+	public List<MemberVO> getAllMembers() {
+		return memberDAO.selectAllMembers();
+	}
 }

@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class CommentVO {
-    private int commentId;
-    private int hotdealId;
-    private Integer parentId; // 대댓글용
-    private String username;
-    private String content;
-    private String regDate;
+	private int commentId;
+	private int hotdealId;
+	private Integer parentId;
+	private String username;
+	private String content;
+	private String regDate;
 }

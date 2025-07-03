@@ -10,13 +10,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final CommentDAO commentDAO;
+	private final CommentDAO commentDAO;
 
-    public List<CommentVO> getCommentList(int hotdealId) {
-        return commentDAO.getCommentList(hotdealId);
-    }
+	public List<CommentVO> getCommentList(int hotdealId) {
+		return commentDAO.getCommentList(hotdealId);
+	}
 
-    public void insertComment(CommentVO vo) {
-        commentDAO.insertComment(vo);
-    }
+	public void insertComment(CommentVO vo) {
+		commentDAO.insertComment(vo);
+	}
 }

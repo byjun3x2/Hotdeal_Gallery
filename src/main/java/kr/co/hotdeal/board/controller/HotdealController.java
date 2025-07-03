@@ -61,11 +61,11 @@ public class HotdealController {
 			@RequestParam(value = "category", required = false) String category,
 			@RequestParam(value = "sortColumn", required = false, defaultValue = "regDate") String sortColumn,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
-		
+
 		List<HotdealVO> noticeList = hotdealService.getNoticeList();
 		List<HotdealVO> hotdealList = hotdealService.getHotdealList(criteria, keyword, category, sortColumn, sortOrder);
 		int totalCount = hotdealService.getTotalCount(keyword, category);
-		
+
 		model.addAttribute("noticeList", noticeList);
 		model.addAttribute("hotdealList", hotdealList);
 		model.addAttribute("totalCount", totalCount);
@@ -74,13 +74,13 @@ public class HotdealController {
 		model.addAttribute("selectedCategory", category);
 		model.addAttribute("sortColumn", sortColumn);
 		model.addAttribute("sortOrder", sortOrder);
-		
+
 		List<HotdealVO> bestList = hotdealService.getBestHotdealList(10);
 		model.addAttribute("bestList", bestList);
-		
+
 		List<String> categoryList = productService.getAllCategories();
 		model.addAttribute("categoryList", categoryList);
-		
+
 		return "list";
 	}
 
@@ -94,40 +94,33 @@ public class HotdealController {
 		return "write";
 	}
 
-	/**
-	 * [수정된 최종 버전]
-	 * - @ModelAttribute 제거
-	 * - 가격(price) 파라미터를 int가 아닌 Integer로 받아 null을 허용
-	 */
 	@PostMapping("/write")
-	public String write(@RequestParam("title") String title,
-			@RequestParam("content") String content,
+	public String write(@RequestParam("title") String title, @RequestParam("content") String content,
 			@RequestParam(value = "thumbnail", required = false) String thumbnail,
 			@RequestParam(value = "product.category", required = false) String category,
 			@RequestParam(value = "product.shopName", required = false) String shopName,
 			@RequestParam(value = "product.productName", required = false) String productName,
-			@RequestParam(value = "product.price", required = false) Integer price, // int -> Integer로 변경
+			@RequestParam(value = "product.price", required = false) Integer price,
 			@RequestParam(value = "product.deliveryFee", required = false) String deliveryFee,
 			@RequestParam(name = "product.relatedUrl", required = false) String relatedUrl,
 			@RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
-			@RequestParam(value = "isNotice", required = false) String isNotice,
-			HttpSession session, Model model)
+			@RequestParam(value = "isNotice", required = false) String isNotice, HttpSession session, Model model)
 			throws IOException {
-		
+
 		MemberVO member = (MemberVO) session.getAttribute("loginUser");
 		if (member == null) {
 			return "redirect:/login";
 		}
-		
+
 		HotdealVO hotdeal = new HotdealVO();
 		hotdeal.setTitle(title);
 		hotdeal.setContent(content);
 		hotdeal.setThumbnail(thumbnail);
 		hotdeal.setAuthor(member.getUsername());
-		
+
 		boolean isAdminNotice = "ROLE_ADMIN".equals(member.getRole()) && "Y".equals(isNotice);
 		hotdeal.setIsNotice(isAdminNotice ? "Y" : "N");
-		
+
 		ProductVO product = new ProductVO();
 		if (isAdminNotice) {
 			product.setCategory("공지");
@@ -137,11 +130,8 @@ public class HotdealController {
 			product.setDeliveryFee("0");
 			product.setRelatedUrl("");
 		} else {
-			if (category == null || category.isEmpty() ||
-				shopName == null || shopName.isEmpty() ||
-				productName == null || productName.isEmpty() ||
-				price == null || // Integer는 null을 허용하므로 null 체크 가능
-				deliveryFee == null || deliveryFee.isEmpty()) {
+			if (category == null || category.isEmpty() || shopName == null || shopName.isEmpty() || productName == null
+					|| productName.isEmpty() || price == null || deliveryFee == null || deliveryFee.isEmpty()) {
 				model.addAttribute("msg", "일반글은 상품 관련 정보를 모두 입력해야 합니다.");
 				model.addAttribute("deal", hotdeal);
 				return "write";
@@ -153,13 +143,14 @@ public class HotdealController {
 			product.setDeliveryFee(deliveryFee);
 			product.setRelatedUrl(relatedUrl);
 		}
-		
+
 		hotdeal.setCategory(product.getCategory());
-		
+
 		if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
 			String uploadDir = "C:/upload/";
 			File dir = new File(uploadDir);
-			if (!dir.exists()) dir.mkdirs();
+			if (!dir.exists())
+				dir.mkdirs();
 			String fileName = UUID.randomUUID() + "_" + thumbnailFile.getOriginalFilename();
 			File dest = new File(dir, fileName);
 			thumbnailFile.transferTo(dest);
@@ -169,16 +160,16 @@ public class HotdealController {
 		} else if (hotdeal.getThumbnail() != null && !hotdeal.getThumbnail().isEmpty()) {
 			product.setProductImage(hotdeal.getThumbnail());
 		}
-		
+
 		String uuid = UUID.randomUUID().toString();
 		product.setProductId(uuid);
 		productService.insertProduct(product);
 		hotdeal.setProductId(product.getProductId());
 		hotdealService.insertHotdeal(hotdeal);
-		
+
 		return "redirect:/list";
 	}
-	
+
 	@GetMapping("/edit")
 	public String editForm(@RequestParam("id") int id, Model model, HttpSession session) {
 		HotdealVO deal = hotdealService.getHotdealById(id);
@@ -192,29 +183,23 @@ public class HotdealController {
 	}
 
 	@PostMapping("/edit")
-	public String editHotdeal(
-			@RequestParam("id") int id,
-			@RequestParam("title") String title,
-			@RequestParam("content") String content,
-			@RequestParam("product.productId") String productId,
-			@RequestParam("product.category") String category,
-			@RequestParam("product.shopName") String shopName,
-			@RequestParam("product.productName") String productName,
-			@RequestParam("product.price") int price,
+	public String editHotdeal(@RequestParam("id") int id, @RequestParam("title") String title,
+			@RequestParam("content") String content, @RequestParam("product.productId") String productId,
+			@RequestParam("product.category") String category, @RequestParam("product.shopName") String shopName,
+			@RequestParam("product.productName") String productName, @RequestParam("product.price") int price,
 			@RequestParam("product.deliveryFee") String deliveryFee,
 			@RequestParam("product.relatedUrl") String relatedUrl,
-			@RequestParam(value="thumbnail", required=false) String thumbnailUrl,
-			@RequestParam(value="thumbnailFile", required=false) MultipartFile thumbnailFile,
-			@RequestParam(value="isNotice", required=false) String isNotice,
-			Model model, HttpSession session) {
-		
+			@RequestParam(value = "thumbnail", required = false) String thumbnailUrl,
+			@RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+			@RequestParam(value = "isNotice", required = false) String isNotice, Model model, HttpSession session) {
+
 		HotdealVO origin = hotdealService.getHotdealById(id);
 		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
 		if (origin == null || loginUser == null || !origin.getAuthor().equals(loginUser.getUsername())) {
 			model.addAttribute("msg", "수정 권한이 없습니다.");
 			return "redirect:/detail?id=" + id;
 		}
-		
+
 		String thumbnail = thumbnailUrl;
 		if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
 			try {
@@ -230,7 +215,7 @@ public class HotdealController {
 				return "edit";
 			}
 		}
-		
+
 		ProductVO product = new ProductVO();
 		product.setProductId(productId);
 		product.setCategory(category);
@@ -240,7 +225,7 @@ public class HotdealController {
 		product.setDeliveryFee(deliveryFee);
 		product.setRelatedUrl(relatedUrl);
 		productService.updateProduct(product);
-		
+
 		HotdealVO vo = new HotdealVO();
 		vo.setId(id);
 		vo.setTitle(title);
@@ -253,10 +238,9 @@ public class HotdealController {
 			vo.setIsNotice("N");
 		}
 		hotdealService.updateHotdeal(vo);
-		
+
 		return "redirect:/detail?id=" + id;
 	}
-
 
 	@PostMapping("/delete")
 	public String deleteHotdeal(@RequestParam("id") int id, HttpSession session, Model model) {
@@ -269,7 +253,7 @@ public class HotdealController {
 		hotdealService.deleteHotdeal(id);
 		return "redirect:/list?page=1";
 	}
-	
+
 	@RequestMapping("/detail")
 	public String detail(@RequestParam("id") int id, HttpSession session, Model model) {
 		@SuppressWarnings("unchecked")
@@ -290,71 +274,69 @@ public class HotdealController {
 		model.addAttribute("commentList", commentList);
 		return "detail";
 	}
-	
-    @PostMapping("/reportEnd")
-    @ResponseBody
-    public Map<String, Object> reportEnd(@RequestParam("id") int id, HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            response.put("status", "error");
-            response.put("message", "로그인이 필요합니다.");
-            return response;
-        }
-        HotdealVO updatedDeal = hotdealService.toggleEndStatus(id);
-        if (updatedDeal != null) {
-            response.put("status", "success");
-            response.put("isEnded", updatedDeal.getIsEnded());
-        } else {
-            response.put("status", "error");
-            response.put("message", "게시글을 찾을 수 없습니다.");
-        }
-        return response;
-    }
-    
-    @PostMapping("/reportPost")
-    @ResponseBody
-    public String reportPost(@RequestParam("hotdealId") int hotdealId,
-                                 @RequestParam("reportType") String reportType,
-                                 HttpSession session) {
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "not_logged_in";
-        }
-        try {
-            ReportVO report = new ReportVO();
-            report.setHotdealId(hotdealId);
-            report.setReporterUserId(loginUser.getMemberId());
-            report.setReportType(reportType);
-            reportService.addReport(report);
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
-        }
-    }
-    
- // HotdealRestController.java
-    @RestController
-    @RequestMapping("/notice")
-    @RequiredArgsConstructor
-    public class HotdealRestController {
 
-        private final HotdealService hotdealService;
+	@PostMapping("/reportEnd")
+	@ResponseBody
+	public Map<String, Object> reportEnd(@RequestParam("id") int id, HttpSession session) {
+		Map<String, Object> response = new HashMap<>();
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			response.put("status", "error");
+			response.put("message", "로그인이 필요합니다.");
+			return response;
+		}
+		HotdealVO updatedDeal = hotdealService.toggleEndStatus(id);
+		if (updatedDeal != null) {
+			response.put("status", "success");
+			response.put("isEnded", updatedDeal.getIsEnded());
+		} else {
+			response.put("status", "error");
+			response.put("message", "게시글을 찾을 수 없습니다.");
+		}
+		return response;
+	}
 
-        // 공지사항 목록을 JSON으로 반환
-        @GetMapping("/list")
-        public List<Map<String, Object>> getNoticeList() {
-            List<HotdealVO> noticeList = hotdealService.getNoticeList();
-            // 필요한 필드만 추려서 반환 (id, title)
-            List<Map<String, Object>> result = new ArrayList<>();
-            for (HotdealVO vo : noticeList) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("id", vo.getId());
-                map.put("title", vo.getTitle());
-                result.add(map);
-            }
-            return result;
-        }
-    }
+	@PostMapping("/reportPost")
+	@ResponseBody
+	public String reportPost(@RequestParam("hotdealId") int hotdealId, @RequestParam("reportType") String reportType,
+			HttpSession session) {
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "not_logged_in";
+		}
+		try {
+			ReportVO report = new ReportVO();
+			report.setHotdealId(hotdealId);
+			report.setReporterUserId(loginUser.getMemberId());
+			report.setReportType(reportType);
+			reportService.addReport(report);
+			return "success";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fail";
+		}
+	}
+
+	@RestController
+	@RequestMapping("/notice")
+	@RequiredArgsConstructor
+	public class HotdealRestController {
+
+		private final HotdealService hotdealService;
+
+		// 공지사항 목록을 JSON으로 반환
+		@GetMapping("/list")
+		public List<Map<String, Object>> getNoticeList() {
+			List<HotdealVO> noticeList = hotdealService.getNoticeList();
+			// 필요한 필드만 추려서 반환 (id, title)
+			List<Map<String, Object>> result = new ArrayList<>();
+			for (HotdealVO vo : noticeList) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("id", vo.getId());
+				map.put("title", vo.getTitle());
+				result.add(map);
+			}
+			return result;
+		}
+	}
 }

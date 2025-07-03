@@ -12,14 +12,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentService commentService;
+	private final CommentService commentService;
 
-    @PostMapping("/addComment")
-    public String addComment(@ModelAttribute CommentVO comment, HttpSession session) {
-        MemberVO user = (MemberVO) session.getAttribute("loginUser");
-        if (user == null) return "redirect:/login";
-        comment.setUsername(user.getUsername());
-        commentService.insertComment(comment);
-        return "redirect:/detail?id=" + comment.getHotdealId();
-    }
+	@PostMapping("/addComment")
+	public String addComment(@ModelAttribute CommentVO comment, HttpSession session) {
+		MemberVO user = (MemberVO) session.getAttribute("loginUser");
+		if (user == null)
+			return "redirect:/login";
+		comment.setUsername(user.getUsername());
+		commentService.insertComment(comment);
+		return "redirect:/detail?id=" + comment.getHotdealId();
+	}
 }

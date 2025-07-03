@@ -5,10 +5,11 @@
 <configuration>
 
 	<settings>
-    	<setting name="jdbcTypeForNull" value="NULL"/>
-  	</settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
 	<typeAliases>
-		<typeAlias type="kr.co.hotdeal.board.vo.HotdealVO" alias="HotdealVO"/>
+		<typeAlias type="kr.co.hotdeal.board.vo.HotdealVO"
+			alias="HotdealVO" />
 	</typeAliases>
-  
+
 </configuration>

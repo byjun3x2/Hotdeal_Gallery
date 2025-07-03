@@ -4,42 +4,45 @@
 
 <mapper namespace="reportMapper">
 
-    <insert id="insertReport" parameterType="kr.co.hotdeal.report.vo.ReportVO">
-        INSERT INTO REPORT (
-            REPORT_ID, HOTDEAL_ID, REPORTER_USER_ID, REPORT_TYPE, REPORT_DATE, STATUS
-        ) VALUES (
-            REPORT_SEQ.NEXTVAL, #{hotdealId}, #{reporterUserId}, #{reportType}, SYSDATE, 'PENDING'
-        )
-    </insert>
+	<insert id="insertReport"
+		parameterType="kr.co.hotdeal.report.vo.ReportVO">
+		INSERT INTO REPORT (
+		REPORT_ID, HOTDEAL_ID, REPORTER_USER_ID, REPORT_TYPE, REPORT_DATE, STATUS
+		) VALUES (
+		REPORT_SEQ.NEXTVAL, #{hotdealId}, #{reporterUserId}, #{reportType}, SYSDATE, 'PENDING'
+		)
+	</insert>
 
-    <resultMap id="reportWithDetailsResultMap" type="kr.co.hotdeal.report.vo.ReportVO">
-        <id property="reportId" column="REPORT_ID"/>
-        <result property="hotdealId" column="HOTDEAL_ID"/>
-        <result property="reporterUserId" column="REPORTER_USER_ID"/>
-        <result property="reportType" column="REPORT_TYPE"/>
-        <result property="reportDate" column="REPORT_DATE"/>
-        <result property="status" column="STATUS"/>
-        <result property="hotdealTitle" column="HOTDEAL_TITLE"/>
-        <result property="reporterUsername" column="REPORTER_USERNAME"/>
-    </resultMap>
+	<resultMap id="reportWithDetailsResultMap"
+		type="kr.co.hotdeal.report.vo.ReportVO">
+		<id property="reportId" column="REPORT_ID" />
+		<result property="hotdealId" column="HOTDEAL_ID" />
+		<result property="reporterUserId" column="REPORTER_USER_ID" />
+		<result property="reportType" column="REPORT_TYPE" />
+		<result property="reportDate" column="REPORT_DATE" />
+		<result property="status" column="STATUS" />
+		<result property="hotdealTitle" column="HOTDEAL_TITLE" />
+		<result property="reporterUsername" column="REPORTER_USERNAME" />
+	</resultMap>
 
-    <select id="selectAllReports" resultMap="reportWithDetailsResultMap">
-    SELECT
-        r.REPORT_ID,
-        r.HOTDEAL_ID,
-        r.REPORTER_USER_ID,
-        r.REPORT_TYPE,
-        r.REPORT_DATE,  r.STATUS,
-        h.TITLE AS HOTDEAL_TITLE,
-        m.USERNAME AS REPORTER_USERNAME
-    FROM
-        REPORT r
-    JOIN
-        HOTDEAL h ON r.HOTDEAL_ID = h.ID
-    JOIN
-        MEMBER m ON r.REPORTER_USER_ID = m.MEMBER_ID
-    ORDER BY
-        r.REPORT_ID DESC
-</select>
-    
+	<select id="selectAllReports"
+		resultMap="reportWithDetailsResultMap">
+		SELECT
+		r.REPORT_ID,
+		r.HOTDEAL_ID,
+		r.REPORTER_USER_ID,
+		r.REPORT_TYPE,
+		r.REPORT_DATE, r.STATUS,
+		h.TITLE AS HOTDEAL_TITLE,
+		m.USERNAME AS REPORTER_USERNAME
+		FROM
+		REPORT r
+		JOIN
+		HOTDEAL h ON r.HOTDEAL_ID = h.ID
+		JOIN
+		MEMBER m ON r.REPORTER_USER_ID = m.MEMBER_ID
+		ORDER BY
+		r.REPORT_ID DESC
+	</select>
+
 </mapper>
