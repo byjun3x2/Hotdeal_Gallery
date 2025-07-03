@@ -373,7 +373,7 @@ body {
 .bottom-action-bar .back-link:hover {
 	text-decoration: underline;
 }
-/* ▼▼▼▼▼ 수정: 버튼 그룹 오른쪽 이동 ▼▼▼▼▼ */
+/* Button group move right */
 .edit-delete-btns-bar {
 	position: absolute;
 	right: -30px;
@@ -381,7 +381,7 @@ body {
 	display: flex;
 	gap: 5px;
 }
-/* ▼▼▼▼▼ 수정: 버튼 크기 통일 ▼▼▼▼▼ */
+/* Button size unify */
 .edit-delete-btns-bar button, .edit-delete-btns-bar .btn-info {
 	font-size: 15px;
 	padding: 7px 18px 7px 14px;
@@ -395,8 +395,7 @@ body {
 	transition: background 0.2s;
 }
 
-.edit-delete-btns-bar button:hover, .edit-delete-btns-bar .btn-info:hover
-	{
+.edit-delete-btns-bar button:hover, .edit-delete-btns-bar .btn-info:hover {
 	background-color: #f4f6fa;
 }
 /* [ADD] 종료된 핫딜 메시지 스타일 */
@@ -598,6 +597,7 @@ body {
 		<%@ include file="bestPosts.jsp"%>
 	</div>
 	<script>
+// 투표 기능
 var voteMsgTimer;
 function vote(type) {
     $.post("vote", {id: "${deal.id}", type: type}, function(res) {
@@ -610,58 +610,152 @@ function vote(type) {
         } else {
             message = res.result;
         }
-
         msgSpan.text(message).css('visibility', 'visible');
-        
-        if (voteMsgTimer) {
-            clearTimeout(voteMsgTimer);
-        }
-
+        if (voteMsgTimer) clearTimeout(voteMsgTimer);
         voteMsgTimer = setTimeout(function() {
             msgSpan.css('visibility', 'hidden');
         }, 1500);
-
     }, "json");
 }
-$(function() {
-    $("#commentForm").submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: "addComment",
-            type: "POST",
-            data: $(this).serialize(),
-            success: function(res) {
-                $("#comment-list").load(location.href + " #comment-list>*");
-                $("#commentForm textarea").val("");
-            },
-            error: function() {
-                alert("댓글 등록에 실패했습니다.");
+
+// 댓글/답글 등록, 수정, 삭제 AJAX 및 답글 토글
+function showEditForm(commentId) {
+    document.getElementById('editForm-' + commentId).style.display = 'block';
+}
+function hideEditForm(commentId) {
+    document.getElementById('editForm-' + commentId).style.display = 'none';
+}
+
+// 댓글 등록
+$(document).on('submit', '#commentForm', function(e) {
+    e.preventDefault();
+    var $form = $(this);
+    var hotdealId = $form.find('input[name="hotdealId"]').val();
+    var content = $form.find('textarea[name="content"]').val();
+    $.ajax({
+        url: 'addComment',
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({ hotdealId: hotdealId, content: content }),
+        success: function(res) {
+            if(res && res.success) {
+                $('#comment-list').load(location.href + ' #comment-list>*');
+                $('#commentForm textarea').val("");
+            } else if(res && res.msg) {
+                alert(res.msg);
+            } else {
+                alert('댓글 등록에 실패했습니다.');
             }
-        });
-    });
-    $(document).on("click", ".reply-toggle-btn", function() {
-        var targetId = $(this).data("target");
-        $(".replyForm").not("#" + targetId).hide();
-        $("#" + targetId).toggle();
-    });
-    $(document).on("submit", ".replyForm", function(e) {
-        var $form = $(this);
-        e.preventDefault();
-        $.ajax({
-            url: "addComment",
-            type: "POST",
-            data: $form.serialize(),
-            success: function(res) {
-                $("#comment-list").load(location.href + " #comment-list>*");
-                $form.find("textarea").val("");
-                $form.hide();
-            },
-            error: function() {
-                alert("답글 등록에 실패했습니다.");
-            }
-        });
+        },
+        error: function() {
+            alert('댓글 등록에 실패했습니다.');
+        }
     });
 });
+// 답글 등록
+$(document).on('submit', '.replyForm', function(e) {
+    e.preventDefault();
+    var $form = $(this);
+    var hotdealId = $form.find('input[name="hotdealId"]').val();
+    var parentId = $form.find('input[name="parentId"]').val();
+    var content = $form.find('textarea[name="content"]').val();
+    $.ajax({
+        url: 'addComment',
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({ hotdealId: hotdealId, parentId: parentId, content: content }),
+        success: function(res) {
+            if(res && res.success) {
+                $('#comment-list').load(location.href + ' #comment-list>*');
+                $form.find('textarea').val("");
+                $form.hide();
+            } else if(res && res.msg) {
+                alert(res.msg);
+            } else {
+                alert('답글 등록에 실패했습니다.');
+            }
+        },
+        error: function() {
+            alert('답글 등록에 실패했습니다.');
+        }
+    });
+});
+// 댓글 수정
+$(document).on('submit', 'form[action="updateComment"]', function(e) {
+    e.preventDefault();
+    var $form = $(this);
+    var commentId = $form.find('input[name="commentId"]').val();
+    var hotdealId = $form.find('input[name="hotdealId"]').val();
+    var content = $form.find('textarea[name="content"]').val();
+    var scrollPos = window.scrollY;
+    $.ajax({
+        url: 'updateComment',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({ commentId: commentId, hotdealId: hotdealId, content: content }),
+        success: function(res) {
+            if(res && res.success) {
+                $('#comment-list').load(location.href + ' #comment-list>*', function() {
+                    hideEditForm(commentId);
+                    window.scrollTo(0, scrollPos);
+                });
+            } else if(res && res.msg) {
+                alert(res.msg);
+            } else {
+                alert('댓글 수정에 실패했습니다.');
+            }
+        },
+        error: function() {
+            alert('댓글 수정에 실패했습니다.');
+        }
+    });
+});
+// 댓글 삭제
+$(document).on('submit', 'form[action="deleteComment"]', function(e) {
+    e.preventDefault();
+    var $form = $(this);
+    var $btn = $form.find('button[type="submit"]');
+    if($btn.prop('disabled')) return; // 이미 처리 중이면 무시
+    if(!confirm('정말 삭제하시겠습니까?')) return;
+    $btn.prop('disabled', true); // 중복 방지
+
+    var commentId = $form.find('input[name="commentId"]').val();
+    var hotdealId = $form.find('input[name="hotdealId"]').val();
+    var scrollPos = window.scrollY;
+    $.ajax({
+        url: 'deleteComment',
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify({ commentId: parseInt(commentId), hotdealId: parseInt(hotdealId) }),
+        success: function(res) {
+            $btn.prop('disabled', false); // 완료 후 다시 활성화
+            if(res && res.success) {
+                $('#comment-list').load(location.href + ' #comment-list>*', function() {
+                    window.scrollTo(0, scrollPos);
+                });
+            } else if(res && res.msg) {
+                alert(res.msg);
+            } else {
+                alert('댓글 삭제에 실패했습니다.');
+            }
+        },
+        error: function() {
+            $btn.prop('disabled', false);
+            alert('댓글 삭제에 실패했습니다.');
+        }
+    });
+});
+// 답글 폼 토글 (중복 방지, 한 번만 선언)
+$(document).on("click", ".reply-toggle-btn", function() {
+    var targetId = $(this).data("target");
+    $(".replyForm").not("#" + targetId).hide();
+    $("#" + targetId).toggle();
+});
+
 window.addEventListener("DOMContentLoaded", function() {
     const slides = document.querySelectorAll('.carousel-slide');
     const dots = document.querySelectorAll('.carousel-dot');
@@ -697,7 +791,6 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 
 function reportEnd() {
-
     var btn = document.getElementById('reportEndBtn');
     var msg;
     if (btn.innerText.trim() === '종료신고') {

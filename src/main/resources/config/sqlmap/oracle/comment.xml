@@ -9,14 +9,16 @@
 	<insert id="insertComment"
 		parameterType="kr.co.hotdeal.comment.vo.CommentVO">
 		INSERT INTO HOTDEAL_COMMENT (
-		COMMENT_ID, HOTDEAL_ID, PARENT_ID, USERNAME, CONTENT, REG_DATE
+		COMMENT_ID, HOTDEAL_ID, PARENT_ID, USERNAME, CONTENT, REG_DATE, IS_EDITED, EDIT_DATE
 		) VALUES (
 		HOTDEAL_COMMENT_SEQ.NEXTVAL,
 		#{hotdealId},
 		#{parentId, jdbcType=NUMERIC},
 		#{username},
 		#{content},
-		SYSDATE
+		SYSDATE,
+		'N',
+		NULL
 		)
 	</insert>
 
@@ -27,10 +29,29 @@
 		PARENT_ID AS parentId,
 		USERNAME,
 		CONTENT,
-		TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI') AS regDate
+		TO_CHAR(REG_DATE, 'YYYY-MM-DD HH24:MI') AS regDate,
+		IS_EDITED AS isEdited,
+		TO_CHAR(EDIT_DATE, 'YYYY-MM-DD HH24:MI') AS editDate
 		FROM HOTDEAL_COMMENT
 		WHERE HOTDEAL_ID = #{hotdealId}
 		ORDER BY COMMENT_ID ASC
+	</select>
+
+	<update id="updateComment" parameterType="kr.co.hotdeal.comment.vo.CommentVO">
+		UPDATE HOTDEAL_COMMENT
+		SET CONTENT = #{content},
+		    IS_EDITED = 'Y',
+		    EDIT_DATE = SYSDATE
+		WHERE COMMENT_ID = #{commentId}
+		  AND USERNAME = #{username}
+	</update>
+
+	<delete id="deleteComment" parameterType="int">
+		DELETE FROM HOTDEAL_COMMENT WHERE COMMENT_ID = #{commentId}
+	</delete>
+
+	<select id="countChildComments" parameterType="int" resultType="int">
+		SELECT COUNT(*) FROM HOTDEAL_COMMENT WHERE PARENT_ID = #{parentId}
 	</select>
 
 	<delete id="deleteAllComments">

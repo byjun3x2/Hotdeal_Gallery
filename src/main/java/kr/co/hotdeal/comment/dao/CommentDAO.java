@@ -9,4 +9,10 @@ public interface CommentDAO {
 	void insertComment(CommentVO vo);
 
 	void deleteAllComments();
+
+	void updateComment(CommentVO vo);
+
+	void deleteComment(int commentId);
+
+	int countChildComments(int parentId);
 }

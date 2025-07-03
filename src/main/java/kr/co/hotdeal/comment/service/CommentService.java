@@ -19,4 +19,16 @@ public class CommentService {
 	public void insertComment(CommentVO vo) {
 		commentDAO.insertComment(vo);
 	}
+
+	public void updateComment(CommentVO vo) {
+		commentDAO.updateComment(vo);
+	}
+
+	public void deleteComment(int commentId) {
+		commentDAO.deleteComment(commentId);
+	}
+
+	public int countChildComments(int parentId) {
+		return commentDAO.countChildComments(parentId);
+	}
 }

@@ -28,4 +28,19 @@ public class CommentDAOImpl implements CommentDAO {
 	public void deleteAllComments() {
 		sqlSessionTemplate.delete(NAMESPACE + "deleteAllComments");
 	}
+
+	@Override
+	public void updateComment(CommentVO vo) {
+		sqlSessionTemplate.update(NAMESPACE + "updateComment", vo);
+	}
+
+	@Override
+	public void deleteComment(int commentId) {
+		sqlSessionTemplate.delete(NAMESPACE + "deleteComment", commentId);
+	}
+
+	@Override
+	public int countChildComments(int parentId) {
+		return sqlSessionTemplate.selectOne(NAMESPACE + "countChildComments", parentId);
+	}
 }
