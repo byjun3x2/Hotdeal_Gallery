@@ -31,10 +31,18 @@ public class VoteDAOTest {
 	private ProductDAO productDAO;
 
 	private MemberVO createAndInsertTestMember(String username) {
+		// 기존 회원이 있으면 삭제
+		try {
+			memberDAO.deleteMemberByUsername(username);
+		} catch (Exception e) {
+			// 무시
+		}
+		
 		MemberVO member = new MemberVO();
 		member.setUsername(username);
 		member.setPassword("test1234");
 		member.setName(username);
+		member.setEmail(username + "@test.com");
 		memberDAO.insertMember(member);
 		return member;
 	}
@@ -61,6 +69,7 @@ public class VoteDAOTest {
 		hotdeal.setViews(0);
 		hotdeal.setLikes(0);
 		hotdeal.setDislikes(0);
+		hotdeal.setIsNotice("0"); // 명시적으로 isNotice 설정
 		hotdealDAO.insertHotdeal(hotdeal);
 		return hotdeal;
 	}

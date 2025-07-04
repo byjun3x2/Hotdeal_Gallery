@@ -67,6 +67,19 @@ public class MemberDAOTest {
 
 	@Test
 	public void testLogin() {
+		// 먼저 회원을 생성
+		safeDeleteMember("testuser1");
+		
+		MemberVO member = new MemberVO();
+		member.setUsername("testuser1");
+		member.setPassword("testpass1");
+		member.setName("테스트유저1");
+		member.setEmail("testuser1@example.com");
+		member.setRole("USER");
+		
+		memberDAO.insertMember(member);
+		
+		// 로그인 테스트
 		MemberVO loginResult = memberDAO.login("testuser1", "testpass1");
 		assertNotNull(loginResult);
 		assertEquals("testuser1", loginResult.getUsername());

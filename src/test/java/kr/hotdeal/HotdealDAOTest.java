@@ -47,6 +47,7 @@ public class HotdealDAOTest {
 		vo.setViews(0);
 		vo.setLikes(0);
 		vo.setDislikes(0);
+		vo.setIsNotice("0");
 		return vo;
 	}
 
@@ -86,6 +87,7 @@ public class HotdealDAOTest {
 			forUpdate.setContent("수정된 내용입니다.");
 			forUpdate.setThumbnail("updated.jpg");
 			forUpdate.setProductId(product.getProductId());
+			forUpdate.setIsNotice("0"); // isNotice 필드 설정
 			hotdealDAO.updateHotdeal(forUpdate);
 
 			HotdealVO updated = hotdealDAO.getHotdealById(testId);

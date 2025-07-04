@@ -98,6 +98,7 @@ public class BoardAutoPopulateTest {
 			vo.setViews(RANDOM.nextInt(300));
 			vo.setLikes(0);
 			vo.setDislikes(0);
+			vo.setIsNotice("0"); // 명시적으로 isNotice 설정
 			hotdealService.insertHotdeal(vo);
 			hotdealList.add(vo);
 

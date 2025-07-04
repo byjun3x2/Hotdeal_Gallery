@@ -6,7 +6,6 @@ import kr.co.hotdeal.comment.vo.CommentVO;
 import kr.co.hotdeal.member.vo.MemberVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
