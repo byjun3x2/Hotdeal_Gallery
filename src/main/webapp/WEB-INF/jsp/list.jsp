@@ -403,26 +403,40 @@ main {
 }
 
 .notice-board {
+	position: relative;
 	background-color: #fff;
 	border: 1px solid #e0e0e0;
 	border-radius: 4px;
 	margin-bottom: 16px;
 	padding: 0 15px;
 	overflow: hidden;
-	height: 43px
 }
 
 .notice-carousel-wrapper {
-	position: relative;
-	height: 180px;
+	height: 45px;
+	transition: height 0.3s;
 	overflow: hidden;
 }
 
-.notice-carousel-track {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
+.notice-carousel-wrapper.expanded {
+	height: auto !important;
+	max-height: 1000px;
+	overflow: visible;
+}
+
+.notice-toggle-bottom {
+	padding: 4px 0 6px 0;
+	color: #007bff;
+	font-size: 14px;
+	user-select: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+}
+.notice-toggle-bottom:hover {
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 .notice-item {
@@ -450,6 +464,19 @@ main {
 	font-size: 15px;
 	font-weight: 500;
 }
+
+.notice-toggle-side {
+  font-size: 14px;
+  user-select: none;
+  color: #007bff;
+  padding: 0 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.notice-toggle-side:hover {
+  background: #f0f7ff;
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
@@ -471,15 +498,21 @@ main {
 					</div>
 
 					<c:if test="${not empty noticeList}">
-						<div class="notice-board">
-							<div class="notice-carousel-wrapper">
-								<div class="notice-carousel-track">
-									<c:forEach var="notice" items="${noticeList}">
-										<a href="detail?id=${notice.id}" class="notice-item">
-											<div class="notice-tag">공지</div>
-											<div class="notice-title">${notice.title}</div>
-										</a>
-									</c:forEach>
+						<div class="notice-board" id="noticeBoard" style="position:relative;">
+							<div style="display:flex; align-items:center; justify-content:space-between;">
+								<div class="notice-carousel-wrapper" id="noticeCarouselWrapper" style="flex:1;">
+									<div class="notice-carousel-track">
+										<c:forEach var="notice" items="${noticeList}">
+											<a href="detail?id=${notice.id}" class="notice-item">
+												<div class="notice-tag">공지</div>
+												<div class="notice-title">${notice.title}</div>
+											</a>
+										</c:forEach>
+									</div>
+								</div>
+								<div class="notice-toggle-side" id="noticeToggle" style="margin-left:10px; cursor:pointer; min-width:90px; display:flex; align-items:center; color:#007bff; user-select:none;">
+									<span id="noticeToggleText">펼쳐서 공지보기</span>
+									<span id="noticeToggleArrow" style="margin-left:4px;">▼</span>
 								</div>
 							</div>
 						</div>
@@ -773,6 +806,41 @@ window.addEventListener("DOMContentLoaded", function() {
     });
     
     window.addEventListener('resize', setInitialPositions);
+
+    // 공지 펼침/접힘 토글 (우측 버튼)
+    const noticeCarouselWrapper = document.getElementById('noticeCarouselWrapper');
+    const noticeToggle = document.getElementById('noticeToggle');
+    const noticeToggleText = document.getElementById('noticeToggleText');
+    const noticeToggleArrow = document.getElementById('noticeToggleArrow');
+    let noticeItems = noticeCarouselWrapper ? noticeCarouselWrapper.querySelectorAll('.notice-item') : [];
+
+    if (noticeToggle && noticeCarouselWrapper) {
+      let expanded = false;
+      noticeToggle.addEventListener('click', function() {
+        expanded = !expanded;
+        // noticeItems를 매번 새로 가져와야 동적 cloneNode 반영됨
+        noticeItems = noticeCarouselWrapper.querySelectorAll('.notice-item');
+        if (expanded) {
+          // 캐러셀용 cloneNode(맨 마지막) 숨기기
+          if (noticeItems.length > 1) {
+            noticeItems[noticeItems.length - 1].style.display = 'none';
+          }
+          noticeCarouselWrapper.style.height = (noticeItems.length - 1) * 45 + 'px';
+          noticeToggleText.textContent = '접어서 공지 숨기기';
+          noticeToggleArrow.textContent = '▲';
+        } else {
+          // 다시 보이게
+          if (noticeItems.length > 1) {
+            noticeItems[noticeItems.length - 1].style.display = '';
+          }
+          noticeCarouselWrapper.style.height = '45px';
+          noticeToggleText.textContent = '펼쳐서 공지보기';
+          noticeToggleArrow.textContent = '▼';
+        }
+      });
+      // 초기 상태
+      noticeCarouselWrapper.style.height = '45px';
+    }
 });
 </script>
 </body>
