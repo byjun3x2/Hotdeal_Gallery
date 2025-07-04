@@ -3,6 +3,7 @@ package kr.co.hotdeal.board.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,6 +63,12 @@ public class HotdealController {
 			@RequestParam(value = "sortColumn", required = false, defaultValue = "regDate") String sortColumn,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder) {
 
+		// write.jsp 드롭다운과 동일한 카테고리만 노출
+		List<String> categoryList = Arrays.asList(
+				"pc제품", "sw/게임", "가전제품", "기타", "먹거리", "모바일/상품권", "생활용품", "세일정보", "의류", "해외핫딜", "화장품"
+		);
+		model.addAttribute("categoryList", categoryList);
+
 		List<HotdealVO> noticeList = hotdealService.getNoticeList();
 		List<HotdealVO> hotdealList = hotdealService.getHotdealList(criteria, keyword, category, sortColumn, sortOrder);
 		int totalCount = hotdealService.getTotalCount(keyword, category);
@@ -77,9 +84,6 @@ public class HotdealController {
 
 		List<HotdealVO> bestList = hotdealService.getBestHotdealList(10);
 		model.addAttribute("bestList", bestList);
-
-		List<String> categoryList = productService.getAllCategories();
-		model.addAttribute("categoryList", categoryList);
 
 		return "list";
 	}
