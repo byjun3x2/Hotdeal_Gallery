@@ -15,7 +15,7 @@
   		</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
-		<multipart-config /> <!-- 이 한 줄 추가! -->
+		<multipart-config />
 	</servlet>
 
 	<servlet-mapping>

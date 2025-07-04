@@ -395,7 +395,8 @@ body {
 	transition: background 0.2s;
 }
 
-.edit-delete-btns-bar button:hover, .edit-delete-btns-bar .btn-info:hover {
+.edit-delete-btns-bar button:hover, .edit-delete-btns-bar .btn-info:hover
+	{
 	background-color: #f4f6fa;
 }
 /* [ADD] 종료된 핫딜 메시지 스타일 */
@@ -597,7 +598,7 @@ body {
 		<%@ include file="bestPosts.jsp"%>
 	</div>
 	<script>
-// 투표 기능
+
 var voteMsgTimer;
 function vote(type) {
     $.post("vote", {id: "${deal.id}", type: type}, function(res) {
@@ -618,7 +619,6 @@ function vote(type) {
     }, "json");
 }
 
-// 댓글/답글 등록, 수정, 삭제 AJAX 및 답글 토글
 function showEditForm(commentId) {
     document.getElementById('editForm-' + commentId).style.display = 'block';
 }
@@ -626,7 +626,7 @@ function hideEditForm(commentId) {
     document.getElementById('editForm-' + commentId).style.display = 'none';
 }
 
-// 댓글 등록
+
 $(document).on('submit', '#commentForm', function(e) {
     e.preventDefault();
     var $form = $(this);
@@ -653,7 +653,7 @@ $(document).on('submit', '#commentForm', function(e) {
         }
     });
 });
-// 답글 등록
+
 $(document).on('submit', '.replyForm', function(e) {
     e.preventDefault();
     var $form = $(this);
@@ -682,7 +682,7 @@ $(document).on('submit', '.replyForm', function(e) {
         }
     });
 });
-// 댓글 수정
+
 $(document).on('submit', 'form[action="updateComment"]', function(e) {
     e.preventDefault();
     var $form = $(this);
@@ -749,7 +749,7 @@ $(document).on('submit', 'form[action="deleteComment"]', function(e) {
         }
     });
 });
-// 답글 폼 토글 (중복 방지, 한 번만 선언)
+
 $(document).on("click", ".reply-toggle-btn", function() {
     var targetId = $(this).data("target");
     $(".replyForm").not("#" + targetId).hide();

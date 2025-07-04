@@ -324,7 +324,6 @@ public class HotdealController {
 
 		private final HotdealService hotdealService;
 
-		// 공지사항 목록을 JSON으로 반환
 		@GetMapping("/list")
 		public List<Map<String, Object>> getNoticeList() {
 			List<HotdealVO> noticeList = hotdealService.getNoticeList();

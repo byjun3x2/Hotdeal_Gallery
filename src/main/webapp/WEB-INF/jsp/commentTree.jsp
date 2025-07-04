@@ -62,7 +62,3 @@
 		</c:forEach>
 	</c:if>
 </c:forEach>
-
-<%--
-    [수정] 이 파일에 있던 <script>...</script> 블록을 완전히 삭제합니다.
---%>
