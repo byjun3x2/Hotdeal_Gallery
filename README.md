@@ -1,6 +1,6 @@
 # 🔥 핫딜 갤러리 (Hotdeal Gallery)
 
-![Hotdeal Gallery Logo](https://i.imgur.com/8Qj8mC1.png)
+![Hotdeal Gallery Logo](./src/main/resources/images/hotdeal_gallery_logo.jpeg)
 
 **핫딜 갤러리**는 사용자들이 직접 실시간 쇼핑 할인 정보(핫딜)를 공유하고, 추천/비추천 및 댓글을 통해 정보의 가치를 함께 평가하는 커뮤니티 기반 웹 서비스입니다.
 
