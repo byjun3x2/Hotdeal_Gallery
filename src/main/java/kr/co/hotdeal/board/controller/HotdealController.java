@@ -151,8 +151,8 @@ public class HotdealController {
 		hotdeal.setCategory(product.getCategory());
 
 		if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
-			String uploadDir = "C:/upload/";
-			File dir = new File(uploadDir);
+			            String uploadDir = "C:/Users/SANGJUN/Workspace/Image_Upload_Folder/";			
+			            File dir = new File(uploadDir);
 			if (!dir.exists())
 				dir.mkdirs();
 			String fileName = UUID.randomUUID() + "_" + thumbnailFile.getOriginalFilename();
@@ -207,8 +207,7 @@ public class HotdealController {
 		String thumbnail = thumbnailUrl;
 		if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
 			try {
-				String uploadDir = "C:/upload";
-				String fileName = System.currentTimeMillis() + "_" + thumbnailFile.getOriginalFilename();
+				                String uploadDir = "C:/Users/SANGJUN/Workspace/Image_Upload_Folder/";				String fileName = System.currentTimeMillis() + "_" + thumbnailFile.getOriginalFilename();
 				java.io.File dest = new java.io.File(uploadDir, fileName);
 				dest.getParentFile().mkdirs();
 				thumbnailFile.transferTo(dest);

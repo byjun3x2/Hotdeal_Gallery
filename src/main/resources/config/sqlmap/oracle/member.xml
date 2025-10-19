@@ -63,8 +63,4 @@
 		DELETE FROM REPORT WHERE REPORTER_USER_ID = #{username}
 	</delete>
 
-	<delete id="deleteAllMembers">
-		DELETE FROM MEMBER
-	</delete>
-
 </mapper>

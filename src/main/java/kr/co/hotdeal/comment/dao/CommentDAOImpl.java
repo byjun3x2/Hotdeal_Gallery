@@ -24,10 +24,7 @@ public class CommentDAOImpl implements CommentDAO {
 		sqlSessionTemplate.insert(NAMESPACE + "insertComment", vo);
 	}
 
-	@Override
-	public void deleteAllComments() {
-		sqlSessionTemplate.delete(NAMESPACE + "deleteAllComments");
-	}
+
 
 	@Override
 	public void updateComment(CommentVO vo) {

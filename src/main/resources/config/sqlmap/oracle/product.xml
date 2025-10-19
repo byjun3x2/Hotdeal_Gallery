@@ -54,10 +54,6 @@
 		WHERE PRODUCT_ID = #{productId}
 	</delete>
 
-	<delete id="deleteAllProducts">
-		DELETE FROM PRODUCT
-	</delete>
-
 	<select id="getAllCategories" resultType="string">
 		SELECT DISTINCT
 		CATEGORY FROM PRODUCT

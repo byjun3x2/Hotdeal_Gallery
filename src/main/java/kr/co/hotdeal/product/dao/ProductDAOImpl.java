@@ -38,11 +38,7 @@ public class ProductDAOImpl implements ProductDAO {
         sqlSessionTemplate.delete(NAMESPACE + "deleteProduct", productId);
     }
     
-    @Override
-    public void deleteAllProducts() {
-        sqlSessionTemplate.delete(NAMESPACE + "deleteAllProducts");
-    }
-    
+
 
     @Override
     public List<String> getAllCategories() {

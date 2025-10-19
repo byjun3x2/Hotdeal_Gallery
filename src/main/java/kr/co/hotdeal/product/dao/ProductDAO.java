@@ -15,7 +15,5 @@ public interface ProductDAO {
 
 	void deleteProduct(String productId);
 
-	void deleteAllProducts(); // 전체 상품 삭제
-
 	List<String> getAllCategories();
 }

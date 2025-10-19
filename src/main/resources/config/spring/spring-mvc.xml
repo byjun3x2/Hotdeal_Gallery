@@ -26,6 +26,7 @@
     </mvc:annotation-driven>
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/upload/**" location="file:///C:/Users/SANGJUN/Workspace/Image_Upload_Folder/" />
 	<mvc:resources mapping="/favicon.ico" location="/resources/favicon.ico" />
 	
     <mvc:default-servlet-handler />
@@ -58,7 +59,7 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+        <property name="url" value="jdbc:oracle:thin:@//localhost:1521/xepdb1" />
         <property name="username" value="SANGJUN" />
         <property name="password" value="335130" />
     </bean>

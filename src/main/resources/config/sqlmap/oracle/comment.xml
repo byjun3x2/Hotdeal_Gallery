@@ -54,7 +54,4 @@
 		SELECT COUNT(*) FROM HOTDEAL_COMMENT WHERE PARENT_ID = #{parentId}
 	</select>
 
-	<delete id="deleteAllComments">
-		DELETE FROM HOTDEAL_COMMENT
-	</delete>
 </mapper>
